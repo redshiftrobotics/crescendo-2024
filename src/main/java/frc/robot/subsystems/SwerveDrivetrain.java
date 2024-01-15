@@ -207,7 +207,7 @@ public class SwerveDrivetrain extends SubsystemBase {
     public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative) {
 
         if (fieldRelative) {
-            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, gyro.getRotation2d());
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
         }
 
         setDesiredState(speeds);
