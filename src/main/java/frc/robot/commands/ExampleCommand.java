@@ -3,7 +3,9 @@ package frc.robot.commands;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
-// How to make Command (ignore image instructions): https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html
+// How to make Command (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html
+// Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
+// Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
 
 /** An example command that uses an example subsystem. */
 public class ExampleCommand extends Command {
