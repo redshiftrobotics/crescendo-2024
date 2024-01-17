@@ -87,7 +87,6 @@ public class SwerveModule extends SubsystemBase {
         configuration.MagnetSensor.MagnetOffset = steeringEncoderZero;
         configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
         steeringEncoder.getConfigurator().apply(configuration);
-
         
         // --- Steering PID ---
         steeringPIDController = new PIDController(
@@ -95,11 +94,11 @@ public class SwerveModule extends SubsystemBase {
             SwerveModuleConstants.STEERING_PID_I,
             SwerveModuleConstants.STEERING_PID_D
         );
-        steeringPIDController.enableContinuousInput(0, 360);
+        steeringPIDController.enableContinuousInput(0, 1);
         
         // --- Save other values ---
         this.distanceFromCenter = distanceFromCenter;
-        steeringPosition = steeringEncoder.getPosition();
+        steeringPosition = steeringEncoder.getAbsolutePosition();
 
         setName(toString());
     }
@@ -323,12 +322,11 @@ public class SwerveModule extends SubsystemBase {
         return newAngle;
     }
 
-
     @Override
     public String toString() {
         
-        final String[] xPositions = {"Front", "Middle", "Back"};
-        final String[] yPositions = {"Left", "Middle", "Right"}; 
+        final String[] xPositions = {"Right", "Middle", "Left"};
+        final String[] yPositions = {"Back", "Middle", "Front"}; 
 
         final int xSignum = (int) Math.signum(distanceFromCenter.getX());
         final int ySignum = (int) Math.signum(distanceFromCenter.getY());
