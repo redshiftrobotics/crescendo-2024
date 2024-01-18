@@ -74,13 +74,13 @@ public class OptionButton {
 
 
     /**
-     * <p>Get the state of the button
+     * <p>Get the state of the button</p>
      * 
-     * <p>for TAP buttons this returns true if the button has been tapped
+     * <p>for TAP buttons this returns true if the button has been tapped</p>
      * 
-     * <p>for HOLD buttons this returns true if the button is currently being held down
+     * <p>for HOLD buttons this returns true if the button is currently being held down</p>
      * 
-     * <p>for TOGGLE buttons this returns true if the button has been tapped an odd number of times
+     * <p>for TOGGLE buttons this returns true if the button has been tapped an odd number of times</p>
      * 
      * @return boolean with true being the button is active
      */

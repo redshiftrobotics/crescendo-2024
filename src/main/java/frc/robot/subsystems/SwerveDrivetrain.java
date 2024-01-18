@@ -158,9 +158,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 
     /**
      * Get speeds of robot.
-     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.
-     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).
-     * <p>omega: The angular velocity of the robot in radians per second.
+     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.</p>
+     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
+     * <p>omega: The angular velocity of the robot in radians per second.</p>
      * 
      * @return Speeds of drivetrain (from swerve modules)
      */
@@ -175,9 +175,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 
     /**
      * Set speeds of robot.
-     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.
-     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).
-     * <p>omega: The angular velocity of the robot in radians per second.
+     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.</p>
+     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
+     * <p>omega: The angular velocity of the robot in radians per second.</p>
      * 
      * @param speeds Desired speeds of drivetrain (using swerve modules)
      */
@@ -239,11 +239,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 
     /**
-     * <p>Return the heading of the robot as a rotation in a 2D coordinate frame represented by a point on the unit circle (cosine and sine).
+     * <p>Return the heading of the robot as a rotation in a 2D coordinate frame represented by a point on the unit circle (cosine and sine).</p>
      * 
-     * <p>The angle is continuous, that is it will continue from 360 to 361 degrees. This allows algorithms that wouldn't want to see a discontinuity in the gyro output as it sweeps past from 360 to 0 on the second time around.
+     * <p>The angle is continuous, that is it will continue from 360 to 361 degrees. This allows algorithms that wouldn't want to see a discontinuity in the gyro output as it sweeps past from 360 to 0 on the second time around.</p>
      * 
-     * <p>The angle is expected to increase as the gyro turns counterclockwise when looked at from the top.
+     * <p>The angle is expected to increase as the gyro turns counterclockwise when looked at from the top.</p>
      * It needs to follow the NWU axis convention.
      * 
      * @return the current heading of the robot as a {@link Rotation2d}.
@@ -255,7 +255,7 @@ public class SwerveDrivetrain extends SubsystemBase {
     }
 
     /**
-     * <p>Return the heading of the robot in as a rotation in a 3D coordinate frame represented by a quaternion.
+     * <p>Return the heading of the robot in as a rotation in a 3D coordinate frame represented by a quaternion.</p>
      * 
      * @return the current heading of the robot as a {@link Rotation3d}.
      */
