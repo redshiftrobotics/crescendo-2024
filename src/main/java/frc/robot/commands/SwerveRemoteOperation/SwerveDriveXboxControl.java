@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveDrivetrain;
 
+// Here is the documentation for the xbox controller code:
+// https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj2/command/button/CommandXboxController.html
+
 /**
  * This is the default command for the drivetrain, allowing for remote operation with joystick
  */
