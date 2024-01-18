@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 
@@ -52,6 +53,12 @@ public class SwerveDriveXboxControl extends Command {
         double leftX = controller.getLeftX();
         double leftY = controller.getLeftY();
         
+        final ChassisSpeeds speeds = new ChassisSpeeds(
+            leftX * ControllerConstants.maxSpeed,
+            leftY * ControllerConstants.maxSpeed,
+            0
+        );
+
         double rightX = controller.getRightX();
         double rightY = controller.getRightY();
         

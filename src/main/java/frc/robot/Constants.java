@@ -24,6 +24,10 @@ public final class Constants {
         public static final double[] maxSpeedOptionsRotation = {1, 2, 4};
     }
 
+    public static class ControllerConstants {
+        public static final double maxSpeed = 5;
+    }
+
     public static class OperatorConstants {
         public static final int OPERATOR_JOYSTICK_PORT = 1;
     }
