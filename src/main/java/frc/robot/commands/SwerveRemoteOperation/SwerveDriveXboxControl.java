@@ -1,8 +1,10 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 // Here is the documentation for the xbox controller code:
@@ -47,17 +49,19 @@ public class SwerveDriveXboxControl extends Command {
      */
     @Override
     public void execute() {
-        // Example getting value from controller
-        double rightX = controller.getRightX();
-
-        // Example putting number on smart dashboard
-        SmartDashboard.putNumber("Right Stick X", rightX);
+        double leftX = controller.getLeftX();
+        double leftY= controller.getLeftY();
+        
+        double rightX=controller.getRightX();
+        double rightY=controller.getRightY();
+        
     }
 
     /**
      * Whether the command has finished. Once a command finishes, the scheduler will call its end() method and un-schedule it.
      * Always return false since we never want to end in this case.
      */
+    
 	@Override
 	public boolean isFinished() {
 		return false;
@@ -90,4 +94,5 @@ public class SwerveDriveXboxControl extends Command {
         // scale value from the range [0, 1] to (deadzone, 1]
         return joystickValue * (1 + deadzone) - Math.signum(joystickValue) * deadzone;
     }
+
 }
