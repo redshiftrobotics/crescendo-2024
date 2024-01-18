@@ -1,0 +1,22 @@
+# I suggested to Michael that we set up automatic builds so when something starts failing or someone forgets to test before pushing we can know
+# I don't think this should get anywhere near our workflows quota but if it does you can blame Aceius
+name: Auto Build
+
+on:
+  push:
+
+jobs:
+  build-gradle-project:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup Repo
+      uses: actions/checkout@v3
+    - name: Setup Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: 17
+        distribution: zulu
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+    - name: Building Repo
+      run: ./gradlew build
