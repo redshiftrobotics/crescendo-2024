@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -147,7 +148,7 @@ public class SwerveDrivetrain extends SubsystemBase {
         modulesMap(SwerveModule::stop);
     }
 
-    /** Put all swerve modules to default state */
+    /** Put all swerve modules to default state, facing forward and staying still */
     public void toDefaultStates() {
         modulesMap(SwerveModule::toDefaultState);
     }
@@ -211,6 +212,22 @@ public class SwerveDrivetrain extends SubsystemBase {
         }
 
         setDesiredState(speeds);
+    }
+
+    public void setDesiredStateDrive(ChassisSpeeds speeds, boolean fieldRelative) {
+        speeds = ChassisSpeeds.discretize(speeds, TimedRobot.kDefaultPeriod);
+
+        if (fieldRelative) {
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
+        }
+
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
+
+        for (int i = 0; i < modules.length; i++) {
+            modules[i].setDesiredStateDrive(states[i]);
+        }
+
+        this.desiredSpeeds = speeds;
     }
 
 
