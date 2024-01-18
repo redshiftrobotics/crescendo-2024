@@ -12,7 +12,7 @@ public class AutoDriveForward extends Command {
      * as wells as arguments for what to do, such as a joystick in the drive command or a desired position in an auto command.
      * Example uses include saving parameters passed to the command, creating and configuring objects for the class like PID controllers, and adding subsystem requirements
      */
-    public AutoDriveForward(SwerveDriveTrain drivetrain) {
+    public AutoDriveForward(SwerveDrivetrain drivetrain) {
         // use "this" to access member variable subsystem rather than local subsystem
         this.drivetrain = drivetrain;
 
