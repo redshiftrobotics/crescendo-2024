@@ -61,7 +61,11 @@ public class SwerveDriveXboxControl extends Command {
 
         double rightX = controller.getRightX();
         double rightY = controller.getRightY();
+        double angleGoal= Math.atan(rightY/rightX);
+        if (rightX < 0) angleGoal+=Math.PI;
+        angleGoal %= (2*Math.PI);
         
+
     }
 
     /**
