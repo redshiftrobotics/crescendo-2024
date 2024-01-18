@@ -50,10 +50,10 @@ public class SwerveDriveXboxControl extends Command {
     @Override
     public void execute() {
         double leftX = controller.getLeftX();
-        double leftY= controller.getLeftY();
+        double leftY = controller.getLeftY();
         
-        double rightX=controller.getRightX();
-        double rightY=controller.getRightY();
+        double rightX = controller.getRightX();
+        double rightY = controller.getRightY();
         
     }
 
