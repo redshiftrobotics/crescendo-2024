@@ -1,5 +1,3 @@
-# I suggested to Michael that we set up automatic builds so when something starts failing or someone forgets to test before pushing we can know
-# I don't think this should get anywhere near our workflows quota but if it does you can blame Aceius
 name: Auto Build
 
 on:
