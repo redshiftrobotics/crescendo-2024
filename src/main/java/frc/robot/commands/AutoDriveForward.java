@@ -1,9 +1,11 @@
 package frc.robot.commands;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 public class AutoDriveForward extends Command {
     private final SwerveDrivetrain drivetrain;
+    private boolean finishedDriving = false;
 
     /**
      * The constructor creates a new command and is automatically called one time when the command is created (with 'new' keyword).
@@ -12,13 +14,9 @@ public class AutoDriveForward extends Command {
      * as wells as arguments for what to do, such as a joystick in the drive command or a desired position in an auto command.
      * Example uses include saving parameters passed to the command, creating and configuring objects for the class like PID controllers, and adding subsystem requirements
      */
-    public AutoDriveForward(SwerveDriveTrain drivetrain) {
-        // use "this" to access member variable subsystem rather than local subsystem
+    public AutoDriveForward(SwerveDrivetrain drivetrain) {
         this.drivetrain = drivetrain;
 
-        // Use addRequirements() here to declare subsystem dependencies.
-        // This makes sure no other commands try to do stuff with your subsystem while
-        // you are using it.
         addRequirements(this.drivetrain);
     }
 
@@ -29,6 +27,9 @@ public class AutoDriveForward extends Command {
      */
     @Override
     public void initialize() {
+        ChassisSpeeds desiredState = new ChassisSpeeds(0.5,0,0);
+
+        drivetrain.setDesiredState(desiredState);
     }
 
     /**
@@ -47,7 +48,7 @@ public class AutoDriveForward extends Command {
      */
     @Override
     public boolean isFinished() {
-        return true;
+        return this.finishedDriving;
     }
 
     /**
