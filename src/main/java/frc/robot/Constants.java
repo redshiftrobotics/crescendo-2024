@@ -1,5 +1,12 @@
 package frc.robot;
 
+import java.io.File;
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -8,6 +15,20 @@ import edu.wpi.first.math.util.Units;
  * Do not put any functionality in this class.
  */
 public final class Constants {
+
+    // private static final String botName = "WoodBot";
+    // private static final String fileFormat = "configs/%s.json";
+
+    // private static final JsonNode rootNode;
+    // static {
+    //     JsonNode node = null;
+    //     try {
+    //         node = new ObjectMapper().readTree(new File(String.format(fileFormat, botName)));
+    //     } catch (IOException e) {
+    //         System.out.println("Invalid config file.");
+    //     }
+    //     rootNode = node;
+    // }
 
     public static class DriverConstants {
         public static final int DRIVER_JOYSTICK_PORT = 0;
@@ -29,16 +50,20 @@ public final class Constants {
     }
 
     public static class SwerveModuleConstants {
-        public static final double MAX_SPEED = 1;
-
+        
         // Values from https://www.swervedrivespecialties.com/products/mk4-swerve-module. We have L1 Modules.
         public static final double DRIVE_MOTOR_GEAR_RATIO = 57 / 7;
         public static final double STEERING_MOTOR_GEAR_RATIO = 12.8;
-
+        
         public static final double STEERING_ENCODER_SENSOR_COEFFICIENT = 0.000244140625; // if you put 1/4096 it just becomes zero
-
+        
         public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(7);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_METERS * Math.PI;
+        
+        // Other settings
+        public static final double MAX_SPEED_LIMIT = 1;
+        public static final double SWERVE_MODULE_DRIVE_COSIGN_COEFFICIENT = 1;
+
 
         // Steering PID values
         public static final double STEERING_PID_P = 1;

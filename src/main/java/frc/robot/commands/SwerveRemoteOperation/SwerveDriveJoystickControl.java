@@ -1,5 +1,6 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,9 +57,9 @@ public class SwerveDriveJoystickControl extends Command {
     public void execute() {
 
         // Get joystick inputs
-        final double speedX = applyJoystickDeadzone(-joystick.getX(), DriverConstants.JOYSTICK_DEAD_ZONE);
-		final double speedY = applyJoystickDeadzone(-joystick.getY(), DriverConstants.JOYSTICK_DEAD_ZONE);
-		final double speedOmega = applyJoystickDeadzone(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
+        final double speedX = MathUtil.applyDeadband(-joystick.getX(), DriverConstants.JOYSTICK_DEAD_ZONE);
+		final double speedY = MathUtil.applyDeadband(-joystick.getY(), DriverConstants.JOYSTICK_DEAD_ZONE);
+		final double speedR = MathUtil.applyDeadband(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
 
         // // Code for rotating with buttons if driver prefers 
         // double speedOmega = 0;
@@ -87,7 +88,7 @@ public class SwerveDriveJoystickControl extends Command {
         final ChassisSpeeds speeds = new ChassisSpeeds(
             speedX * DriverConstants.maxSpeedOptionsTranslation[speedLevel] * speedCoefficient,
             speedY * DriverConstants.maxSpeedOptionsTranslation[speedLevel] * speedCoefficient,
-            speedOmega * DriverConstants.maxSpeedOptionsRotation[speedLevel] * speedCoefficient
+            speedR * DriverConstants.maxSpeedOptionsRotation[speedLevel] * speedCoefficient
         );
 
         // Display relevant data on shuffleboard.
@@ -104,11 +105,11 @@ public class SwerveDriveJoystickControl extends Command {
         SmartDashboard.putNumber("Target Speed Y MPH", speeds.vyMetersPerSecond * metersPerSecondToMPH);
         SmartDashboard.putNumber("Target RPM", speeds.omegaRadiansPerSecond * radiansPerSecondToRPM);
 
-        final ChassisSpeeds realSpeeds = drivetrain.getState();
+        final ChassisSpeeds currentRobotSpeeds = drivetrain.getState();
 
-        SmartDashboard.putNumber("Real Speed X MPH", realSpeeds.vxMetersPerSecond * metersPerSecondToMPH);
-        SmartDashboard.putNumber("Real Speed Y MPH", realSpeeds.vyMetersPerSecond * metersPerSecondToMPH);
-        SmartDashboard.putNumber("Real RPM", realSpeeds.omegaRadiansPerSecond * radiansPerSecondToRPM);
+        SmartDashboard.putNumber("Real Speed X MPH", currentRobotSpeeds.vxMetersPerSecond * metersPerSecondToMPH);
+        SmartDashboard.putNumber("Real Speed Y MPH", currentRobotSpeeds.vyMetersPerSecond * metersPerSecondToMPH);
+        SmartDashboard.putNumber("Real RPM", currentRobotSpeeds.omegaRadiansPerSecond * radiansPerSecondToRPM);
 
         SmartDashboard.putNumber("Joystick X", joystick.getX());
 		SmartDashboard.putNumber("Joystick Y", joystick.getY());
@@ -116,10 +117,9 @@ public class SwerveDriveJoystickControl extends Command {
 
         SmartDashboard.putBoolean("X Active", speedX != 0);
 		SmartDashboard.putBoolean("Y Active", speedY != 0);
-		SmartDashboard.putBoolean("R Active", speedOmega != 0);
+		SmartDashboard.putBoolean("R Active", speedR != 0); 
 
-
-        drivetrain.setDesiredState(speeds, isFieldRelative);
+        drivetrain.setDesiredStateDrive(speeds, isFieldRelative);
     }
 
     /**
@@ -138,25 +138,5 @@ public class SwerveDriveJoystickControl extends Command {
     @Override
     public void end(boolean interrupted) {
         drivetrain.stop();
-    }
-
-
-    
-    // --- Util ---
-
-    /**
-     * Utility method. Apply a deadzone to the joystick output to account for stick drift and small bumps.
-     * 
-     * @param joystickValue Value in [-1, 1] from joystick axis
-     * @return {@code 0} if {@code |joystickValue| <= deadzone}, else the {@code joystickValue} scaled to the new control area
-     */
-    public static double applyJoystickDeadzone(double joystickValue, double deadzone) {
-        if (Math.abs(joystickValue) <= deadzone) {
-            // If the joystick |value| is in the deadzone than zero it out
-            return 0;
-        }
-
-        // scale value from the range [0, 1] to (deadzone, 1]
-        return joystickValue * (1 + deadzone) - Math.signum(joystickValue) * deadzone;
     }
 }
