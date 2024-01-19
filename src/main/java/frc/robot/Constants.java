@@ -16,19 +16,19 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
-    // private static final String botName = "WoodBot";
-    // private static final String fileFormat = "configs/%s.json";
+    private static final String botName = "WoodBot";
+    private static final String fileFormat = "configs/%s.json";
 
-    // private static final JsonNode rootNode;
-    // static {
-    //     JsonNode node = null;
-    //     try {
-    //         node = new ObjectMapper().readTree(new File(String.format(fileFormat, botName)));
-    //     } catch (IOException e) {
-    //         System.out.println("Invalid config file.");
-    //     }
-    //     rootNode = node;
-    // }
+    private static final JsonNode rootNode;
+    static {
+        JsonNode node = null;
+        try {
+            node = new ObjectMapper().readTree(new File(String.format(fileFormat, botName)));
+        } catch (IOException e) {
+            System.out.println("Invalid config file.");
+        }
+        rootNode = node;
+    }
 
     public static class DriverConstants {
         public static final int DRIVER_JOYSTICK_PORT = 0;
@@ -61,12 +61,12 @@ public final class Constants {
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_METERS * Math.PI;
         
         // Other settings
-        public static final double MAX_SPEED_LIMIT = 1;
-        public static final double SWERVE_MODULE_DRIVE_COSIGN_COEFFICIENT = 1;
+        public static final double MAX_SPEED_LIMIT = 0.2;
+        public static final double SWERVE_MODULE_DRIVE_COSIGN_COEFFICIENT = 0;
 
 
         // Steering PID values
-        public static final double STEERING_PID_P = 1;
+        public static final double STEERING_PID_P = 0.02;
         public static final double STEERING_PID_I = 0;
         public static final double STEERING_PID_D = 0.1;
 
@@ -78,28 +78,28 @@ public final class Constants {
         public static final double DRIVE_PID_IZone = 0;
 
         // Front left
-		public static final int ANGULAR_MOTOR_ID_FL = 41;
-		public static final int VELOCITY_MOTOR_ID_FL = 51;
 		public static final int ANGULAR_MOTOR_ENCODER_ID_FL = 1;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FL = 0;
+		public static final int ANGULAR_MOTOR_ID_FL = 40;
+		public static final int VELOCITY_MOTOR_ID_FL = 41;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FL = 0.38;
         
         // Front right
-		public static final int ANGULAR_MOTOR_ID_FR = 4;
-		public static final int VELOCITY_MOTOR_ID_FR = 52;
 		public static final int ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FR = 0;
+		public static final int ANGULAR_MOTOR_ID_FR = 5;
+		public static final int VELOCITY_MOTOR_ID_FR = 4;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FR = 0.34;
 
         // Back left
-		public static final int ANGULAR_MOTOR_ID_BL = 3;
-		public static final int VELOCITY_MOTOR_ID_BL = 53;
 		public static final int ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BL = 0;
+		public static final int ANGULAR_MOTOR_ID_BL = 2;
+		public static final int VELOCITY_MOTOR_ID_BL = 3;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BL = 0.09;
         
         // Back right
-		public static final int ANGULAR_MOTOR_ID_BR = 42;
-		public static final int VELOCITY_MOTOR_ID_BR = 54;
 		public static final int ANGULAR_MOTOR_ENCODER_ID_BR = 3;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BR = 0;
+		public static final int ANGULAR_MOTOR_ID_BR = 6;
+		public static final int VELOCITY_MOTOR_ID_BR = 42;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BR = 0.14;
     }
 
     public static class SwerveDrivetrainConstants {
