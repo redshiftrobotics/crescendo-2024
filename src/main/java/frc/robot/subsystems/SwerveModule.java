@@ -85,7 +85,6 @@ public class SwerveModule extends SubsystemBase {
         steeringEncoder = new CANcoder(steeringAbsoluteEncoderId);
 
         CANcoderConfiguration configuration = new CANcoderConfiguration();
-        configuration.MagnetSensor.MagnetOffset = steeringEncoderZero;
         configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
         steeringEncoder.getConfigurator().apply(configuration);
         
@@ -182,17 +181,35 @@ public class SwerveModule extends SubsystemBase {
         this.desiredState = state;
     }
 
+    /**
+     * Set the state of the swerve module. The state is the speed and angle of the swerve module.
+     * You can use {@code Rotation2d.fromDegrees()} to create angle.
+     * This version is meant for driving the robot, where a new state is set every 20ms.
+     * It tries to make driving smoother by 
+     * 
+     * @param state New state of swerve module, contains speed in meters per second and angle as {@link Rotation2d}
+     * @param shouldOptimize Whether to optimize the way the swerve module gets to the desired state
+     */
     public void setDesiredStateDrive(SwerveModuleState state) {
         if (state != null) {
-            Rotation2d encoderRotation = getState().angle;
+
+            // get current angle of robot
+            Rotation2d encoderAngle = getState().angle;
 
             // Optimize the reference state to avoid spinning further than 90 degrees
-            state = SwerveModuleState.optimize(state, encoderRotation);
+
+            state = SwerveModuleState.optimize(state, encoderAngle);
 
             // Scale speed by cosine of angle error. 
             // This scales down movement perpendicular to the desired direction of travel that can occur when modules change directions.
             // This results in smoother driving.
-            state.speedMetersPerSecond *= state.angle.minus(encoderRotation).getCos() * SwerveModuleConstants.SWERVE_MODULE_DRIVE_COSIGN_COEFFICIENT;
+
+            final double speed = state.speedMetersPerSecond;
+            final double speedCosScaled = speed * state.angle.minus(encoderAngle).getCos();
+
+            final double scaleSplit = SwerveModuleConstants.SWERVE_MODULE_DRIVE_COSIGN_SCALE;
+
+            state.speedMetersPerSecond = (speed * scaleSplit) + (speedCosScaled * (1 - scaleSplit));
         }
         
         this.desiredState = state;

@@ -19,10 +19,10 @@ public final class Constants {
         public static final String[] maxSpeedOptionsNames = {"Precise", "Normal", "Boost"};
 
         // max forward/sideways velocities for drivetrain, in meters per second
-        public static final double[] maxSpeedOptionsTranslation = {0.44, 4.4, 11.6};
+        public static final double[] maxSpeedOptionsTranslation = {0.4, 4, 8};
         
         // max angular velocity for drivetrain, in radians per second
-        public static final double[] maxSpeedOptionsRotation = {1, 2, 4};
+        public static final double[] maxSpeedOptionsRotation = {0.1, 0.2, 0.4};
     }
 
     public static class ControllerConstants {
@@ -49,7 +49,7 @@ public final class Constants {
         
         // Other settings
         public static final double MAX_SPEED_LIMIT = 0.2;
-        public static final double SWERVE_MODULE_DRIVE_COSIGN_COEFFICIENT = 0;
+        public static final double SWERVE_MODULE_DRIVE_COSIGN_SCALE = 0.1;
 
 
         // Steering PID values
