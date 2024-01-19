@@ -1,5 +1,7 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,6 +19,8 @@ import frc.robot.subsystems.SwerveDrivetrain;
 public class SwerveDriveXboxControl extends Command {
     private final SwerveDrivetrain drivetrain;
     private final CommandXboxController controller;
+    private final PIDController xboxPID;    
+
 
     /**
 	 * Creates a new SwerveDriveXboxControl Command.
@@ -27,6 +31,14 @@ public class SwerveDriveXboxControl extends Command {
     public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
         this.drivetrain = drivetrain;
         this.controller = driverXboxController;
+
+        //not sure if this code in right place
+        xboxPID = new PIDController(
+            ControllerConstants.CONTROLLER_PID_P,
+            ControllerConstants.CONTROLLER_PID_I,
+            ControllerConstants.CONTROLLER_PID_D
+        );
+        xboxPID.enableContinuousInput(0, 2*Math.PI);
 
         // Create and configure buttons
         // OptionButton exampleToggleButton = new OptionButton(controller::a, ActivationMode.TOGGLE);
@@ -48,23 +60,28 @@ public class SwerveDriveXboxControl extends Command {
     /**
      * The main body of a command. Called repeatedly while the command is scheduled (Every 20 ms).
      */
+
+
     @Override
     public void execute() {
         double leftX = controller.getLeftX();
         double leftY = controller.getLeftY();
+        double rightX = controller.getRightX();
+        double rightY = controller.getRightY();
+        double angleGoal= Math.atan2(rightX,rightY);
+        
+        final double currentAngle = drivetrain.getHeading().getRadians();
+        final double turnspeed = xboxPID.calculate(currentAngle,angleGoal);
         
         final ChassisSpeeds speeds = new ChassisSpeeds(
             leftX * ControllerConstants.maxSpeed,
             leftY * ControllerConstants.maxSpeed,
-            0
+            turnspeed
         );
 
-        double rightX = controller.getRightX();
-        double rightY = controller.getRightY();
-        double angleGoal= Math.atan(rightY/rightX);
-        if (rightX < 0) angleGoal+=Math.PI;
-        angleGoal %= (2*Math.PI);
         
+        
+        drivetrain.setDesiredState(speeds);
 
     }
 

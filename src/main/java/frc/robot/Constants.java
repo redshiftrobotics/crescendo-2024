@@ -26,6 +26,9 @@ public final class Constants {
 
     public static class ControllerConstants {
         public static final double maxSpeed = 5;
+        public static final double CONTROLLER_PID_P = 0.5;
+        public static final double CONTROLLER_PID_I = 0;
+        public static final double CONTROLLER_PID_D = 0.5;
     }
 
     public static class OperatorConstants {
