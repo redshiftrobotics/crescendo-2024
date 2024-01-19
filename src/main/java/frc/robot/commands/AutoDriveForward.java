@@ -1,4 +1,6 @@
 package frc.robot.commands;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -24,7 +26,9 @@ public class AutoDriveForward extends Command {
         ChassisSpeeds desiredState = new ChassisSpeeds(0.5,0,0);
         this.beganDriving = System.currentTimeMillis();
 
-        drivetrain.setDesiredState(desiredState);
+        drivetrain.setDesiredState(
+            drivetrain.getPosition().plus(new Transform2d(1 ,0, 0))
+        );
     }
 
     // No execute() because we don't need it
