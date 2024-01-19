@@ -25,10 +25,7 @@ public class AutoDriveForward extends Command {
     public void initialize() {
         ChassisSpeeds desiredState = new ChassisSpeeds(0.5,0,0);
         this.beganDriving = System.currentTimeMillis();
-
-        drivetrain.setDesiredState(
-            drivetrain.getPosition().plus(new Transform2d(1 ,0, 0))
-        );
+        drivetrain.setDesiredState(desiredState);
     }
 
     // No execute() because we don't need it
