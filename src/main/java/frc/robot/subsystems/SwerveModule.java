@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
@@ -84,9 +84,8 @@ public class SwerveModule extends SubsystemBase {
         // --- Steering Encoder ---
         steeringEncoder = new CANcoder(steeringAbsoluteEncoderId);
 
-        CANcoderConfiguration configuration = new CANcoderConfiguration();
-        configuration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-        steeringEncoder.getConfigurator().apply(configuration);
+        // Use 0-1 for rotational
+        steeringEncoder.getConfigurator().apply(new MagnetSensorConfigs().withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1));
         
         // --- Steering PID ---
         steeringPIDController = new PIDController(
@@ -123,9 +122,15 @@ public class SwerveModule extends SubsystemBase {
             steeringMotor.set(steeringMotorSpeed);
     
             // the drive motor's PID controller is in RPM so we convert our value from Meters/Second to Rotations/Minute
-            final double driveVelocityRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
             // Use the drive motors built in pid controller to reach target velocity
-            drivePIDController.setReference(driveVelocityRotationsPerMinute, CANSparkMax.ControlType.kVelocity);
+            
+            if (desiredState.speedMetersPerSecond == 0) {
+                driveMotor.stopMotor();
+            }
+            else {
+                final double driveVelocityRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
+                drivePIDController.setReference(driveVelocityRotationsPerMinute, CANSparkMax.ControlType.kVelocity);
+            }
         }
     }
 
@@ -175,7 +180,7 @@ public class SwerveModule extends SubsystemBase {
     public void setDesiredState(SwerveModuleState state, boolean shouldOptimize) {
         if (shouldOptimize && state != null) {
             // Optimize the reference state to avoid spinning further than 90 degrees
-            state = SwerveModuleState.optimize(state,  getState().angle);
+            state = optimize(state,  getState().angle);
         }
         
         this.desiredState = state;
@@ -289,6 +294,74 @@ public class SwerveModule extends SubsystemBase {
      */
     private double getSteeringAngleRotations() {
         return steeringPosition.refresh().getValueAsDouble() + steeringOffset;
+    }
+
+    // --- Util ---
+
+    /**
+     * Optimize a swerve module state so that instead of suddenly rotating the wheel (with steering motor)
+     * to go a certain direction we can instead just turn a half as much and switch
+     * the speed of wheel to go in reverse.
+     * 
+     * @param desiredState The state you want the swerve module to be in
+     * @param currentAngle The current angle of the swerve module in degrees
+     * @return             An optimized version of desiredState
+     */
+    private static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+        // find the target angle in the same 0-360 scope as the desired state
+        double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
+
+        // keep the same target speed
+        double targetSpeed = desiredState.speedMetersPerSecond;
+
+        // found how much we have to move to get to target angle
+        double delta = targetAngle - currentAngle.getDegrees();
+
+        // If we have to flip around more than 90 degrees than instead just reverse our direction
+        // and only turn enough so that we have the motor facing in the same direction, just the other way 
+        if (Math.abs(delta) > 90) {
+            targetSpeed = -targetSpeed;
+            targetAngle += delta > 0 ? -180 : 180;
+        }
+
+        return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
+    }
+
+    /**
+     * Utility method. Move an angle into the range of the reference. Finds the relative 0 and 360
+     * position for a scope reference and moves the new angle into that.
+     * Example: {@code placeInAppropriate0To360Scope(90, 370) = 10.0}
+     * {@code placeInAppropriate0To360Scope(720, 10) = 730.0}
+     * 
+     * @param scopeReference The reference to find which 0-360 scope we are in.
+     *                       For example {@code 10} is in {@code 0-360} scope while {@code 370} is in {@code 360-720} scope.
+     * @param newAngle       The angle we want to move into found scope.
+     *                       For example if the scope was {@code 0-360} and our angle was {@code 370} it would become {@code 10}
+     * @return               {@code newAngle} in the same scope as {@code scopeReference}
+     */
+    private static double placeInAppropriate0To360Scope(double scopeReference, double newAngle) {
+        double lowerBound;
+        double upperBound;
+        double lowerOffset = scopeReference % 360;
+        if (lowerOffset >= 0) {
+            lowerBound = scopeReference - lowerOffset;
+            upperBound = scopeReference + (360 - lowerOffset);
+        } else {
+            upperBound = scopeReference - lowerOffset;
+            lowerBound = scopeReference - (360 + lowerOffset);
+        }
+        while (newAngle < lowerBound) {
+            newAngle += 360;
+        }
+        while (newAngle > upperBound) {
+            newAngle -= 360;
+        }
+        if (newAngle - scopeReference > 180) {
+            newAngle -= 360;
+        } else if (newAngle - scopeReference < -180) {
+            newAngle += 360;
+        }
+        return newAngle;
     }
 
     @Override

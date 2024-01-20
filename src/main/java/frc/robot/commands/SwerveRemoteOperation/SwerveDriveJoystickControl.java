@@ -1,6 +1,5 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -57,9 +56,9 @@ public class SwerveDriveJoystickControl extends Command {
     public void execute() {
 
         // Get joystick inputs
-        final double speedX = MathUtil.applyDeadband(-joystick.getX(), DriverConstants.JOYSTICK_DEAD_ZONE);
-		final double speedY = MathUtil.applyDeadband(-joystick.getY(), DriverConstants.JOYSTICK_DEAD_ZONE);
-		final double speedR = MathUtil.applyDeadband(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
+        final double speedX = -applyJoystickDeadzone(joystick.getX(), DriverConstants.JOYSTICK_DEAD_ZONE);
+		final double speedY = -applyJoystickDeadzone(joystick.getY(), DriverConstants.JOYSTICK_DEAD_ZONE);
+		final double speedR = applyJoystickDeadzone(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
 
         // // Code for rotating with buttons if driver prefers 
         // double speedOmega = 0;
@@ -86,8 +85,8 @@ public class SwerveDriveJoystickControl extends Command {
         final boolean isFieldRelative = fieldRelieveButton.getState();
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
-            speedX * DriverConstants.maxSpeedOptionsTranslation[speedLevel] * speedCoefficient,
             speedY * DriverConstants.maxSpeedOptionsTranslation[speedLevel] * speedCoefficient,
+            speedX * DriverConstants.maxSpeedOptionsTranslation[speedLevel] * speedCoefficient,
             speedR * DriverConstants.maxSpeedOptionsRotation[speedLevel] * speedCoefficient
         );
 
@@ -119,7 +118,7 @@ public class SwerveDriveJoystickControl extends Command {
 		SmartDashboard.putBoolean("Y Active", speedY != 0);
 		SmartDashboard.putBoolean("R Active", speedR != 0); 
 
-        drivetrain.setDesiredStateDrive(speeds, isFieldRelative);
+        drivetrain.setDesiredState(speeds, isFieldRelative);
     }
 
     /**
@@ -138,5 +137,24 @@ public class SwerveDriveJoystickControl extends Command {
     @Override
     public void end(boolean interrupted) {
         drivetrain.stop();
+    }
+
+    /* -- Util --- */
+
+
+    /**
+     * Utility method. Apply a deadzone to the joystick output to account for stick drift and small bumps.
+     * 
+     * @param joystickValue Value in [-1, 1] from joystick axis
+     * @return {@code 0} if {@code |joystickValue| <= deadzone}, else the {@code joystickValue} scaled to the new control area
+     */
+    public static double applyJoystickDeadzone(double joystickValue, double deadzone) {
+        if (Math.abs(joystickValue) <= deadzone) {
+            // If the joystick |value| is in the deadzone than zero it out
+            return 0;
+        }
+
+        // scale value from the range [0, 1] to (deadzone, 1]
+        return joystickValue * (1 + deadzone) - Math.signum(joystickValue) * deadzone;
     }
 }

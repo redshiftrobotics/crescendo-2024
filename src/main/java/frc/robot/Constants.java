@@ -11,7 +11,7 @@ public final class Constants {
     public static class DriverConstants {
         public static final int DRIVER_JOYSTICK_PORT = 0;
 
-        public static final double JOYSTICK_DEAD_ZONE = 0.15;
+        public static final double JOYSTICK_DEAD_ZONE = 0.25;
         public static final double XBOX_DEAD_ZONE = 0.10;
         public static final double PS4_DEAD_ZONE = 0.12;
 
@@ -19,7 +19,8 @@ public final class Constants {
         public static final String[] maxSpeedOptionsNames = {"Precise", "Normal", "Boost"};
 
         // max forward/sideways velocities for drivetrain, in meters per second
-        public static final double[] maxSpeedOptionsTranslation = {0.4, 4, 8};
+        // public static final double[] maxSpeedOptionsTranslation = {0.4, 4, 8};
+        public static final double[] maxSpeedOptionsTranslation = {0.2, 2, 4};
         
         // max angular velocity for drivetrain, in radians per second
         public static final double[] maxSpeedOptionsRotation = {0.1, 0.2, 0.4};
@@ -29,7 +30,7 @@ public final class Constants {
         public static final double maxSpeed = 5;
         public static final double CONTROLLER_PID_P = 0.5;
         public static final double CONTROLLER_PID_I = 0;
-        public static final double CONTROLLER_PID_D = 0.5;
+        public static final double CONTROLLER_PID_D = 0;
     }
 
     public static class OperatorConstants {
@@ -53,14 +54,14 @@ public final class Constants {
 
 
         // Steering PID values
-        public static final double STEERING_PID_P = 0.02;
+        public static final double STEERING_PID_P = 0.5;
         public static final double STEERING_PID_I = 0;
-        public static final double STEERING_PID_D = 0.1;
+        public static final double STEERING_PID_D = 0;
 
         // Drive PID values
-        public static final double DRIVE_PID_P = 0.02;
+        public static final double DRIVE_PID_P = 0.5;
         public static final double DRIVE_PID_I = 0;
-        public static final double DRIVE_PID_D = 0.1;
+        public static final double DRIVE_PID_D = 0;
         public static final double DRIVE_PID_FF = 0;
         public static final double DRIVE_PID_IZone = 0;
 
@@ -68,7 +69,7 @@ public final class Constants {
 		public static final int ANGULAR_MOTOR_ENCODER_ID_FL = 1;
 		public static final int ANGULAR_MOTOR_ID_FL = 40;
 		public static final int VELOCITY_MOTOR_ID_FL = 41;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FL = 0.38;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FL = 0.39;
         
         // Front right
 		public static final int ANGULAR_MOTOR_ENCODER_ID_FR = 2;
@@ -86,7 +87,7 @@ public final class Constants {
 		public static final int ANGULAR_MOTOR_ENCODER_ID_BR = 3;
 		public static final int ANGULAR_MOTOR_ID_BR = 6;
 		public static final int VELOCITY_MOTOR_ID_BR = 42;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BR = 0.14;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BR = 0.13;
     }
 
     public static class SwerveDrivetrainConstants {
