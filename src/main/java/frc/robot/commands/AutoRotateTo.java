@@ -11,6 +11,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AutoRotateTo extends Command {
     private final SwerveDrivetrain subsystem;
 
+    private final PIDController rotatepid = new PIDController(
+        ControllerConstants.CONTROLLER_PID_P,
+        ControllerConstants.CONTROLLER_PID_I,
+        ControllerConstants.CONTROLLER_PID_D
+    );
+
     /**
      * The constructor creates a new command and is automatically called one time when the command is created (with 'new' keyword).
      * It should set up the initial state and properties of the object to ensure it's ready for use.
@@ -18,9 +24,11 @@ public class AutoRotateTo extends Command {
      * as wells as arguments for what to do, such as a joystick in the drive command or a desired position in an auto command.
      * Example uses include saving parameters passed to the command, creating and configuring objects for the class like PID controllers, and adding subsystem requirements
      */
-    public AutoRotateTo(SwerveDrivetrain subsystem, double direction) {
+    public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
+
         // use "this" to access member variable subsystem rather than local subsystem
         this.subsystem = subsystem;
+        this.angleGoal = direction.getRadians();
 
         // Use addRequirements() here to declare subsystem dependencies.
         // This makes sure no other commands try to do stuff with your subsystem while
@@ -44,6 +52,18 @@ public class AutoRotateTo extends Command {
      */
     @Override
     public void execute() {
+        final double currentAngle = drivetrain.getHeading().getRadians();
+        double turnspeed = rotatepid.calculate(currentAngle,this.angleGoal);
+        drivetrain.
+        final ChassisSpeeds speeds = new ChassisSpeeds(
+            leftX * ControllerConstants.maxSpeed,
+            leftY * ControllerConstants.maxSpeed,
+            turnspeed
+        );
+
+        
+        
+        drivetrain.setDesiredState(speeds);
     }
 
     /**
