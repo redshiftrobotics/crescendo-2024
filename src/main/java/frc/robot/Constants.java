@@ -23,7 +23,7 @@ public final class Constants {
         public static final double[] maxSpeedOptionsTranslation = {0.2, 2, 4};
         
         // max angular velocity for drivetrain, in radians per second
-        public static final double[] maxSpeedOptionsRotation = {0.1, 0.2, 0.4};
+        public static final double[] maxSpeedOptionsRotation = {0.4, 1, 3};
     }
 
     public static class ControllerConstants {
@@ -40,7 +40,7 @@ public final class Constants {
     public static class SwerveModuleConstants {
         
         // Values from https://www.swervedrivespecialties.com/products/mk4-swerve-module. We have L1 Modules.
-        public static final double DRIVE_MOTOR_GEAR_RATIO = 57 / 7;
+        public static final double DRIVE_MOTOR_GEAR_RATIO = 8.4;
         public static final double STEERING_MOTOR_GEAR_RATIO = 12.8;
         
         public static final double STEERING_ENCODER_SENSOR_COEFFICIENT = 0.000244140625; // if you put 1/4096 it just becomes zero
@@ -49,7 +49,7 @@ public final class Constants {
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_METERS * Math.PI;
         
         // Other settings
-        public static final double MAX_SPEED_LIMIT = 0.2;
+        public static final double MAX_SPEED_LIMIT = 1;
         public static final double SWERVE_MODULE_DRIVE_COSIGN_SCALE = 0.1;
 
 
@@ -59,7 +59,7 @@ public final class Constants {
         public static final double STEERING_PID_D = 0;
 
         // Drive PID values
-        public static final double DRIVE_PID_P = 0.5;
+        public static final double DRIVE_PID_P = 0.3;
         public static final double DRIVE_PID_I = 0;
         public static final double DRIVE_PID_D = 0;
         public static final double DRIVE_PID_FF = 0;

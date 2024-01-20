@@ -6,7 +6,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -28,7 +27,7 @@ public class SwerveModule extends SubsystemBase {
     // the drive motor is the motor that spins the wheel making the robot move across the ground (aka wheel or velocity motor)
     private final CANSparkMax driveMotor;
     private final RelativeEncoder driveEncoder;
-    private final SparkPIDController drivePIDController;
+    private final PIDController drivePIDController;
    
     // the steering motor is the motor that changes the rotation of the wheel allowing the robot to drive in any direction (aka spin or angular motor)
     // Also allows for spinning in place
@@ -70,13 +69,11 @@ public class SwerveModule extends SubsystemBase {
         driveEncoder.setVelocityConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
 
         // --- Drive PID ---
-        drivePIDController = driveMotor.getPIDController();
-        drivePIDController.setP(SwerveModuleConstants.DRIVE_PID_P);
-        drivePIDController.setI(SwerveModuleConstants.DRIVE_PID_I);
-        drivePIDController.setD(SwerveModuleConstants.DRIVE_PID_D);
-        drivePIDController.setFF(SwerveModuleConstants.DRIVE_PID_FF);
-        drivePIDController.setIZone(SwerveModuleConstants.DRIVE_PID_IZone);
-        drivePIDController.setOutputRange(-SwerveModuleConstants.MAX_SPEED_LIMIT, SwerveModuleConstants.MAX_SPEED_LIMIT);
+        drivePIDController = new PIDController(
+            SwerveModuleConstants.DRIVE_PID_P,
+            SwerveModuleConstants.DRIVE_PID_I,
+            SwerveModuleConstants.DRIVE_PID_D
+        );
 
         // --- Steering Motor ---
         steeringMotor = new CANSparkMax(steeringMotorDeviceId, MotorType.kBrushless);
@@ -85,7 +82,10 @@ public class SwerveModule extends SubsystemBase {
         steeringEncoder = new CANcoder(steeringAbsoluteEncoderId);
 
         // Use 0-1 for rotational
-        steeringEncoder.getConfigurator().apply(new MagnetSensorConfigs().withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1));
+        steeringEncoder.getConfigurator().apply(
+            new MagnetSensorConfigs()
+                .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
+        );
         
         // --- Steering PID ---
         steeringPIDController = new PIDController(
@@ -104,6 +104,8 @@ public class SwerveModule extends SubsystemBase {
         setName(toString());
     }
 
+    int count = 10;
+
     /**
      * This is the periodic function of the swerve module.
      * This method is called periodically by the CommandScheduler, about every 20ms.
@@ -111,25 +113,26 @@ public class SwerveModule extends SubsystemBase {
     @Override
     public void periodic() {
         if (desiredState != null) { 
-            // Get real and desired angles of steering motor
-            // In pid the real value is often known as the measure or process variable, while the desired value is the setpoint or reference
-            final double measuredRotations = getState().angle.getRotations();
             final double desiredRotations = desiredState.angle.getRotations();
+            final double measuredRotations = getSteeringAngleRotations();
             
-            // Use the steering motor pid controller to calculate speed to turn steering motor to get to desired angle
             final double steeringMotorSpeed = steeringPIDController.calculate(measuredRotations, desiredRotations);
-            // set steering motor to calculated value
             steeringMotor.set(steeringMotorSpeed);
-    
-            // the drive motor's PID controller is in RPM so we convert our value from Meters/Second to Rotations/Minute
-            // Use the drive motors built in pid controller to reach target velocity
             
-            if (desiredState.speedMetersPerSecond == 0) {
-                driveMotor.stopMotor();
+            final double desiredDriveRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
+            final double measuredDriveRotationsPerMinute = getDriveSpeedRotationsPerMinute();
+
+            count++;
+            if (desiredDriveRotationsPerMinute != 0) {
+                // final double driveMotorSpeed = drivePIDController.calculate(measuredDriveRotationsPerMinute, desiredDriveRotationsPerMinute);
+                // if (getName().equals("RightFrontSwerveModule") && count % 100 == 0) {
+                //     System.out.println("Desired=" + desiredDriveRotationsPerMinute + " Measured=" + measuredDriveRotationsPerMinute + " Output=" + driveMotorSpeed);
+                // }
+                // driveMotor.set(driveMotorSpeed);
+                driveMotor.set(desiredState.speedMetersPerSecond / 4);
             }
             else {
-                final double driveVelocityRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
-                drivePIDController.setReference(driveVelocityRotationsPerMinute, CANSparkMax.ControlType.kVelocity);
+                driveMotor.stopMotor();
             }
         }
     }

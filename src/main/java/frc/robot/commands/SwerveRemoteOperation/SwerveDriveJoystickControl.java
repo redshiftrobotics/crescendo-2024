@@ -18,7 +18,7 @@ public class SwerveDriveJoystickControl extends Command {
 
     private final OptionButton preciseModeButton;
     private final OptionButton boostModeButton;
-    private final OptionButton fieldRelieveButton;
+    private final OptionButton fieldRelativeButton;
 
     /**
 	 * Creates a new SwerveDriveJoystickControl Command.
@@ -33,7 +33,7 @@ public class SwerveDriveJoystickControl extends Command {
         // Create and configure buttons
         preciseModeButton = new OptionButton(driverJoystick, 2, ActivationMode.TOGGLE);
         boostModeButton = new OptionButton(driverJoystick, 1, ActivationMode.HOLD);
-        fieldRelieveButton = new OptionButton(driverJoystick, 3, ActivationMode.TOGGLE);
+        fieldRelativeButton = new OptionButton(driverJoystick, 3, ActivationMode.TOGGLE);
 
         // Tell the command schedular we are using the drivetrain
         addRequirements(drivetrain);
@@ -58,7 +58,7 @@ public class SwerveDriveJoystickControl extends Command {
         // Get joystick inputs
         final double speedX = -applyJoystickDeadzone(joystick.getX(), DriverConstants.JOYSTICK_DEAD_ZONE);
 		final double speedY = -applyJoystickDeadzone(joystick.getY(), DriverConstants.JOYSTICK_DEAD_ZONE);
-		final double speedR = applyJoystickDeadzone(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
+		final double speedR = -applyJoystickDeadzone(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
 
         // // Code for rotating with buttons if driver prefers 
         // double speedOmega = 0;
@@ -82,7 +82,7 @@ public class SwerveDriveJoystickControl extends Command {
         // Can be changed for testing
         final int speedCoefficient = 1;
 
-        final boolean isFieldRelative = fieldRelieveButton.getState();
+        final boolean isFieldRelative = fieldRelativeButton.getState();
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
             speedY * DriverConstants.maxSpeedOptionsTranslation[speedLevel] * speedCoefficient,
