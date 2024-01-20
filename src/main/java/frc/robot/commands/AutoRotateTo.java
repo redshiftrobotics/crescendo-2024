@@ -3,6 +3,16 @@ package frc.robot.commands;
 import frc.robot.subsystems.SwerveDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.DriverConstants;
+import frc.robot.subsystems.SwerveDrivetrain;
+
 // How to make Command (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html
 // Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
 // Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
@@ -10,8 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 /** An example command that uses an example subsystem. */
 public class AutoRotateTo extends Command {
     private final SwerveDrivetrain subsystem;
+    private final double angleGoal;
 
     private final PIDController rotatepid = new PIDController(
+        //TODO: replae WITH NEW CONSTANTS
         ControllerConstants.CONTROLLER_PID_P,
         ControllerConstants.CONTROLLER_PID_I,
         ControllerConstants.CONTROLLER_PID_D
@@ -52,18 +64,13 @@ public class AutoRotateTo extends Command {
      */
     @Override
     public void execute() {
-        final double currentAngle = drivetrain.getHeading().getRadians();
+        final double currentAngle = subsystem.getHeading().getRadians();
         double turnspeed = rotatepid.calculate(currentAngle,this.angleGoal);
-        drivetrain.
-        final ChassisSpeeds speeds = new ChassisSpeeds(
-            leftX * ControllerConstants.maxSpeed,
-            leftY * ControllerConstants.maxSpeed,
-            turnspeed
-        );
 
+        ChassisSpeeds speeds = subsystem.getDesiredState();
+        speeds.omegaRadiansPerSecond=turnspeed;
         
-        
-        drivetrain.setDesiredState(speeds);
+        subsystem.setDesiredState(speeds);
     }
 
     /**
@@ -73,7 +80,11 @@ public class AutoRotateTo extends Command {
      */
     @Override
     public boolean isFinished() {
-        return true;
+        final double currentAngle = subsystem.getHeading().getRadians();
+
+        //TODO: replace Math.PI/10 with a constant, it's like the amount of margin for the degree of the robot, currently set at 9 degrees
+        if (Math.abs(currentAngle-this.angleGoal)<Math.PI/20) return true;
+        else return false;
     }
 
     /**
