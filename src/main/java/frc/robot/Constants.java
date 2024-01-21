@@ -42,51 +42,47 @@ public final class Constants {
         // Values from https://www.swervedrivespecialties.com/products/mk4-swerve-module. We have L1 Modules.
         public static final double DRIVE_MOTOR_GEAR_RATIO = 8.4;
         public static final double STEERING_MOTOR_GEAR_RATIO = 12.8;
-        
-        public static final double STEERING_ENCODER_SENSOR_COEFFICIENT = 0.000244140625; // if you put 1/4096 it just becomes zero
-        
+                
         public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(7);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_METERS * Math.PI;
         
         // Other settings
         public static final double MAX_SPEED_LIMIT = 1;
-        public static final double SWERVE_MODULE_DRIVE_COSIGN_SCALE = 0.1;
+        public static final double SWERVE_MODULE_DRIVE_COSIGN_SCALE = 1;
 
+        // Drive PID values
+        public static final double DRIVE_PID_P = 0.000001;
+        public static final double DRIVE_PID_I = 0;
+        public static final double DRIVE_PID_D = 0;
+        public static final double DRIVE_PID_FF = 0.090944883322;
 
         // Steering PID values
         public static final double STEERING_PID_P = 0.5;
         public static final double STEERING_PID_I = 0;
         public static final double STEERING_PID_D = 0;
 
-        // Drive PID values
-        public static final double DRIVE_PID_P = 0.3;
-        public static final double DRIVE_PID_I = 0;
-        public static final double DRIVE_PID_D = 0;
-        public static final double DRIVE_PID_FF = 0;
-        public static final double DRIVE_PID_IZone = 0;
-
         // Front left
-		public static final int ANGULAR_MOTOR_ENCODER_ID_FL = 1;
-		public static final int ANGULAR_MOTOR_ID_FL = 40;
 		public static final int VELOCITY_MOTOR_ID_FL = 41;
+		public static final int ANGULAR_MOTOR_ID_FL = 40;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_FL = 1;
 		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FL = 0.39;
         
         // Front right
-		public static final int ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-		public static final int ANGULAR_MOTOR_ID_FR = 5;
 		public static final int VELOCITY_MOTOR_ID_FR = 4;
+		public static final int ANGULAR_MOTOR_ID_FR = 5;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_FR = 2;
 		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.34;
 
         // Back left
-		public static final int ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-		public static final int ANGULAR_MOTOR_ID_BL = 2;
 		public static final int VELOCITY_MOTOR_ID_BL = 3;
+		public static final int ANGULAR_MOTOR_ID_BL = 2;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_BL = 4;
 		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BL = 0.09;
         
         // Back right
-		public static final int ANGULAR_MOTOR_ENCODER_ID_BR = 3;
-		public static final int ANGULAR_MOTOR_ID_BR = 6;
 		public static final int VELOCITY_MOTOR_ID_BR = 42;
+		public static final int ANGULAR_MOTOR_ID_BR = 6;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_BR = 3;
 		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BR = 0.13;
     }
 

@@ -58,19 +58,16 @@ public class SwerveDriveJoystickControl extends Command {
         // Get joystick inputs
         final double speedX = -applyJoystickDeadzone(joystick.getX(), DriverConstants.JOYSTICK_DEAD_ZONE);
 		final double speedY = -applyJoystickDeadzone(joystick.getY(), DriverConstants.JOYSTICK_DEAD_ZONE);
-		final double speedR = -applyJoystickDeadzone(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
+		
+        double speedR = -applyJoystickDeadzone(joystick.getTwist(), DriverConstants.JOYSTICK_DEAD_ZONE);
 
-        // // Code for rotating with buttons if driver prefers 
-        // double speedOmega = 0;
-        // if (joystick.button(7).getAsBoolean()) {
-		// 	speedOmega += OperatorConstants.maxSpeedOptionsRotation[0];
-		// } else if (joystick.button(8).getAsBoolean()) {
-		// 	speedOmega -= OperatorConstants.maxSpeedOptionsRotation[0];
-		// } else if (joystick.button(9).getAsBoolean()) {
-		// 	speedOmega += OperatorConstants.maxSpeedOptionsRotation[1];
-		// } else if (joystick.button(10).getAsBoolean()) {
-		// 	speedOmega -= OperatorConstants.maxSpeedOptionsRotation[1];
-		// }
+        // Code for rotating with buttons if driver prefers 
+		if (joystick.button(9).getAsBoolean()) {
+			speedR += DriverConstants.maxSpeedOptionsRotation[1];
+        }
+		if (joystick.button(10).getAsBoolean()) {
+			speedR -= DriverConstants.maxSpeedOptionsRotation[1];
+		}
 
         
         // Level of speed from Precise, to Normal, to Boost

@@ -67,6 +67,7 @@ public class SwerveModule extends SubsystemBase {
         driveEncoder = driveMotor.getEncoder();
 
         driveEncoder.setVelocityConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
+        driveEncoder.setPositionConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
 
         // --- Drive PID ---
         drivePIDController = new PIDController(
@@ -85,6 +86,7 @@ public class SwerveModule extends SubsystemBase {
         steeringEncoder.getConfigurator().apply(
             new MagnetSensorConfigs()
                 .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
+                .withMagnetOffset(steeringEncoderZero)
         );
         
         // --- Steering PID ---
@@ -99,12 +101,12 @@ public class SwerveModule extends SubsystemBase {
         this.distanceFromCenter = distanceFromCenter;
 
         steeringPosition = steeringEncoder.getAbsolutePosition();
-        steeringOffset = steeringEncoderZero;
+
+        // TODO figure out if this works \/
+        steeringOffset = 0;
 
         setName(toString());
     }
-
-    int count = 10;
 
     /**
      * This is the periodic function of the swerve module.
@@ -113,31 +115,36 @@ public class SwerveModule extends SubsystemBase {
     @Override
     public void periodic() {
         if (desiredState != null) { 
-            final double desiredRotations = desiredState.angle.getRotations();
-            final double measuredRotations = getSteeringAngleRotations();
+
+            // --- Set drive motor ---
             
-            final double steeringMotorSpeed = steeringPIDController.calculate(measuredRotations, desiredRotations);
-            steeringMotor.set(steeringMotorSpeed);
-            
+            // get our current speed and our desired speed
             final double desiredDriveRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
             final double measuredDriveRotationsPerMinute = getDriveSpeedRotationsPerMinute();
 
-            count++;
-            if (desiredDriveRotationsPerMinute != 0) {
-                // final double driveMotorSpeed = drivePIDController.calculate(measuredDriveRotationsPerMinute, desiredDriveRotationsPerMinute);
-                // if (getName().equals("RightFrontSwerveModule") && count % 100 == 0) {
-                //     System.out.println("Desired=" + desiredDriveRotationsPerMinute + " Measured=" + measuredDriveRotationsPerMinute + " Output=" + driveMotorSpeed);
-                // }
-                // driveMotor.set(driveMotorSpeed);
-                driveMotor.set(desiredState.speedMetersPerSecond / 4);
-            }
-            else {
+            // If our desired speed is 0, just use the built in motor stop
+            if (desiredDriveRotationsPerMinute == 0) {
                 driveMotor.stopMotor();
             }
+            // If we do want to move calculate how fast to spin the motor to get to the desired velocity using our PID controller
+            else {
+                final double driveMotorSpeed = drivePIDController.calculate(measuredDriveRotationsPerMinute, desiredDriveRotationsPerMinute);
+                driveMotor.set(driveMotorSpeed);
+            }
+
+            // --- Set steering motor ---
+
+            // get our current angle and our desired angle
+            final double desiredRotations = desiredState.angle.getRotations();
+            final double measuredRotations = getSteeringAngleRotations();
+            
+            // calculate how fast to spin the motor to get to the desired angle using our PID controller
+            final double steeringMotorSpeed = steeringPIDController.calculate(measuredRotations, desiredRotations);
+            steeringMotor.set(steeringMotorSpeed);
         }
     }
 
-    /** Set desired state to nothing and stop drive and steering motor of swerve module. */
+    /** stop drive and steering motor of swerve module and set desired state to nothing*/
     public void stop() {
 
         // Make sure we have no desired state
@@ -205,8 +212,7 @@ public class SwerveModule extends SubsystemBase {
             Rotation2d encoderAngle = getState().angle;
 
             // Optimize the reference state to avoid spinning further than 90 degrees
-
-            state = SwerveModuleState.optimize(state, encoderAngle);
+            state = optimize(state, encoderAngle);
 
             // Scale speed by cosine of angle error. 
             // This scales down movement perpendicular to the desired direction of travel that can occur when modules change directions.
@@ -217,7 +223,7 @@ public class SwerveModule extends SubsystemBase {
 
             final double scaleSplit = SwerveModuleConstants.SWERVE_MODULE_DRIVE_COSIGN_SCALE;
 
-            state.speedMetersPerSecond = (speed * scaleSplit) + (speedCosScaled * (1 - scaleSplit));
+            state.speedMetersPerSecond = (speed * (1 - scaleSplit)) + (speedCosScaled * scaleSplit);
         }
         
         this.desiredState = state;
