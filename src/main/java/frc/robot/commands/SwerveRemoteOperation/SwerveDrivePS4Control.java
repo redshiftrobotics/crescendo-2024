@@ -56,7 +56,6 @@ public class SwerveDrivePS4Control extends Command {
         double leftX = controller.getLeftX();
         double leftY = controller.getLeftY();
         double rightX = controller.getRightX();
-        double rightY = controller.getRightY();
 
         final int speedLevel = 1
             - preciseModeButton.getStateAsInt()
@@ -66,8 +65,9 @@ public class SwerveDrivePS4Control extends Command {
             leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
             leftY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
             rightX
-            
         );
+
+        drivetrain.setDesiredStateDrive(speeds, false);
     }
 
     /**
