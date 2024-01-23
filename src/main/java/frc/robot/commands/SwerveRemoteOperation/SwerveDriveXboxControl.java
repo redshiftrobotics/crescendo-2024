@@ -1,9 +1,7 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
@@ -14,20 +12,19 @@ import frc.robot.subsystems.SwerveDrivetrain;
 // https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj2/command/button/CommandXboxController.html
 
 /**
- * This is the default command for the drivetrain, allowing for remote operation with joystick
+ * This is the default command for the drivetrain, allowing for remote operation with xbox controller
  */
 public class SwerveDriveXboxControl extends Command {
     private final SwerveDrivetrain drivetrain;
     private final CommandXboxController controller;
-    private final PIDController xboxPID;    
-
+    private final PIDController robotAnglePID;
 
     /**
-	 * Creates a new SwerveDriveXboxControl Command.
-	 *
-	 * @param drivetrain The drivetrain of the robot
-	 * @param driverXboxController The xbox controller used to control drivetrain
-	 */
+     * Creates a new SwerveDriveXboxControl Command.
+     *
+     * @param drivetrain           The drivetrain of the robot
+     * @param driverXboxController The xbox controller used to control drivetrain
+     */
     public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
         this.drivetrain = drivetrain;
         this.controller = driverXboxController;
@@ -45,7 +42,6 @@ public class SwerveDriveXboxControl extends Command {
         addRequirements(drivetrain);
     }
 
-    
     /**
      * The initial subroutine of a command. Called once when the command is initially scheduled.
      * Puts all swerve modules to the default state, staying still and facing forwards.
@@ -58,28 +54,26 @@ public class SwerveDriveXboxControl extends Command {
     /**
      * The main body of a command. Called repeatedly while the command is scheduled (Every 20 ms).
      */
-
-
     @Override
     public void execute() {
-        double leftX = controller.getLeftX();
-        double leftY = controller.getLeftY();
-        double rightX = controller.getRightX();
-        double rightY = controller.getRightY();
-        double angleGoal= Math.atan2(rightX,rightY);
-        
-        final double currentAngle = drivetrain.getHeading().getRadians();
-        final double turnspeed = xboxPID.calculate(currentAngle,angleGoal);
-        
-        final ChassisSpeeds speeds = new ChassisSpeeds(
-            leftX * ControllerConstants.maxSpeed,
-            leftY * ControllerConstants.maxSpeed,
-            turnspeed
-        );
 
-        
-        
-        drivetrain.setDesiredState(speeds, true);
+        double leftX = applyJoystickDeadzone(controller.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
+        double leftY = applyJoystickDeadzone(controller.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
+
+        double rightX = applyJoystickDeadzone(controller.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
+        double rightY = applyJoystickDeadzone(controller.getRightY(), DriverConstants.XBOX_DEAD_ZONE);
+
+        double targetAngle = Math.atan2(rightX, rightY);
+
+        final double currentAngle = drivetrain.getHeading().getRadians();
+        final double turnSpeed = robotAnglePID.calculate(currentAngle, targetAngle);
+
+        final ChassisSpeeds speeds = new ChassisSpeeds(
+                leftX * ControllerConstants.maxSpeed,
+                leftY * ControllerConstants.maxSpeed,
+                turnSpeed);
+
+        drivetrain.setDesiredState(speeds);
 
     }
 
@@ -87,11 +81,11 @@ public class SwerveDriveXboxControl extends Command {
      * Whether the command has finished. Once a command finishes, the scheduler will call its end() method and un-schedule it.
      * Always return false since we never want to end in this case.
      */
-    
-	@Override
-	public boolean isFinished() {
-		return false;
-	}
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 
     /**
      * The action to take when the command ends. Called when either the command finishes normally, or when it interrupted/canceled.
@@ -102,7 +96,6 @@ public class SwerveDriveXboxControl extends Command {
         drivetrain.stop();
     }
 
- 
     // --- Util ---
 
     /**

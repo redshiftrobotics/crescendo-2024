@@ -23,26 +23,26 @@ public class RobotContainer {
 
     // The robot's subsystems and commands are defined here...
     private final SwerveModule swerveModuleFL = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_FL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_FL,
-			SwerveModuleConstants.VELOCITY_MOTOR_ID_FL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FL,
             new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 	private final SwerveModule swerveModuleFR = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_FR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_FR,
-			SwerveModuleConstants.VELOCITY_MOTOR_ID_FR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FR,
             new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 	private final SwerveModule swerveModuleBL = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_BL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_BL,
-			SwerveModuleConstants.VELOCITY_MOTOR_ID_BL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BL,
             new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 	private final SwerveModule swerveModuleBR = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_BR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_BR,
-			SwerveModuleConstants.VELOCITY_MOTOR_ID_BR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BR,
             new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));

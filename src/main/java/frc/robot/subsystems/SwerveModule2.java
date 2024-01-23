@@ -6,6 +6,8 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -22,12 +24,12 @@ import frc.robot.Constants.SwerveModuleConstants;
  * 
  * @see <a href="https://www.swervedrivespecialties.com/products/mk4-swerve-module">Swerve Module Kit</a>
  */
-public class SwerveModule extends SubsystemBase {
+public class SwerveModule2 extends SubsystemBase {
 
     // the drive motor is the motor that spins the wheel making the robot move across the ground (aka wheel or velocity motor)
     private final CANSparkMax driveMotor;
     private final RelativeEncoder driveEncoder;
-    private final PIDController drivePIDController;
+    private final SparkPIDController drivePIDController;
    
     // the steering motor is the motor that changes the rotation of the wheel allowing the robot to drive in any direction (aka spin or angular motor)
     // Also allows for spinning in place
@@ -58,7 +60,7 @@ public class SwerveModule extends SubsystemBase {
      * @param distanceFromCenter     distance from center of robot to center of swerve module
      * @param steeringEncoderZero    the zero (forward) position for the angular motor's absolute encoder, in rotations
      */
-    public SwerveModule(int driveMotorDeviceId, int steeringMotorDeviceId, int steeringAbsoluteEncoderId, double steeringEncoderZero, Translation2d distanceFromCenter) {
+    public SwerveModule2(int driveMotorDeviceId, int steeringMotorDeviceId, int steeringAbsoluteEncoderId, double steeringEncoderZero, Translation2d distanceFromCenter) {
         // --- Drive Motor ---
         driveMotor = new CANSparkMax(driveMotorDeviceId, MotorType.kBrushless);
         driveMotor.setIdleMode(IdleMode.kBrake);
@@ -70,11 +72,11 @@ public class SwerveModule extends SubsystemBase {
         driveEncoder.setPositionConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
 
         // --- Drive PID ---
-        drivePIDController = new PIDController(
-            SwerveModuleConstants.DRIVE_PID_P,
-            SwerveModuleConstants.DRIVE_PID_I,
-            SwerveModuleConstants.DRIVE_PID_D
-        );
+        drivePIDController = driveMotor.getPIDController();
+        drivePIDController.setP(SwerveModuleConstants.DRIVE_PID_P);
+        drivePIDController.setI(SwerveModuleConstants.DRIVE_PID_I);
+        drivePIDController.setD(SwerveModuleConstants.DRIVE_PID_D);
+        drivePIDController.setFF(SwerveModuleConstants.DRIVE_PID_FF);
 
         // --- Steering Motor ---
         steeringMotor = new CANSparkMax(steeringMotorDeviceId, MotorType.kBrushless);
@@ -103,6 +105,7 @@ public class SwerveModule extends SubsystemBase {
         steeringPosition = steeringEncoder.getAbsolutePosition();
 
         // TODO figure out if this works \/
+        // steeringOffset = steeringEncoderZero;
         steeringOffset = 0;
 
         setName(toString());
@@ -120,7 +123,6 @@ public class SwerveModule extends SubsystemBase {
             
             // get our current speed and our desired speed
             final double desiredDriveRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
-            final double measuredDriveRotationsPerMinute = getDriveSpeedRotationsPerMinute();
 
             // If our desired speed is 0, just use the built in motor stop
             if (desiredDriveRotationsPerMinute == 0) {
@@ -128,8 +130,7 @@ public class SwerveModule extends SubsystemBase {
             }
             // If we do want to move calculate how fast to spin the motor to get to the desired velocity using our PID controller
             else {
-                final double driveMotorSpeed = drivePIDController.calculate(measuredDriveRotationsPerMinute, desiredDriveRotationsPerMinute);
-                driveMotor.set(driveMotorSpeed);
+                drivePIDController.setReference(desiredDriveRotationsPerMinute, ControlType.kVelocity);
             }
 
             // --- Set steering motor ---
