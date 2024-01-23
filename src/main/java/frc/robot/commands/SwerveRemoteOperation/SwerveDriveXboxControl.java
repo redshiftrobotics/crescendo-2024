@@ -31,9 +31,7 @@ public class SwerveDriveXboxControl extends Command {
     public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
         this.drivetrain = drivetrain;
         this.controller = driverXboxController;
-
-        //not sure if this code in right place
-        xboxPID = new PIDController(
+        this.xboxPID = new PIDController(
             ControllerConstants.CONTROLLER_PID_P,
             ControllerConstants.CONTROLLER_PID_I,
             ControllerConstants.CONTROLLER_PID_D
@@ -81,7 +79,7 @@ public class SwerveDriveXboxControl extends Command {
 
         
         
-        drivetrain.setDesiredState(speeds);
+        drivetrain.setDesiredState(speeds, true);
 
     }
 

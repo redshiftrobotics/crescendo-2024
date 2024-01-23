@@ -70,7 +70,7 @@ public class AutoRotateTo extends Command {
         ChassisSpeeds speeds = subsystem.getDesiredState();
         speeds.omegaRadiansPerSecond=turnspeed;
         
-        subsystem.setDesiredState(speeds);
+        subsystem.setDesiredState(speeds,true);
     }
 
     /**
