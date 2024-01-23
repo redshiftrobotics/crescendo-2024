@@ -26,11 +26,14 @@ public final class Constants {
         public static final double[] maxSpeedOptionsRotation = {0.4, 1, 3};
     }
 
-    public static class ControllerConstants {
+    public static class RobotMovementConstants {
         public static final double maxSpeed = 5;
-        public static final double CONTROLLER_PID_P = 0.5;
-        public static final double CONTROLLER_PID_I = 0;
-        public static final double CONTROLLER_PID_D = 0;
+        public static final double ROTATION_PID_P = 0.5;
+        public static final double ROTATION_PID_I = 0;
+        public static final double ROTATION_PID_D = 0;
+        public static final double TRANSLATION_PID_P = 0.5;
+        public static final double TRANSLATION_PID_I = 0;
+        public static final double TRANSLATION_PID_D = 0;
     }
 
     public static class OperatorConstants {

@@ -4,7 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 
@@ -29,9 +29,9 @@ public class SwerveDriveXboxControl extends Command {
         this.drivetrain = drivetrain;
         this.controller = driverXboxController;
         this.robotAnglePID = new PIDController(
-            ControllerConstants.CONTROLLER_PID_P,
-            ControllerConstants.CONTROLLER_PID_I,
-            ControllerConstants.CONTROLLER_PID_D
+            RobotMovementConstants.ROTATION_PID_P,
+            RobotMovementConstants.ROTATION_PID_I,
+            RobotMovementConstants.ROTATION_PID_D
         );
         robotAnglePID.enableContinuousInput(0, 2*Math.PI);
 
@@ -69,8 +69,8 @@ public class SwerveDriveXboxControl extends Command {
         final double turnSpeed = robotAnglePID.calculate(currentAngle, targetAngle);
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
-                leftX * ControllerConstants.maxSpeed,
-                leftY * ControllerConstants.maxSpeed,
+                leftX * RobotMovementConstants.maxSpeed,
+                leftY * RobotMovementConstants.maxSpeed,
                 turnSpeed);
 
         drivetrain.setDesiredState(speeds, true);

@@ -1,10 +1,15 @@
 package frc.robot.commands;
 
+import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.SwerveDrivetrain;
+import edu.wpi.first.wpilibj2.command.Command;
+
 import frc.robot.subsystems.SwerveDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants.RobotMovementConstants;
 
@@ -13,16 +18,10 @@ import frc.robot.Constants.RobotMovementConstants;
 // Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
 
 /** An example command that uses an example subsystem. */
-public class AutoRotateTo extends Command {
+public class AutoDriveTo extends Command {
     private final SwerveDrivetrain subsystem;
-    private final double angleGoal;
-
-    private final PIDController rotatepid = new PIDController(
-        //TODO: replace WITH NEW CONSTANTS
-        RobotMovementConstants.ROTATION_PID_P,
-        RobotMovementConstants.ROTATION_PID_I,
-        RobotMovementConstants.ROTATION_PID_D
-    );
+    private final PIDController movePID;
+    private double initx,inity, xgoal, ygoal;
 
     /**
      * The constructor creates a new command and is automatically called one time when the command is created (with 'new' keyword).
@@ -31,11 +30,18 @@ public class AutoRotateTo extends Command {
      * as wells as arguments for what to do, such as a joystick in the drive command or a desired position in an auto command.
      * Example uses include saving parameters passed to the command, creating and configuring objects for the class like PID controllers, and adding subsystem requirements
      */
-    public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
-
+    public AutoDriveTo(SwerveDrivetrain subsystem, Translation2d translation) {
         // use "this" to access member variable subsystem rather than local subsystem
         this.subsystem = subsystem;
-        this.angleGoal = direction.getRadians();
+
+        double xgoal = translation.getX();
+        double ygoal = translation.getY();
+
+        movePID = new PIDController(
+            RobotMovementConstants.TRANSLATION_PID_P,
+            RobotMovementConstants.TRANSLATION_PID_I,
+            RobotMovementConstants.TRANSLATION_PID_D
+        );
 
         // Use addRequirements() here to declare subsystem dependencies.
         // This makes sure no other commands try to do stuff with your subsystem while
@@ -50,6 +56,9 @@ public class AutoRotateTo extends Command {
      */
     @Override
     public void initialize() {
+        Pose2d position=subsystem.getPosition();
+        initx = position.getX();
+        inity = position.getY();
     }
 
     /**
@@ -59,13 +68,17 @@ public class AutoRotateTo extends Command {
      */
     @Override
     public void execute() {
-        final double currentAngle = subsystem.getHeading().getRadians();
-        double turnspeed = rotatepid.calculate(currentAngle,this.angleGoal);
+        Pose2d position=this.subsystem.getPosition();
+        double x = position.getX()-initx;
+        double y = position.getY()-inity;
 
-        ChassisSpeeds speeds = subsystem.getDesiredState();
-        speeds.omegaRadiansPerSecond=turnspeed;
-        
-        subsystem.setDesiredState(speeds,true);
+        double xspeed = movePID.calculate(x, xgoal);
+        double yspeed = movePID.calculate(y, ygoal);
+
+        final ChassisSpeeds speeds = new ChassisSpeeds(
+            xspeed,
+            yspeed,
+            0);
     }
 
     /**
@@ -75,11 +88,7 @@ public class AutoRotateTo extends Command {
      */
     @Override
     public boolean isFinished() {
-        final double currentAngle = subsystem.getHeading().getRadians();
-
-        //TODO: replace Math.PI/10 with a constant, it's like the amount of margin for the degree of the robot, currently set at 9 degrees
-        if (Math.abs(currentAngle-this.angleGoal)<Math.PI/20) return true;
-        else return false;
+        return true;
     }
 
     /**
