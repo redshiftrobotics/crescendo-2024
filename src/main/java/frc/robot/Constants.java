@@ -87,9 +87,9 @@ public final class Constants {
     }
 
     public static class SwerveDrivetrainConstants {
-        // distance of swerve modules from center of robot
-        public static final double MODULE_LOCATION_X = 0.25;
-        public static final double MODULE_LOCATION_Y = 0.25;
+        // distance of swerve modules from center of robot, in meters
+        public static final double MODULE_LOCATION_Y = 28.5 / 100;
+        public static final double MODULE_LOCATION_X = 26.0 / 100;
     }
 }
 

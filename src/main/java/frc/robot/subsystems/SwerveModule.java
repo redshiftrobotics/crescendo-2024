@@ -7,6 +7,7 @@ import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -48,6 +49,8 @@ public class SwerveModule extends SubsystemBase {
     /** Locations of the wheel relative to the physical center of the robot. */
     private final Translation2d distanceFromCenter;
 
+    private boolean powerDriveMode = false;
+
     /**
      * Constructor for an individual Swerve Module.
      * Sets up both drive and angular motor for swerve module as well as systems to monitor and control them
@@ -62,6 +65,8 @@ public class SwerveModule extends SubsystemBase {
         // --- Drive Motor ---
         driveMotor = new CANSparkMax(driveMotorDeviceId, MotorType.kBrushless);
 
+        // You most restore factory defaults if you want to use velocity encoder.
+        // If you do not do this, everything will break and shake itself to death
         driveMotor.restoreFactoryDefaults();
 
         driveMotor.setIdleMode(IdleMode.kBrake);
@@ -119,17 +124,19 @@ public class SwerveModule extends SubsystemBase {
 
             // --- Set drive motor ---
             
-            // get our current speed and our desired speed
-            // final double desiredDriveRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
-
-            // If our desired speed is 0, just use the built in motor stop
             if (desiredState.speedMetersPerSecond == 0) {
+                // If our desired speed is 0, just use the built in motor stop, no matter the mode.
                 driveMotor.stopMotor();
             }
-            // If we do want to move calculate how fast to spin the motor to get to the desired velocity using our PID controller
-            else {
+            else if (powerDriveMode) {
+                // If we are in power drive mode just directly set power to our desired speed.
+                // This is a bit of an abuse of the SwerveModuleState object but we don't want to have to deal with a pid controller when we are just driving
                 driveMotor.set(desiredState.speedMetersPerSecond);
-                // drivePIDController.setReference(desiredDriveRotationsPerMinute, ControlType.kVelocity);
+            }
+            else {
+                // If we are  in normal drive mode use our drive motor builtin PID controller in velocity mode to set it to our desired meters per second
+                final double desiredDriveRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
+                drivePIDController.setReference(desiredDriveRotationsPerMinute, ControlType.kVelocity);
             }
 
             // --- Set steering motor ---
@@ -193,6 +200,7 @@ public class SwerveModule extends SubsystemBase {
             state = optimize(state,  getState().angle);
         }
         
+        powerDriveMode = false;
         this.desiredState = state;
     }
 
@@ -200,7 +208,8 @@ public class SwerveModule extends SubsystemBase {
      * Set the state of the swerve module. The state is the speed and angle of the swerve module.
      * You can use {@code Rotation2d.fromDegrees()} to create angle.
      * This version is meant for driving the robot, where a new state is set every 20ms.
-     * It tries to make driving smoother by 
+     * It tries to make driving smoother by scaling speed by the cosine of the angle
+     * It also expects states to be in power mode, meaning instead of meters per second the motors are givin the direct speed to spin at
      * 
      * @param state New state of swerve module, contains speed in meters per second and angle as {@link Rotation2d}
      * @param shouldOptimize Whether to optimize the way the swerve module gets to the desired state
@@ -217,7 +226,6 @@ public class SwerveModule extends SubsystemBase {
             // Scale speed by cosine of angle error. 
             // This scales down movement perpendicular to the desired direction of travel that can occur when modules change directions.
             // This results in smoother driving.
-
             final double speed = state.speedMetersPerSecond;
             final double speedCosScaled = speed * state.angle.minus(encoderAngle).getCos();
 
@@ -226,6 +234,7 @@ public class SwerveModule extends SubsystemBase {
             state.speedMetersPerSecond = (speed * (1 - scaleSplit)) + (speedCosScaled * scaleSplit);
         }
         
+        powerDriveMode = true;
         this.desiredState = state;
     }
 
