@@ -20,8 +20,9 @@ import frc.robot.Constants.RobotMovementConstants;
 /** An example command that uses an example subsystem. */
 public class AutoDriveTo extends Command {
     private final SwerveDrivetrain subsystem;
-    private final PIDController movePID;
+    private final PIDController xmovePID,ymovePID;
     private double initx,inity, xgoal, ygoal;
+    private double counter = 0;
 
     /**
      * The constructor creates a new command and is automatically called one time when the command is created (with 'new' keyword).
@@ -34,10 +35,16 @@ public class AutoDriveTo extends Command {
         // use "this" to access member variable subsystem rather than local subsystem
         this.subsystem = subsystem;
 
-        double xgoal = translation.getX();
-        double ygoal = translation.getY();
+        xgoal = translation.getX();
+        ygoal = translation.getY();
 
-        movePID = new PIDController(
+        xmovePID = new PIDController(
+            RobotMovementConstants.TRANSLATION_PID_P,
+            RobotMovementConstants.TRANSLATION_PID_I,
+            RobotMovementConstants.TRANSLATION_PID_D
+        );
+
+        ymovePID = new PIDController(
             RobotMovementConstants.TRANSLATION_PID_P,
             RobotMovementConstants.TRANSLATION_PID_I,
             RobotMovementConstants.TRANSLATION_PID_D
@@ -72,13 +79,18 @@ public class AutoDriveTo extends Command {
         double x = position.getX()-initx;
         double y = position.getY()-inity;
 
-        double xspeed = movePID.calculate(x, xgoal);
-        double yspeed = movePID.calculate(y, ygoal);
+        if (Math.abs(x-xgoal)<RobotMovementConstants.POS_TOLERANCE && Math.abs(y-ygoal)<RobotMovementConstants.POS_TOLERANCE) counter+=20;
+        else counter=0;
+
+        double xspeed = xmovePID.calculate(x, xgoal);
+        double yspeed = ymovePID.calculate(y, ygoal);
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
             xspeed,
             yspeed,
             0);
+        
+        subsystem.setDesiredState(speeds);
     }
 
     /**
@@ -88,7 +100,8 @@ public class AutoDriveTo extends Command {
      */
     @Override
     public boolean isFinished() {
-        return true;
+        if (counter>RobotMovementConstants.MOVE_PID_TOLERANCE_TIME) return true;
+        else return false;
     }
 
     /**

@@ -25,9 +25,13 @@ public final class Constants {
         // max angular velocity for drivetrain, in radians per second
         public static final double[] maxSpeedOptionsRotation = {0.4, 1, 3};
     }
-
+    
     public static class RobotMovementConstants {
-        public static final double maxSpeed = 5;
+        public static final double maxSpeed = 5; // m/s
+        public static final double MOVE_PID_TOLERANCE_TIME = 500; //milliseconds
+        public static final double ROTATE_PID_TOLERANCE_TIME = 500; //milliseconds
+        public static final double ANGLE_TOLERANCE = Math.PI/30; //radians
+        public static final double POS_TOLERANCE = 0.1; //meters
         public static final double ROTATION_PID_P = 0.5;
         public static final double ROTATION_PID_I = 0;
         public static final double ROTATION_PID_D = 0;

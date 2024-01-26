@@ -16,13 +16,9 @@ import frc.robot.Constants.RobotMovementConstants;
 public class AutoRotateTo extends Command {
     private final SwerveDrivetrain subsystem;
     private final double angleGoal;
+    private double counter=0;
 
-    private final PIDController rotatepid = new PIDController(
-        //TODO: replace WITH NEW CONSTANTS
-        RobotMovementConstants.ROTATION_PID_P,
-        RobotMovementConstants.ROTATION_PID_I,
-        RobotMovementConstants.ROTATION_PID_D
-    );
+    private final PIDController rotatepid;
 
     /**
      * The constructor creates a new command and is automatically called one time when the command is created (with 'new' keyword).
@@ -32,6 +28,12 @@ public class AutoRotateTo extends Command {
      * Example uses include saving parameters passed to the command, creating and configuring objects for the class like PID controllers, and adding subsystem requirements
      */
     public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
+        
+        rotatepid= new PIDController(
+            RobotMovementConstants.ROTATION_PID_P,
+            RobotMovementConstants.ROTATION_PID_I,
+            RobotMovementConstants.ROTATION_PID_D
+        );
 
         // use "this" to access member variable subsystem rather than local subsystem
         this.subsystem = subsystem;
@@ -66,6 +68,9 @@ public class AutoRotateTo extends Command {
         speeds.omegaRadiansPerSecond=turnspeed;
         
         subsystem.setDesiredState(speeds,true);
+
+        if (Math.abs(currentAngle-this.angleGoal)<RobotMovementConstants.ANGLE_TOLERANCE) counter+=20;
+        else counter=0;
     }
 
     /**
@@ -75,10 +80,7 @@ public class AutoRotateTo extends Command {
      */
     @Override
     public boolean isFinished() {
-        final double currentAngle = subsystem.getHeading().getRadians();
-
-        //TODO: replace Math.PI/10 with a constant, it's like the amount of margin for the degree of the robot, currently set at 9 degrees
-        if (Math.abs(currentAngle-this.angleGoal)<Math.PI/20) return true;
+        if (counter>RobotMovementConstants.ROTATE_PID_TOLERANCE_TIME) return true;
         else return false;
     }
 
