@@ -28,12 +28,12 @@ public class SwerveDriveXboxControl extends Command {
     public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
         this.drivetrain = drivetrain;
         this.controller = driverXboxController;
-
-        robotAnglePID = new PIDController(
-                ControllerConstants.CONTROLLER_PID_P,
-                ControllerConstants.CONTROLLER_PID_I,
-                ControllerConstants.CONTROLLER_PID_D);
-        robotAnglePID.enableContinuousInput(0, 2 * Math.PI);
+        this.robotAnglePID = new PIDController(
+            ControllerConstants.CONTROLLER_PID_P,
+            ControllerConstants.CONTROLLER_PID_I,
+            ControllerConstants.CONTROLLER_PID_D
+        );
+        robotAnglePID.enableContinuousInput(0, 2*Math.PI);
 
         // Create and configure buttons
         // OptionButton exampleToggleButton = new OptionButton(controller::a, ActivationMode.TOGGLE);
@@ -73,7 +73,7 @@ public class SwerveDriveXboxControl extends Command {
                 leftY * ControllerConstants.maxSpeed,
                 turnSpeed);
 
-        drivetrain.setDesiredState(speeds);
+        drivetrain.setDesiredState(speeds, true);
 
     }
 
