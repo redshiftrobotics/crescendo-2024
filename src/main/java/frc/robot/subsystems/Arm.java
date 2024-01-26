@@ -1,19 +1,41 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.hardware.CANcoder;
 
 // How to make Subsystem (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/subsystems/subsystems.html
 // Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
 // Subsystem Documentation documentation: https://docs.wpilib.org/en/stable/docs/software/commandbased/subsystems.html
 
-/**
- * How to make a Subsystem:
- * 1. Copy this file, remember that class name has to match 
- */
+
 
 public class Arm extends SubsystemBase {
+
+    private final CANSparkMax leftArmMotor;
+    private final CANcoder leftArmEncoder;
+
+    private final CANSparkMax rightArmMotor;
+    private final CANcoder rightArmEncoder;
+
+    private final PIDController armRaisePIDController;
+
     /** Constructor. Creates a new ExampleSubsystem. */
-    public Arm() {
+    public Arm(int leftMotorId, int leftEncoderId, int rightMotorId, int rightEncoderId) {
+
+        leftArmMotor = new CANSparkMax(leftMotorId,MotorType.kBrushless);
+        leftArmEncoder = new CANcoder(leftEncoderId);
+
+        rightArmMotor = new CANSparkMax(rightMotorId,MotorType.kBrushless);
+        rightArmEncoder = new CANcoder(rightEncoderId);
+
+        armRaisePIDController = new PIDController(
+            0,
+            0,
+            0
+            );
 
     }
 
