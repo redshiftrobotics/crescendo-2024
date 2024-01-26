@@ -1,5 +1,6 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -115,7 +116,12 @@ public class SwerveDriveJoystickControl extends Command {
 		SmartDashboard.putBoolean("Y Active", speedY != 0);
 		SmartDashboard.putBoolean("R Active", speedR != 0); 
 
-        drivetrain.setDesiredState(speeds, isFieldRelative);
+        final Pose2d robotPose = drivetrain.getPosition();
+		SmartDashboard.putNumber("PoseY", robotPose.getY());
+        SmartDashboard.putNumber("PoseX", robotPose.getX());
+		SmartDashboard.putNumber("PoseDegrees", robotPose.getRotation().getDegrees()); 
+
+        drivetrain.setDesiredStateDrive(speeds, isFieldRelative);
     }
 
     /**
