@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -97,6 +98,16 @@ public final class Constants {
         // distance of swerve modules from center of robot, in meters
         public static final double MODULE_LOCATION_Y = 28.5 / 100;
         public static final double MODULE_LOCATION_X = 26.0 / 100;
+    }
+
+    public static class AutoConstants{
+
+        public static final double kVelocityControllerP = 0.01;
+        public static final double kAngularControllerP = 0.001;
+
+        public static final double kMaxAutoVelocitySpeedMetersPerSecond = 3;
+        public static final double kMaxAutoRotationSpeedMetersPerSecond = 1;
+        public static final TrapezoidProfile.Constraints kRotationControllerConstraints = new TrapezoidProfile.Constraints(kMaxAutoVelocitySpeedMetersPerSecond, kMaxAutoRotationSpeedMetersPerSecond);
     }
 }
 

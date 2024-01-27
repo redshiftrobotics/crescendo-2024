@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
@@ -10,10 +11,22 @@ import frc.robot.subsystems.SwerveModule;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-
+import java.util.List;
 /**
  * This class is where the bulk of the robot should be declared.
  * Since Command-based is a "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
@@ -55,6 +68,9 @@ public class RobotContainer {
     private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
     // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
 
+
+
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
 
@@ -76,6 +92,16 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An example command will be run in autonomous
-        return null;
+
+        //Trajectory Config
+        final TrajectoryConfig exampleConfig = new TrajectoryConfig(AutoConstants.kMaxAutoVelocitySpeedMetersPerSecond,AutoConstants.kMaxAutoRotationSpeedMetersPerSecond).setKinematics(drivetrain.getKinematics());
+        //Example Trajectory (1 meter forward, then to 1,1, then back to 0,0)
+        final Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0,new Rotation2d(Math.PI*0.5)),List.of(new Translation2d(0,1), new Translation2d(1,1)),new Pose2d(0,0,new Rotation2d(Math.PI *0.5)), exampleConfig);
+        //Profiled PID Controller for trajectory rotation
+        final ProfiledPIDController rotationPidController = new ProfiledPIDController(AutoConstants.kAngularControllerP, 0, 0, AutoConstants.kRotationControllerConstraints);
+        //SwerveControllerCommand Test (Trajectory Auto Drive)
+        final SwerveControllerCommand trajectoryTestCommand = new SwerveControllerCommand(exampleTrajectory, drivetrain::getPosition, drivetrain.getKinematics(), new PIDController(AutoConstants.kVelocityControllerP, 0, 0), new PIDController(AutoConstants.kVelocityControllerP, 0, 0), rotationPidController, drivetrain::setDesiredStateDriveSwerveModuleStates, drivetrain);
+
+        return Commands.sequence(new InstantCommand(() -> drivetrain.resetPosition()), trajectoryTestCommand, new InstantCommand(()-> drivetrain.setDesiredState(new ChassisSpeeds(0,0,0))));
     }
 }

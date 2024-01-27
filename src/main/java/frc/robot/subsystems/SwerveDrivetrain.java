@@ -19,6 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.RobotMovementConstants;
 
 /**
  * Subsystem for full drive train of robot. Contains 4 {@link SwerveModule} subsystems.
@@ -237,6 +239,13 @@ public class SwerveDrivetrain extends SubsystemBase {
         this.desiredSpeeds = speeds;
     }
 
+    public void setDesiredStateDriveSwerveModuleStates(SwerveModuleState[] states){
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, RobotMovementConstants.maxSpeed);
+        for (int i=0;i<modules.length;i++){
+            modules[i].setDesiredState(states[i]);
+        }
+    }
+
 
     /**
      * Get the desired speeds of robot
@@ -318,6 +327,11 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     private void modulesMap(Consumer<SwerveModule> func) {
         Arrays.stream(modules).forEach(func);
+    }
+
+
+    public SwerveDriveKinematics getKinematics(){
+        return kinematics;
     }
 
     /**
