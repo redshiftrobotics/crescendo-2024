@@ -246,6 +246,11 @@ public class SwerveDrivetrain extends SubsystemBase {
         this.desiredSpeeds = speeds;
     }
 
+    /**
+     * Set states of the swerve modules
+     * 
+     * @param states Desired States for the Swerve Moduels
+     */
     public void setDesiredStateDriveSwerveModuleStates(SwerveModuleState[] states){
         SwerveDriveKinematics.desaturateWheelSpeeds(states, RobotMovementConstants.maxSpeed);
         for (int i=0;i<modules.length;i++){
@@ -336,7 +341,11 @@ public class SwerveDrivetrain extends SubsystemBase {
         Arrays.stream(modules).forEach(func);
     }
 
-
+    /**
+     * Getter for the kinematics object
+     * 
+     * @return kinematics object for the swerve Drive
+     */
     public SwerveDriveKinematics getKinematics(){
         return kinematics;
     }
