@@ -5,6 +5,7 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
+import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -27,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import java.util.List;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 /**
  * This class is where the bulk of the robot should be declared.
  * Since Command-based is a "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
@@ -71,10 +74,12 @@ public class RobotContainer {
 
 
 
+    //private final CommandXboxController xboxController = new CommandXboxController(0);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
 
         SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
+        //SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
         drivetrain.setDefaultCommand(control);
 
         // Configure the trigger bindings

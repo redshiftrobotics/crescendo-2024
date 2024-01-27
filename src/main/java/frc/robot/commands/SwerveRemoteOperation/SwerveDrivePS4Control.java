@@ -67,7 +67,7 @@ public class SwerveDrivePS4Control extends Command {
             rightX
         );
 
-        drivetrain.setDesiredStateDrive(speeds, false);
+        drivetrain.setDesiredState(speeds, false);
     }
 
     /**

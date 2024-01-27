@@ -215,39 +215,6 @@ public class SwerveModule extends SubsystemBase {
     }
 
     /**
-     * Set the state of the swerve module. The state is the speed and angle of the swerve module.
-     * You can use {@code Rotation2d.fromDegrees()} to create angle.
-     * This version is meant for driving the robot, where a new state is set every 20ms.
-     * It tries to make driving smoother by scaling speed by the cosine of the angle
-     * It also expects states to be in power mode, meaning instead of meters per second the motors are givin the direct speed to spin at
-     * 
-     * @param state New state of swerve module, contains speed in meters per second and angle as {@link Rotation2d}
-     * @param shouldOptimize Whether to optimize the way the swerve module gets to the desired state
-     */
-    public void setDesiredStateDrive(SwerveModuleState state) {
-        if (state != null) {
-
-            // get current angle of robot
-            Rotation2d encoderAngle = getState().angle;
-
-            // Optimize the reference state to avoid spinning further than 90 degrees
-            state = optimize(state, encoderAngle);
-
-            // Scale speed by cosine of angle error. 
-            // This scales down movement perpendicular to the desired direction of travel that can occur when modules change directions.
-            // This results in smoother driving.
-            final double speed = state.speedMetersPerSecond;
-            final double speedCosScaled = speed * state.angle.minus(encoderAngle).getCos();
-
-            final double scaleSplit = SwerveModuleConstants.SWERVE_MODULE_DRIVE_COSIGN_SCALE;
-
-            state.speedMetersPerSecond = (speed * (1 - scaleSplit)) + (speedCosScaled * scaleSplit);
-        }
-        
-        this.desiredState = state;
-    }
-
-    /**
      * Set the state of the swerve module. Will automatically optimize.
      * The state is the speed and angle of the swerve module.
      * You can use {@code Rotation2d.fromDegrees()} to create angle.
