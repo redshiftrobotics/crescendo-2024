@@ -193,6 +193,13 @@ public class SwerveDrivetrain extends SubsystemBase {
         }
     }
 
+    public void enablePowerDriveMode() {
+        modulesMap(SwerveModule::enablePowerDriveMode);
+    }
+    public void disablePowerDriveMode() {
+        modulesMap(SwerveModule::disablePowerDriveMode);
+    }
+
     /**
      * Set speeds of robot.
      * <li>vx: The velocity of the robot in the x (forward) direction in meter per second.</li>

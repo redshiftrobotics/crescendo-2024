@@ -48,6 +48,7 @@ public class SwerveDriveXboxControl extends Command {
      */
     @Override
     public void initialize() {
+        drivetrain.enablePowerDriveMode();
         drivetrain.toDefaultStates();
     }
 
@@ -93,6 +94,7 @@ public class SwerveDriveXboxControl extends Command {
      */
     @Override
     public void end(boolean interrupted) {
+        drivetrain.disablePowerDriveMode();
         drivetrain.stop();
     }
 
