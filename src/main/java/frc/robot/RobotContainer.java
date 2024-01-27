@@ -10,9 +10,14 @@ import frc.robot.subsystems.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.GenericHID.HIDType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -54,15 +59,27 @@ public class RobotContainer {
     private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR, swerveModuleBL, swerveModuleBR);
 
     // Create joysticks
-    private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
+    private final GenericHID genericHID = new GenericHID(0);
+    private final HIDType genericHIDType = genericHID.getType();
+    private final String HIDTypeName = genericHIDType.toString();
+
+    //private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
     // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
     //private final CommandXboxController xboxController = new CommandXboxController(0);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
 
-        SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
-        //SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
-        drivetrain.setDefaultCommand(control);
+        SmartDashboard.putString("type", HIDTypeName);
+
+        if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+            final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
+            SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
+            drivetrain.setDefaultCommand(control);
+        } else {
+            final CommandXboxController xboxController = new CommandXboxController(0);
+            SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
+            drivetrain.setDefaultCommand(control);
+        }
 
         // Configure the trigger bindings
         configureBindings();
