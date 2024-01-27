@@ -47,6 +47,7 @@ public class SwerveDriveJoystickControl extends Command {
      */
     @Override
     public void initialize() {
+        drivetrain.enablePowerDriveMode();
         drivetrain.toDefaultStates();
     }
 
@@ -139,6 +140,7 @@ public class SwerveDriveJoystickControl extends Command {
      */
     @Override
     public void end(boolean interrupted) {
+        drivetrain.disablePowerDriveMode();
         drivetrain.stop();
     }
 

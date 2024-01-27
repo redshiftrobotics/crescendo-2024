@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveModuleConstants;
 
@@ -123,6 +124,8 @@ public class SwerveModule extends SubsystemBase {
         if (desiredState != null) { 
 
             // --- Set drive motor ---
+
+            SmartDashboard.putBoolean("powerDriveMode", powerDriveMode);
             
             if (desiredState.speedMetersPerSecond == 0) {
                 // If our desired speed is 0, just use the built in motor stop, no matter the mode.
@@ -187,6 +190,14 @@ public class SwerveModule extends SubsystemBase {
                 Rotation2d.fromRotations(getSteeringAngleRotations()));
     }
 
+    public void enablePowerDriveMode() {
+        this.powerDriveMode = true;
+    }
+
+    public void disablePowerDriveMode() {
+        this.powerDriveMode = false;
+    }
+
     /**
      * Set the state of the swerve module. The state is the speed and angle of the swerve module.
      * You can use {@code Rotation2d.fromDegrees()} to create angle.
@@ -200,7 +211,6 @@ public class SwerveModule extends SubsystemBase {
             state = optimize(state,  getState().angle);
         }
         
-        powerDriveMode = false;
         this.desiredState = state;
     }
 
@@ -234,7 +244,6 @@ public class SwerveModule extends SubsystemBase {
             state.speedMetersPerSecond = (speed * (1 - scaleSplit)) + (speedCosScaled * scaleSplit);
         }
         
-        powerDriveMode = true;
         this.desiredState = state;
     }
 
