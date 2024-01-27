@@ -2,6 +2,7 @@ package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.RobotMovementConstants;
@@ -61,8 +62,12 @@ public class SwerveDriveXboxControl extends Command {
         double leftX = applyJoystickDeadzone(controller.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
         double leftY = applyJoystickDeadzone(controller.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
 
-        double rightX = applyJoystickDeadzone(controller.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
+        SmartDashboard.putNumber("OriginalRightX", controller.getRightX());
+
+        double rightX = applyJoystickDeadzone(-(controller.getRightX()), DriverConstants.XBOX_DEAD_ZONE);
         double rightY = applyJoystickDeadzone(controller.getRightY(), DriverConstants.XBOX_DEAD_ZONE);
+
+        SmartDashboard.putNumber("NewRightX", rightX);
 
     /* OLD ROTATION CODE
         double targetAngle = Math.atan2(rightX, rightY);
@@ -81,7 +86,7 @@ public class SwerveDriveXboxControl extends Command {
             leftY * RobotMovementConstants.maxSpeed,
             rightX * RobotMovementConstants.maxTurnSpeed);
         
-        drivetrain.setDesiredState(speeds, true);
+        drivetrain.setDesiredState(speeds, false);
 
     }
 

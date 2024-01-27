@@ -4,6 +4,7 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
+import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared.
@@ -54,11 +56,12 @@ public class RobotContainer {
     // Create joysticks
     private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
     // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
-
+    //private final CommandXboxController xboxController = new CommandXboxController(0);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
 
         SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
+        //SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
         drivetrain.setDefaultCommand(control);
 
         // Configure the trigger bindings
