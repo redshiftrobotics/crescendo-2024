@@ -122,7 +122,7 @@ public class SwerveDriveJoystickControl extends Command {
         SmartDashboard.putNumber("PoseX", robotPose.getX());
 		SmartDashboard.putNumber("PoseDegrees", robotPose.getRotation().getDegrees()); 
 
-        drivetrain.setDesiredStateDrive(speeds, isFieldRelative);
+        drivetrain.setDesiredState(speeds, isFieldRelative);
     }
 
     /**
