@@ -27,7 +27,8 @@ public final class Constants {
     }
     
     public static class RobotMovementConstants {
-        public static final double maxSpeed = 5; // m/s
+        public static final double maxSpeed = 1; // m/s
+        public static final double maxTurnSpeed = 1;
         public static final double MOVE_PID_TOLERANCE_TIME = 500; //milliseconds
         public static final double ROTATE_PID_TOLERANCE_TIME = 500; //milliseconds
         public static final double ANGLE_TOLERANCE = Math.PI/30; //radians

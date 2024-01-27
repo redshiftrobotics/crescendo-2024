@@ -64,8 +64,9 @@ public class SwerveDriveXboxControl extends Command {
         double rightX = applyJoystickDeadzone(controller.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
         double rightY = applyJoystickDeadzone(controller.getRightY(), DriverConstants.XBOX_DEAD_ZONE);
 
+    /* OLD ROTATION CODE
         double targetAngle = Math.atan2(rightX, rightY);
-
+    
         final double currentAngle = drivetrain.getHeading().getRadians();
         final double turnSpeed = robotAnglePID.calculate(currentAngle, targetAngle);
 
@@ -73,7 +74,13 @@ public class SwerveDriveXboxControl extends Command {
                 leftX * RobotMovementConstants.maxSpeed,
                 leftY * RobotMovementConstants.maxSpeed,
                 turnSpeed);
-
+    */
+        
+        final ChassisSpeeds speeds = new ChassisSpeeds(
+            leftX * RobotMovementConstants.maxSpeed,
+            leftY * RobotMovementConstants.maxSpeed,
+            rightX * RobotMovementConstants.maxTurnSpeed);
+        
         drivetrain.setDesiredState(speeds, true);
 
     }
