@@ -222,28 +222,6 @@ public class SwerveDrivetrain extends SubsystemBase {
         setDesiredState(speeds);
     }
 
-    /**
-     * Set speeds of robot when driving. This is for driving, so speeds should be in motor power, not in meters per second
-     * 
-     * @param speeds Desired speeds of drivetrain (using swerve modules). IMPORTANT: These speeds our in motor power, not in meters per second! That means all values in speeds should be from -1 to 1
-     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate system. If field relative, forward will be directly away from driver, no matter the rotation of the robot.
-     */
-    public void setDesiredStateDrive(ChassisSpeeds speeds, boolean fieldRelative) {
-        speeds = ChassisSpeeds.discretize(speeds, TimedRobot.kDefaultPeriod);
-
-        if (fieldRelative) {
-            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
-        }
-
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
-        // SwerveDriveKinematics.desaturateWheelSpeeds(states, );
-
-        for (int i = 0; i < modules.length; i++) {
-            modules[i].setDesiredStateDrive(states[i]);
-        }
-
-        this.desiredSpeeds = speeds;
-    }
 
     /**
      * Set states of the swerve modules
