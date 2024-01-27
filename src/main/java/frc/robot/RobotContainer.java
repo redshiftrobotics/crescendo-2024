@@ -58,17 +58,24 @@ public class RobotContainer {
 
     private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR, swerveModuleBL, swerveModuleBR);
 
-    // Create joysticks
-    private final GenericHID genericHID = new GenericHID(0);
-    private final HIDType genericHIDType = genericHID.getType();
-    private final String HIDTypeName = genericHIDType.toString();
-
-    //private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
-    // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
-    //private final CommandXboxController xboxController = new CommandXboxController(0);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+        
+        setUpController();
+        
+        // Configure the trigger bindings
+        configureBindings();
+    }
 
+    public void setUpController() {
+        // Create joysticks
+        final GenericHID genericHID = new GenericHID(0);
+        final HIDType genericHIDType = genericHID.getType();
+        final String HIDTypeName = genericHIDType.toString();
+
+        //private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
+        // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
+        //private final CommandXboxController xboxController = new CommandXboxController(0);
         SmartDashboard.putString("type", HIDTypeName);
 
         if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
@@ -80,9 +87,6 @@ public class RobotContainer {
             SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
             drivetrain.setDefaultCommand(control);
         }
-
-        // Configure the trigger bindings
-        configureBindings();
     }
 
     /** Use this method to define your trigger->command mappings. */
