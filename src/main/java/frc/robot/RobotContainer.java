@@ -13,11 +13,9 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -61,29 +59,25 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         
-        setUpController();
+        setUpDriveController();
         
         // Configure the trigger bindings
         configureBindings();
     }
 
-    public void setUpController() {
+    public void setUpDriveController() {
         // Create joysticks
-        final GenericHID genericHID = new GenericHID(0);
+        final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
         final HIDType genericHIDType = genericHID.getType();
-        final String HIDTypeName = genericHIDType.toString();
 
-        //private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
-        // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
-        //private final CommandXboxController xboxController = new CommandXboxController(0);
-        SmartDashboard.putString("type", HIDTypeName);
-
+        SmartDashboard.putString("Drive Controller", genericHIDType.toString());
+        
         if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
-            final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
+            final CommandJoystick driverJoystick = new CommandJoystick(genericHID.getPort());
             SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
             drivetrain.setDefaultCommand(control);
         } else {
-            final CommandXboxController xboxController = new CommandXboxController(0);
+            final CommandXboxController xboxController = new CommandXboxController(genericHID.getPort());
             SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
             drivetrain.setDefaultCommand(control);
         }

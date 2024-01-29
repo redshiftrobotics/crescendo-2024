@@ -32,6 +32,8 @@
     "Deadzone",
     "Odometry",
     "setpoint",
+    "teleop",
+    "teleoperated"
   ]
 }
 
