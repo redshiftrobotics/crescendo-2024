@@ -18,6 +18,8 @@ public final class Constants {
      * 
      * Simulated bots cannot have a RoboRIO ID, so we must check if the bot is real. If it isn't, load production config. 
      * The production bot is always default, so if we do anything crazy to our bot during the tourney like swich the roborio the code works.
+     * 
+     * @author Aceius E.
      */
     static {
         String serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "default";
