@@ -101,7 +101,7 @@ public class RobotContainer {
         //Trajectory Config
         final TrajectoryConfig exampleConfig = new TrajectoryConfig(AutoConstants.kMaxAutoVelocitySpeedMetersPerSecond,AutoConstants.kMaxAutoRotationSpeedMetersPerSecond).setKinematics(drivetrain.getKinematics());
         //Example Trajectory (1 meter forward then backward)
-        final Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0,new Rotation2d(Math.PI*0.5)),List.of(new Translation2d(0,1)),new Pose2d(0,0,new Rotation2d(Math.PI *0.5)), exampleConfig);
+        final Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0,new Rotation2d(0)),List.of(new Translation2d(1,0)),new Pose2d(0,0,new Rotation2d(0)), exampleConfig);
         //Profiled PID Controller for trajectory rotation
         final ProfiledPIDController rotationPidController = new ProfiledPIDController(AutoConstants.kAngularControllerP, 0, 0, AutoConstants.kRotationControllerConstraints);
         rotationPidController.enableContinuousInput(-Math.PI, Math.PI);
