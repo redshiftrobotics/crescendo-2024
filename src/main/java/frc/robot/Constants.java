@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Use Constants as convenient storage to hold robot-wide numerical or boolean constants.
@@ -8,6 +10,29 @@ import edu.wpi.first.math.util.Units;
  * Do not put any functionality in this class.
  */
 public final class Constants {
+    // Bot-specific constants.
+    public static final String SOME_VALUE; // This is a demo/test constant
+
+    /**
+     * This code determines what bot is being deployed and sets constants accordingly.
+     * 
+     * Simulated bots cannot have a RoboRIO ID, so we must check if the bot is real. If it isn't, load production config. 
+     * The production bot is always default, so if we do anything crazy to our bot during the tourney like swich the roborio the code works.
+     */
+    static {
+        String serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "default";
+
+        switch (serialNumber) {
+            case "03282B00": // Wood Bot
+                SOME_VALUE = "Wood Bot Value";
+                break;
+        
+            default: // Production Bot
+                SOME_VALUE = "Comp Bot Value";
+                break;
+        }
+    }
+
     public static class DriverConstants {
         public static final int DRIVER_JOYSTICK_PORT = 0;
 
