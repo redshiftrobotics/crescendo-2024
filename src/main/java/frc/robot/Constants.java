@@ -2,6 +2,8 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Use Constants as convenient storage to hold robot-wide numerical or boolean constants.
@@ -9,6 +11,31 @@ import edu.wpi.first.math.util.Units;
  * Do not put any functionality in this class.
  */
 public final class Constants {
+    // Bot-specific constants.
+    public static final String SOME_VALUE; // This is a demo/test constant
+
+    /**
+     * This code determines what bot is being deployed and sets constants accordingly.
+     * 
+     * Simulated bots cannot have a RoboRIO ID, so we must check if the bot is real. If it isn't, load production config. 
+     * The production bot is always default, so if we do anything crazy to our bot during the tourney like swich the roborio the code works.
+     * 
+     * @author Aceius E.
+     */
+    static {
+        String serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "default";
+
+        switch (serialNumber) {
+            case "03282B00": // Wood Bot
+                SOME_VALUE = "Wood Bot Value";
+                break;
+        
+            default: // Production Bot
+                SOME_VALUE = "Comp Bot Value";
+                break;
+        }
+    }
+
     public static class DriverConstants {
         public static final int DRIVER_JOYSTICK_PORT = 0;
 
@@ -20,7 +47,6 @@ public final class Constants {
         public static final String[] maxSpeedOptionsNames = {"Precise", "Normal", "Boost"};
 
         // max forward/sideways velocities for drivetrain, in meters per second
-        // public static final double[] maxSpeedOptionsTranslation = {0.4, 4, 8};
         public static final double[] maxSpeedOptionsTranslation = {0.1, 0.75, 1};
         
         // max angular velocity for drivetrain, in radians per second
@@ -28,16 +54,20 @@ public final class Constants {
     }
     
     public static class RobotMovementConstants {
-        public static final double maxSpeed = 1; // m/s
+        public static final double maxSpeed = 1;
         public static final double maxTurnSpeed = 1;
-        public static final double MOVE_PID_TOLERANCE_TIME = 500; //milliseconds
-        public static final double ROTATE_PID_TOLERANCE_TIME = 500; //milliseconds
-        public static final double ANGLE_TOLERANCE = Math.PI/30; //radians
-        public static final double POS_TOLERANCE = 0.1; //meters
+
+        public static final double MOVE_PID_TOLERANCE_TIME = 500 / 20;
+        public static final double ROTATE_PID_TOLERANCE_TIME = 500 / 20;
+
+        public static final double POS_TOLERANCE = 0.1;
+        public static final double ANGLE_TOLERANCE = Math.PI / 30;
+
         public static final double ROTATION_PID_P = 0.5;
         public static final double ROTATION_PID_I = 0;
         public static final double ROTATION_PID_D = 0;
-        public static final double TRANSLATION_PID_P = 0.5;
+
+        public static final double TRANSLATION_PID_P = 5;
         public static final double TRANSLATION_PID_I = 0;
         public static final double TRANSLATION_PID_D = 0;
     }
@@ -52,7 +82,7 @@ public final class Constants {
         public static final double DRIVE_MOTOR_GEAR_RATIO = 8.4;
         public static final double STEERING_MOTOR_GEAR_RATIO = 12.8;
                 
-        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(7);
+        public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_METERS * Math.PI;
         
         // Other settings

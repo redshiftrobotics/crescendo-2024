@@ -11,11 +11,14 @@ import frc.robot.subsystems.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID.HIDType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -77,13 +80,29 @@ public class RobotContainer {
     //private final CommandXboxController xboxController = new CommandXboxController(0);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-
-        SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
-        //SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
-        drivetrain.setDefaultCommand(control);
-
+        
+        setUpDriveController();
+        
         // Configure the trigger bindings
         configureBindings();
+    }
+
+    public void setUpDriveController() {
+        // Create joysticks
+        final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
+        final HIDType genericHIDType = genericHID.getType();
+
+        SmartDashboard.putString("Drive Controller", genericHIDType.toString());
+        
+        if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+            final CommandJoystick driverJoystick = new CommandJoystick(genericHID.getPort());
+            SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
+            drivetrain.setDefaultCommand(control);
+        } else {
+            final CommandXboxController xboxController = new CommandXboxController(genericHID.getPort());
+            SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
+            drivetrain.setDefaultCommand(control);
+        }
     }
 
     /** Use this method to define your trigger->command mappings. */

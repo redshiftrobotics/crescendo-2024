@@ -175,8 +175,15 @@ public class SwerveDrivetrain extends SubsystemBase {
         return speeds;
     }
 
+    public void enablePowerDriveMode() {
+        modulesMap(SwerveModule::enablePowerDriveMode);
+    }
+    public void disablePowerDriveMode() {
+        modulesMap(SwerveModule::disablePowerDriveMode);
+    }
+
     /**
-     * Set speeds of robot.
+     * Set robot relative speeds of robot.
      * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.</p>
      * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
      * <p>omega: The angular velocity of the robot in radians per second.</p>
@@ -192,13 +199,6 @@ public class SwerveDrivetrain extends SubsystemBase {
         for (int i = 0; i < modules.length; i++) {
             modules[i].setDesiredState(states[i]);
         }
-    }
-
-    public void enablePowerDriveMode() {
-        modulesMap(SwerveModule::enablePowerDriveMode);
-    }
-    public void disablePowerDriveMode() {
-        modulesMap(SwerveModule::disablePowerDriveMode);
     }
 
     /**
@@ -285,11 +285,7 @@ public class SwerveDrivetrain extends SubsystemBase {
         return gyro.getRotation3d();
     }
 
-    /**
-     * Reset the gyro.
-     * 
-     * @return successful?
-     */
+    /** Reset the gyro. */
     public void resetGyro() {
         gyro.reset();
     }
