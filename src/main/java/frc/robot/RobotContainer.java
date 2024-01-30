@@ -3,6 +3,7 @@ package frc.robot;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -13,6 +14,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,12 +58,13 @@ public class RobotContainer {
 
     private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR, swerveModuleBL, swerveModuleBR);
 
+    private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        
+        autoChooser.addOption("Example Auto", Autos.exampleAuto(drivetrain));
+
         setUpDriveController();
-        
-        // Configure the trigger bindings
         configureBindings();
     }
 
@@ -93,7 +96,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // An example command will be run in autonomous
-        return null;
+        return autoChooser.getSelected();
     }
 }
