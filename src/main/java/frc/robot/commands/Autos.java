@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 public final class Autos {
     /** Example static factory for an autonomous command. */
-    public static Command exampleAuto(SwerveDrivetrain drivetrain) {
+    public static Command testingAuto(SwerveDrivetrain drivetrain) {
         return Commands.sequence(
             new AutoDriveTo(drivetrain, new Translation2d(1, 0))
             // new WaitCommand(1),
