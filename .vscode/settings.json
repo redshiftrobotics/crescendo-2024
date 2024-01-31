@@ -31,6 +31,7 @@
     "Brushless",
     "Deadzone",
     "Odometry",
+    "Robo",
     "setpoint",
     "teleop",
     "teleoperated"

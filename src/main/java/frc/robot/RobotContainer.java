@@ -74,6 +74,7 @@ public class RobotContainer {
         final HIDType genericHIDType = genericHID.getType();
 
         SmartDashboard.putString("Drive Controller", genericHIDType.toString());
+        SmartDashboard.putString("Bot Name", Constants.currentBot.name());
         
         if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
             final CommandJoystick driverJoystick = new CommandJoystick(genericHID.getPort());
