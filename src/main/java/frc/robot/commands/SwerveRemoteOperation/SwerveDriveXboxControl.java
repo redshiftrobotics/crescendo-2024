@@ -56,10 +56,9 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
 
         double rightX = -applyJoystickDeadzone(xboxController.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
 
-        int speedLevel = 1 // temporarily commented out code cuz was causing build fail
-        //- preciseModeButton.getStateAsInt()
-        //+ 
-        ;
+        int speedLevel = 1
+        - preciseModeButton.getStateAsInt()
+        + boostModeButton.getStateAsInt();
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
             leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
