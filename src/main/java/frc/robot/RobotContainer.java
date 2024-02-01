@@ -4,6 +4,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -18,6 +19,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -78,12 +80,13 @@ public class RobotContainer {
 
 
     //private final CommandXboxController xboxController = new CommandXboxController(0);
+    private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        
+        autoChooser.addOption("Testing Auto", Autos.testingAuto(drivetrain));
+
         setUpDriveController();
-        
-        // Configure the trigger bindings
         configureBindings();
     }
 
@@ -93,7 +96,8 @@ public class RobotContainer {
         final HIDType genericHIDType = genericHID.getType();
 
         SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-        
+        SmartDashboard.putString("Bot Name", Constants.currentBot.toString());
+
         if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
             final CommandJoystick driverJoystick = new CommandJoystick(genericHID.getPort());
             SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);

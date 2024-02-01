@@ -11,27 +11,33 @@ import edu.wpi.first.wpilibj.RobotController;
  * Do not put any functionality in this class.
  */
 public final class Constants {
-    // Bot-specific constants.
-    public static final String SOME_VALUE; // This is a demo/test constant
+    public static enum Bot { WOOD_BOT, PRACTICE_BOT, COMPETITION_BOT }
+
+    public static final Bot currentBot;
 
     /**
      * This code determines what bot is being deployed and sets constants accordingly.
      * 
      * Simulated bots cannot have a RoboRIO ID, so we must check if the bot is real. If it isn't, load production config. 
-     * The production bot is always default, so if we do anything crazy to our bot during the tourney like swich the roborio the code works.
+     * The production bot is always default, so if we do anything crazy to our bot during the tourney like switch the RoboRIO the code works.
      * 
      * @author Aceius E.
      */
     static {
-        String serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "default";
+        final String serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "default";
 
         switch (serialNumber) {
-            case "03282B00": // Wood Bot
-                SOME_VALUE = "Wood Bot Value";
+            case "03282B00": // Wood Bot Serial Number
+                currentBot = Bot.WOOD_BOT;
                 break;
-        
-            default: // Production Bot
-                SOME_VALUE = "Comp Bot Value";
+
+            case "1": // Practice Bot Serial Number
+                currentBot = Bot.PRACTICE_BOT;
+                break;
+            
+            case "2": // Competition Bot Serial Number
+            default:  // Also use competition bot as default
+                currentBot = Bot.COMPETITION_BOT;
                 break;
         }
     }
@@ -60,16 +66,16 @@ public final class Constants {
         public static final double MOVE_PID_TOLERANCE_TIME = 500 / 20;
         public static final double ROTATE_PID_TOLERANCE_TIME = 500 / 20;
 
-        public static final double POS_TOLERANCE = 0.1;
+        public static final double POS_TOLERANCE = 0.01;
         public static final double ANGLE_TOLERANCE = Math.PI / 30;
 
         public static final double ROTATION_PID_P = 0.5;
         public static final double ROTATION_PID_I = 0;
         public static final double ROTATION_PID_D = 0;
 
-        public static final double TRANSLATION_PID_P = 5;
-        public static final double TRANSLATION_PID_I = 0;
-        public static final double TRANSLATION_PID_D = 0;
+        public static final double TRANSLATION_PID_P = 75;
+        public static final double TRANSLATION_PID_I = 1;
+        public static final double TRANSLATION_PID_D = 0.5;
     }
 
     public static class OperatorConstants {
@@ -77,9 +83,69 @@ public final class Constants {
     }
 
     public static class SwerveModuleConstants {
+
+        static { switch (currentBot) {
+            case WOOD_BOT:
+                // Front Left
+                VELOCITY_MOTOR_ID_FL = 41;
+                ANGULAR_MOTOR_ID_FL = 40;
+                ANGULAR_MOTOR_ENCODER_ID_FL = 1;
+                ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.611328125;
+                
+                // Front right
+                VELOCITY_MOTOR_ID_FR = 4;
+                ANGULAR_MOTOR_ID_FR = 5;
+                ANGULAR_MOTOR_ENCODER_ID_FR = 2;
+                ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.282958;
+
+                // Back left
+                VELOCITY_MOTOR_ID_BL = 3;
+                ANGULAR_MOTOR_ID_BL = 2;
+                ANGULAR_MOTOR_ENCODER_ID_BL = 4;
+                ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.9260253906;
+                
+                // Back right
+                VELOCITY_MOTOR_ID_BR = 42;
+                ANGULAR_MOTOR_ID_BR = 6;
+                ANGULAR_MOTOR_ENCODER_ID_BR = 3;
+                ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.8641367187;   
+                break;
+        
+            case PRACTICE_BOT:
+            default: // Temporary default to practice bot 
+                // Front Left
+                VELOCITY_MOTOR_ID_FL = 41;
+                ANGULAR_MOTOR_ID_FL = 40;
+                ANGULAR_MOTOR_ENCODER_ID_FL = 1;
+                ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.611328125;
+                
+                // Front right
+                VELOCITY_MOTOR_ID_FR = 4;
+                ANGULAR_MOTOR_ID_FR = 5;
+                ANGULAR_MOTOR_ENCODER_ID_FR = 2;
+                ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.282958;
+
+                // Back left
+                VELOCITY_MOTOR_ID_BL = 3;
+                ANGULAR_MOTOR_ID_BL = 2;
+                ANGULAR_MOTOR_ENCODER_ID_BL = 4;
+                ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.9260253906;
+                
+                // Back right
+                VELOCITY_MOTOR_ID_BR = 42;
+                ANGULAR_MOTOR_ID_BR = 6;
+                ANGULAR_MOTOR_ENCODER_ID_BR = 3;
+                ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.8641367187;   
+                break;
+
+            // case COMPETITION_BOT:
+            // default:
+            
+            //     break;
+        }}
         
         // Values from https://www.swervedrivespecialties.com/products/mk4-swerve-module. We have L1 Modules.
-        public static final double DRIVE_MOTOR_GEAR_RATIO = 8.4;
+        public static final double DRIVE_MOTOR_GEAR_RATIO = 1 / 8.4;
         public static final double STEERING_MOTOR_GEAR_RATIO = 12.8;
                 
         public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
@@ -101,28 +167,28 @@ public final class Constants {
         public static final double STEERING_PID_D = 0;
 
         // Front left
-		public static final int VELOCITY_MOTOR_ID_FL = 41;
-		public static final int ANGULAR_MOTOR_ID_FL = 40;
-		public static final int ANGULAR_MOTOR_ENCODER_ID_FL = 1;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.611328125;
+		public static final int VELOCITY_MOTOR_ID_FL;
+		public static final int ANGULAR_MOTOR_ID_FL;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_FL;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FL;
         
         // Front right
-		public static final int VELOCITY_MOTOR_ID_FR = 4;
-		public static final int ANGULAR_MOTOR_ID_FR = 5;
-		public static final int ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.282958;
+		public static final int VELOCITY_MOTOR_ID_FR;
+		public static final int ANGULAR_MOTOR_ID_FR;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_FR;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_FR;
 
         // Back left
-		public static final int VELOCITY_MOTOR_ID_BL = 3;
-		public static final int ANGULAR_MOTOR_ID_BL = 2;
-		public static final int ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.9260253906;
+		public static final int VELOCITY_MOTOR_ID_BL;
+		public static final int ANGULAR_MOTOR_ID_BL;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_BL;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BL;
         
         // Back right
-		public static final int VELOCITY_MOTOR_ID_BR = 42;
-		public static final int ANGULAR_MOTOR_ID_BR = 6;
-		public static final int ANGULAR_MOTOR_ENCODER_ID_BR = 3;
-		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.8641367187;
+		public static final int VELOCITY_MOTOR_ID_BR;
+		public static final int ANGULAR_MOTOR_ID_BR;
+		public static final int ANGULAR_MOTOR_ENCODER_ID_BR;
+		public static final double ANGULAR_MOTOR_ENCODER_OFFSET_BR;
     }
 
     public static class SwerveDrivetrainConstants {
