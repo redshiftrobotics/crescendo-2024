@@ -94,7 +94,8 @@ public final class Constants {
 
     public static class ArmConstants {
 
-        public static final double 
+        public static final double MAXIMUM_ARM_RADIANS = 3;
+        public static final double MINIMUM_ARM_RADIANS = 0;
     }
 }
 

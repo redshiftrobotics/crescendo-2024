@@ -53,6 +53,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void setArmAngleRadians(double desiredRadian) {
+        //maximum should ALWAYS be a greater value then minimum
         if (desiredRadian < ArmConstants.MAXIMUM_ARM_RADIANS || ArmConstants.MINIMUM_ARM_RADIANS > desiredRadian) {
             armRotation2d = Rotation2d.fromRadians(desiredRadian);
         }
@@ -66,8 +67,12 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        final double armSpeed = armRaisePIDController.calculate(armPosition,);
-        leftArmMotor.set(armSpeed);
-        rightArmMotor.set(armSpeed);
+
+        final double armSpeed = armRaisePIDController.calculate(armPosition.refresh().getValueAsDouble(),armRotation2d.getRotations());
+        if(!(armSpeed == 0)){
+            leftArmMotor.set(armSpeed);
+            rightArmMotor.set(armSpeed);
+        }
+        
     }
 }
