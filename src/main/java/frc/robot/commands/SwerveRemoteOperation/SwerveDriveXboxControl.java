@@ -1,10 +1,13 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.utils.OptionButton;
+import frc.robot.utils.OptionButton.ActivationMode;
 
 // Here is the documentation for the xbox controller code:
 // https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj2/command/button/CommandXboxController.html
@@ -13,6 +16,8 @@ import frc.robot.subsystems.SwerveDrivetrain;
  * This is the default command for the drivetrain, allowing for remote operation with xbox controller
  */
 public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
+    private final OptionButton preciseModeButton;
+    private final OptionButton boostModeButton;
     /**
      * Creates a new SwerveDriveXboxControl Command.
      *
@@ -21,10 +26,10 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
      */
     public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
         super(drivetrain, driverXboxController);
-
         // Create and configure buttons
         // OptionButton exampleToggleButton = new OptionButton(controller::a, ActivationMode.TOGGLE);
-
+        preciseModeButton = new OptionButton(driverXboxController, 8, ActivationMode.HOLD);
+        boostModeButton = new OptionButton(driverXboxController, 1, ActivationMode.HOLD);
         // Tell the command schedular we are using the drivetrain
         addRequirements(drivetrain);
     }
@@ -51,7 +56,9 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
 
         double rightX = -applyJoystickDeadzone(xboxController.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
 
-        int speedLevel = 1;
+        int speedLevel = 1
+        - preciseModeButton.getStateAsInt()
+        + ;
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
             leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
