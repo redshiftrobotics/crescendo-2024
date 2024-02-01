@@ -12,6 +12,11 @@ import edu.wpi.first.wpilibj.RobotController;
 public final class Constants {
     public static enum Bot { WOOD_BOT, PRACTICE_BOT, COMPETITION_BOT }
 
+    public static class RobotDimensions {
+        public static final double ROBOT_LENGTH_X = 1;
+        public static final double ROBOT_LENGTH_Y = 1;
+    }
+
     public static final Bot currentBot;
 
     /**
