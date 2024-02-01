@@ -1,12 +1,13 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.utils.OptionButton;
+import frc.robot.utils.OptionButton.ActivationMode;
 
 // Here is the documentation for the xbox controller code:
 // https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj2/command/button/CommandXboxController.html
@@ -14,11 +15,9 @@ import frc.robot.subsystems.SwerveDrivetrain;
 /**
  * This is the default command for the drivetrain, allowing for remote operation with xbox controller
  */
-public class SwerveDriveXboxControl extends Command {
-    private final SwerveDrivetrain drivetrain;
-    private final CommandXboxController controller;
-    private final PIDController robotAnglePID;
-
+public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
+    private final OptionButton preciseModeButton;
+    private final OptionButton boostModeButton;
     /**
      * Creates a new SwerveDriveXboxControl Command.
      *
@@ -26,18 +25,11 @@ public class SwerveDriveXboxControl extends Command {
      * @param driverXboxController The xbox controller used to control drivetrain
      */
     public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
-        this.drivetrain = drivetrain;
-        this.controller = driverXboxController;
-        this.robotAnglePID = new PIDController(
-            RobotMovementConstants.ROTATION_PID_P,
-            RobotMovementConstants.ROTATION_PID_I,
-            RobotMovementConstants.ROTATION_PID_D
-        );
-        robotAnglePID.enableContinuousInput(0, 2*Math.PI);
-
+        super(drivetrain, driverXboxController);
         // Create and configure buttons
         // OptionButton exampleToggleButton = new OptionButton(controller::a, ActivationMode.TOGGLE);
-
+        preciseModeButton = new OptionButton(driverXboxController, 8, ActivationMode.HOLD);
+        boostModeButton = new OptionButton(driverXboxController, 1, ActivationMode.HOLD);
         // Tell the command schedular we are using the drivetrain
         addRequirements(drivetrain);
     }
@@ -57,31 +49,22 @@ public class SwerveDriveXboxControl extends Command {
      */
     @Override
     public void execute() {
+        final CommandXboxController xboxController = (CommandXboxController) controller;
 
-        double leftX = applyJoystickDeadzone(controller.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
-        double leftY = applyJoystickDeadzone(controller.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
+        double leftX = applyJoystickDeadzone(xboxController.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
+        double leftY = applyJoystickDeadzone(xboxController.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
 
-        double rightX = -applyJoystickDeadzone(controller.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
+        double rightX = -applyJoystickDeadzone(xboxController.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
 
-    /* OLD ROTATION CODE
-        double targetAngle = Math.atan2(rightX, rightY);
-    
-        final double currentAngle = drivetrain.getHeading().getRadians();
-        final double turnSpeed = robotAnglePID.calculate(currentAngle, targetAngle);
+        int speedLevel = 1
+        - preciseModeButton.getStateAsInt()
+        + ;
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
-                leftX * RobotMovementConstants.maxSpeed,
-                leftY * RobotMovementConstants.maxSpeed,
-                turnSpeed);
-    */
-        
-        final ChassisSpeeds speeds = new ChassisSpeeds(
-            leftX * RobotMovementConstants.maxSpeed,
-            leftY * RobotMovementConstants.maxSpeed,
-            rightX * RobotMovementConstants.maxTurnSpeed);
-        
+            leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
+            leftY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
+            rightX * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
         drivetrain.setDesiredState(speeds, false);
-
     }
 
     /**

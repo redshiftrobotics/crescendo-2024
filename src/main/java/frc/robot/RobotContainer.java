@@ -62,7 +62,7 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        autoChooser.addOption("Example Auto", Autos.exampleAuto(drivetrain));
+        autoChooser.addOption("Testing Auto", Autos.testingAuto(drivetrain));
 
         setUpDriveController();
         configureBindings();
@@ -74,8 +74,8 @@ public class RobotContainer {
         final HIDType genericHIDType = genericHID.getType();
 
         SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-        SmartDashboard.putString("Bot Name", Constants.currentBot.name());
-        
+        SmartDashboard.putString("Bot Name", Constants.currentBot.toString());
+
         if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
             final CommandJoystick driverJoystick = new CommandJoystick(genericHID.getPort());
             SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
