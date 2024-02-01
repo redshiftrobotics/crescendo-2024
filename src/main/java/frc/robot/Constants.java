@@ -91,5 +91,10 @@ public final class Constants {
         public static final double MODULE_LOCATION_X = 0.25;
         public static final double MODULE_LOCATION_Y = 0.25;
     }
+
+    public static class ArmConstants {
+
+        public static final double 
+    }
 }
 

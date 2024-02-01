@@ -1,9 +1,14 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 
 // How to make Subsystem (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/subsystems/subsystems.html
@@ -16,11 +21,17 @@ public class Arm extends SubsystemBase {
 
     private final CANSparkMax leftArmMotor;
     private final CANcoder leftArmEncoder;
-
+    //<p>leftArmEncoder may be useless, as the right arm equivelent is the position for both.</p>
     private final CANSparkMax rightArmMotor;
     private final CANcoder rightArmEncoder;
 
+    private final StatusSignal<Double> armPosition;
+
     private final PIDController armRaisePIDController;
+
+    private Rotation2d armRotation2d;
+
+    
 
     /** Constructor. Creates a new ExampleSubsystem. */
     public Arm(int leftMotorId, int leftEncoderId, int rightMotorId, int rightEncoderId) {
@@ -37,6 +48,14 @@ public class Arm extends SubsystemBase {
             0
             );
 
+        armPosition = rightArmEncoder.getAbsolutePosition();
+
+    }
+
+    public void setArmAngleRadians(double desiredRadian) {
+        if (desiredRadian < ArmConstants.MAXIMUM_ARM_RADIANS || ArmConstants.MINIMUM_ARM_RADIANS > desiredRadian) {
+            armRotation2d = Rotation2d.fromRadians(desiredRadian);
+        }
     }
 
     /**
@@ -47,5 +66,8 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        final double armSpeed = armRaisePIDController.calculate(armPosition,);
+        leftArmMotor.set(armSpeed);
+        rightArmMotor.set(armSpeed);
     }
 }
