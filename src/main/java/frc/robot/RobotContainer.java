@@ -54,7 +54,7 @@ public class RobotContainer {
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BR,
             new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
-    private final AHRS gyro = new AHRS(I2C.Port.kMXP);
+    private final AHRS gyro = new AHRS(I2C.Port.kOnboard);
 
     private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR, swerveModuleBL, swerveModuleBR);
 
@@ -71,7 +71,8 @@ public class RobotContainer {
     public void setUpDriveController() {
         // Create joysticks
         final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
-        final HIDType genericHIDType = genericHID.getType();
+        // final HIDType genericHIDType = genericHID.getType();
+        final HIDType genericHIDType = GenericHID.HIDType.kHIDJoystick;
 
         SmartDashboard.putString("Drive Controller", genericHIDType.toString());
         SmartDashboard.putString("Bot Name", Constants.currentBot.toString());

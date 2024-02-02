@@ -2,6 +2,7 @@ package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -29,6 +30,8 @@ public class SwerveDriveJoystickControl extends SwerveDriveBaseControl {
         preciseModeButton = new OptionButton(driverJoystick, 2, ActivationMode.TOGGLE);
         boostModeButton = new OptionButton(driverJoystick, 1, ActivationMode.HOLD);
         fieldRelativeButton = new OptionButton(driverJoystick, 3, ActivationMode.TOGGLE);
+
+        driverJoystick.button(5).onTrue(new InstantCommand(drivetrain::zeroGyroYaw));
     }
 
     @Override

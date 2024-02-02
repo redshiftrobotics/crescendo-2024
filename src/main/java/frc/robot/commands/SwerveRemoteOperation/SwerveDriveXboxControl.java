@@ -1,7 +1,6 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -17,6 +16,9 @@ import frc.robot.utils.OptionButton.ActivationMode;
 public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
     private final OptionButton preciseModeButton;
     private final OptionButton boostModeButton;
+
+    // private final OptionButton fieldRelativeButton;
+    
     /**
      * Creates a new SwerveDriveXboxControl Command.
      *
@@ -25,10 +27,14 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
      */
     public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
         super(drivetrain, driverXboxController);
+        
         // Create and configure buttons
         // OptionButton exampleToggleButton = new OptionButton(controller::a, ActivationMode.TOGGLE);
-        preciseModeButton = new OptionButton(driverXboxController, 8, ActivationMode.HOLD);
-        boostModeButton = new OptionButton(driverXboxController, 1, ActivationMode.HOLD);
+        preciseModeButton = new OptionButton(driverXboxController::b, ActivationMode.TOGGLE);
+        boostModeButton = new OptionButton(driverXboxController::leftStick, ActivationMode.HOLD);
+
+        // fieldRelativeButton = new OptionButton(driverXboxController::, ActivationMode.TOGGLE)
+
         // Tell the command schedular we are using the drivetrain
         addRequirements(drivetrain);
     }
@@ -63,6 +69,7 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
             leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
             leftY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
             rightX * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
+
         drivetrain.setDesiredState(speeds, false);
     }
 

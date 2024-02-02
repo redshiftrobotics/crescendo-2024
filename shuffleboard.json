@@ -102,6 +102,19 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "9,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Bot Name",
+              "_title": "Bot Name",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
