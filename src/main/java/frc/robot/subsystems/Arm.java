@@ -21,7 +21,7 @@ public class Arm extends SubsystemBase {
 
     private final CANSparkMax leftArmMotor;
     private final CANcoder leftArmEncoder;
-    //<p>leftArmEncoder may be useless, as the right arm equivelent is the position for both.</p>
+    //<p>leftArmEncoder may be useless, as the right arm equivelent is used for the position for both.</p>
     private final CANSparkMax rightArmMotor;
     private final CANcoder rightArmEncoder;
 
@@ -52,11 +52,23 @@ public class Arm extends SubsystemBase {
 
     }
 
-    public void setArmAngleRadians(double desiredRadian) {
+    public void setArmAngleRadians(double desiredDegree) {
         //maximum should ALWAYS be a greater value then minimum
-        if (desiredRadian < ArmConstants.MAXIMUM_ARM_RADIANS || ArmConstants.MINIMUM_ARM_RADIANS > desiredRadian) {
-            armRotation2d = Rotation2d.fromRadians(desiredRadian);
+        if (desiredDegree < ArmConstants.MAXIMUM_ARM_DEGREES || ArmConstants.MINIMUM_ARM_DEGREES > desiredDegree) {
+            armRotation2d = Rotation2d.fromDegrees(desiredDegree);
         }
+    }
+
+    public void setArmToAmpPosition() {
+        armRotation2d = Rotation2d.fromRadians(ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+    }
+
+    public void setArmToSpeakerPosition() {
+        armRotation2d = Rotation2d.fromRadians(ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+    }
+
+    public void setArmToIntakePosition() {
+        armRotation2d = Rotation2d.fromRadians(ArmConstants.ARM_INTAKE_DEGREES);
     }
 
     /**
@@ -69,7 +81,7 @@ public class Arm extends SubsystemBase {
         // This method will be called once per scheduler run
 
         final double armSpeed = armRaisePIDController.calculate(armPosition.refresh().getValueAsDouble(),armRotation2d.getRotations());
-        if(!(armSpeed == 0)){
+        if(armSpeed != 0){
             leftArmMotor.set(armSpeed);
             rightArmMotor.set(armSpeed);
         }
