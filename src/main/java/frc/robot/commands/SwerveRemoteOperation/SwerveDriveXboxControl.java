@@ -2,7 +2,6 @@ package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 
@@ -64,7 +63,6 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
      * Whether the command has finished. Once a command finishes, the scheduler will call its end() method and un-schedule it.
      * Always return false since we never want to end in this case.
      */
-
     @Override
     public boolean isFinished() {
         return false;
