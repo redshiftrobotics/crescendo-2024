@@ -62,7 +62,8 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        autoChooser.addOption("Testing Auto", Autos.testingAuto(drivetrain));
+        autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
+        SmartDashboard.putData(autoChooser);
 
         setUpDriveController();
         configureBindings();

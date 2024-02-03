@@ -165,9 +165,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 
     /**
      * Set robot relative speeds of robot in meters per second mode.
-     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.</p>
-     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
-     * <p>omega: The angular velocity of the robot in radians per second.</p>
+     * <li>vx: The velocity of the robot in the x (forward) direction in meter per second.</li>
+     * <li>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</li>
+     * <li>omega: The angular velocity of the robot in radians per second.</li>
      * 
      * @param speeds Desired speeds of drivetrain (using swerve modules)
      */
@@ -177,17 +177,20 @@ public class SwerveDrivetrain extends SubsystemBase {
 
     /**
      * Set robot relative speeds of robot.
-     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.</p>
-     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
-     * <p>omega: The angular velocity of the robot in radians per second.</p>
+     * <li>vx: The velocity of the robot in the x (forward) direction</li>
+     * <li>vy: The velocity of the robot in the y (sideways) direction. (Positive values mean the robot is moving to the left).</li>
+     * <li>omega: The angular velocity of the robot.</li>
      * 
-     * @param powerDriveMode whether the ChassisSpeeds is in meters per second (false) or motor power (true)
-     * @param speeds Desired speeds of drivetrain (using swerve modules)
+     * <p>
+     * If power drive mode then speeds X, Y, and Omega are in motor powers from -1 to 1.
+     * If normal drive mode then X and Y are in meters per second and Omega is in radians per second
+     * </p>
+     * 
+     * @param speeds desired speeds of drivetrain (using swerve modules)
+     * @param powerDriveMode if {@code true} speeds are in motor power (-1 to 1), if not then they are in default unit
      */
     public void setDesiredState(ChassisSpeeds speeds, boolean powerDriveMode) {
-
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
-
         for (int i = 0; i < modules.length; i++) {
             modules[i].setDesiredState(states[i], powerDriveMode);
         }
@@ -195,17 +198,28 @@ public class SwerveDrivetrain extends SubsystemBase {
 
     /**
      * Set speeds of robot.
-     * <li>vx: The velocity of the robot in the x (forward) direction in meter per second.</li>
-     * <li>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</li>
-     * <li>omega: The angular velocity of the robot in radians per second.</li>
+     * 
+     * <p>
+     * vx: The velocity of the robot in the x (forward) direction in meter per second.
+     * vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).
+     * omega: The angular velocity of the robot in radians per second.
+     * </p>
+     * 
+     * <p>
+     * If power drive mode then speeds X, Y, and Omega are in motor powers from -1 to 1.
+     * If normal drive mode then X and Y are in meters per second and Omega is in radians per second
+     * </p>
+     * 
+     * <p>
+     * If field relative, forward will be directly away from driver, no matter the rotation of the robot.
+     * If robot relative, forward will be whatever direction the robot is facing in.
+     * </p>
      * 
      * @see https://ibb.co/dJrL259
      * 
      * @param speeds Desired speeds of drivetrain (using swerve modules)
-     * @param powerDriveMode whether the ChassisSpeeds is in meters per second (false) or motor power (true)
-     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate system. If field relative, forward will be directly away from driver, no matter the rotation of the robot.
-     * If robot relative, forward will be whatever direction the robot is facing in.
-     */
+     * @param powerDriveMode True if in power drive mode with motor powers, false if in normal drive mode with default units
+     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate system.     */
     public void setDesiredState(ChassisSpeeds speeds, boolean powerDriveMode, boolean fieldRelative) {
 
         if (fieldRelative) {
