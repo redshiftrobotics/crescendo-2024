@@ -23,11 +23,15 @@ public class AutoDriveTo extends Command {
 
     private double atSetpointCounter = 0;
 
+    private boolean xOnlyMode;
+
     public AutoDriveTo(SwerveDrivetrain subsystem, Translation2d translation) {
         this.drivetrain = subsystem;
 
         goalX = translation.getX();
         goalY = translation.getY();
+
+        xOnlyMode = Math.abs(goalX) > Math.abs(goalY);
 
         xMovePID = new PIDController(
             RobotMovementConstants.TRANSLATION_PID_P,
@@ -71,6 +75,9 @@ public class AutoDriveTo extends Command {
 
         double xSpeed = xMovePID.calculate(x, goalX);
         double ySpeed = yMovePID.calculate(y, goalY);
+
+        if (xOnlyMode) ySpeed = 0;
+        else xSpeed = 0;
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
             xSpeed,

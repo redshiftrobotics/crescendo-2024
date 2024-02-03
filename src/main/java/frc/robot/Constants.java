@@ -158,9 +158,10 @@ public final class Constants {
 
         // Drive PID values
         public static final double DRIVE_PID_P = 0.000006;
-        public static final double DRIVE_PID_I = 0;
+        public static final double DRIVE_PID_I = 0.000001;
         public static final double DRIVE_PID_D = 0;
         public static final double DRIVE_PID_FF = 0.000015;
+        public static final double DRIVE_PID_MAX_I = 0.001;
 
         // Steering PID values
         public static final double STEERING_PID_P = 0.5;

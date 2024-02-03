@@ -78,6 +78,7 @@ public class SwerveModule extends SubsystemBase {
         drivePIDController.setI(SwerveModuleConstants.DRIVE_PID_I);
         drivePIDController.setD(SwerveModuleConstants.DRIVE_PID_D);
         drivePIDController.setFF(SwerveModuleConstants.DRIVE_PID_FF);
+        drivePIDController.setIAccum(SwerveModuleConstants.DRIVE_PID_MAX_I);
         drivePIDController.setOutputRange(-1, 1);
 
         // --- Steering Motor ---
