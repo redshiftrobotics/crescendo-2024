@@ -35,7 +35,7 @@ public final class Constants {
                 currentBot = Bot.WOOD_BOT;
                 break;
 
-            case "1": // Practice Bot Serial Number
+            case "03238024": // Practice Bot Serial Number
                 currentBot = Bot.PRACTICE_BOT;
                 break;
             
@@ -115,28 +115,28 @@ public final class Constants {
             case PRACTICE_BOT:
             default: // Temporary default to practice bot 
                 // Front Left
-                VELOCITY_MOTOR_ID_FL = 41;
-                ANGULAR_MOTOR_ID_FL = 40;
-                ANGULAR_MOTOR_ENCODER_ID_FL = 1;
-                ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.611328125;
+                VELOCITY_MOTOR_ID_FL = 2;
+                ANGULAR_MOTOR_ID_FL = 3;
+                ANGULAR_MOTOR_ENCODER_ID_FL = 3;
+                ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.256015325670498;
                 
                 // Front right
-                VELOCITY_MOTOR_ID_FR = 4;
-                ANGULAR_MOTOR_ID_FR = 5;
+                VELOCITY_MOTOR_ID_FR = 16;
+                ANGULAR_MOTOR_ID_FR = 17;
                 ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-                ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.282958;
+                ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.248045977011494;
 
                 // Back left
-                VELOCITY_MOTOR_ID_BL = 3;
-                ANGULAR_MOTOR_ID_BL = 2;
+                VELOCITY_MOTOR_ID_BL = 8;
+                ANGULAR_MOTOR_ID_BL = 9;
                 ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-                ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.9260253906;
+                ANGULAR_MOTOR_ENCODER_OFFSET_BL =-0.894674329501916;
                 
                 // Back right
-                VELOCITY_MOTOR_ID_BR = 42;
-                ANGULAR_MOTOR_ID_BR = 6;
-                ANGULAR_MOTOR_ENCODER_ID_BR = 3;
-                ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.8641367187;   
+                VELOCITY_MOTOR_ID_BR = 10;
+                ANGULAR_MOTOR_ID_BR = 11;
+                ANGULAR_MOTOR_ENCODER_ID_BR = 1;
+                ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.530498084291188;   
                 break;
 
             // case COMPETITION_BOT:
