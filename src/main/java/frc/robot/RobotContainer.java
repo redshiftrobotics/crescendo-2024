@@ -4,6 +4,7 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.SwerveRemoteOperation.SwerveDriveBaseControl;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -65,28 +66,28 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
         SmartDashboard.putData(autoChooser);
 
-        setUpDriveController();
         configureBindings();
     }
 
     public void setUpDriveController() {
         // Create joysticks
         final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
-        // final HIDType genericHIDType = genericHID.getType();
-        final HIDType genericHIDType = GenericHID.HIDType.kHIDJoystick;
+        final HIDType genericHIDType = genericHID.getType();
 
         SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-        SmartDashboard.putString("Bot Name", Constants.currentBot.toString());
+        SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " " + Constants.serialNumber);
+
+        drivetrain.removeDefaultCommand();
+
+        SwerveDriveBaseControl control;
 
         if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
-            final CommandJoystick driverJoystick = new CommandJoystick(genericHID.getPort());
-            SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
-            drivetrain.setDefaultCommand(control);
+            control = new SwerveDriveJoystickControl(drivetrain, new CommandJoystick(genericHID.getPort()));
         } else {
-            final CommandXboxController xboxController = new CommandXboxController(genericHID.getPort());
-            SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
-            drivetrain.setDefaultCommand(control);
+            control = new SwerveDriveXboxControl(drivetrain, new CommandXboxController(genericHID.getPort()));
         }
+
+        drivetrain.setDefaultCommand(control);
     }
 
     /** Use this method to define your trigger->command mappings. */

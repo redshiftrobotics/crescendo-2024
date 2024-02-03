@@ -13,6 +13,7 @@ public final class Constants {
     public static enum Bot { WOOD_BOT, PRACTICE_BOT, COMPETITION_BOT }
     
     public static final Bot currentBot;
+    public static final String serialNumber;
 
     /**
      * This code determines what bot is being deployed and sets constants accordingly.
@@ -23,7 +24,7 @@ public final class Constants {
      * @author Aceius E.
      */
     static {
-        final String serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "default";
+        serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "-default-";
 
         switch (serialNumber) {
             case "03282B00": // Wood Bot Serial Number
@@ -34,7 +35,7 @@ public final class Constants {
                 currentBot = Bot.PRACTICE_BOT;
                 break;
             
-            case "2": // Competition Bot Serial Number
+            case "-default-": // Competition Bot Serial Number
             default:  // Also use competition bot as default
                 currentBot = Bot.COMPETITION_BOT;
                 break;
