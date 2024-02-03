@@ -255,24 +255,6 @@ public class SwerveDrivetrain extends SubsystemBase {
         return gyro.getRotation3d();
     }
 
-    /** Reset the gyro. */
-    public void resetGyro() {
-        gyro.reset();
-    }
-
-    /**
-     * Zero the yaw of the gyro. Can only change zero yaw when sensor is done calibrating
-     * 
-     * @return successful?
-     */
-    public boolean zeroGyroYaw() {
-        if (gyro.isCalibrating()) return false;
-
-        gyro.zeroYaw();
-
-        return true;
-    }
-
     // --- Util ---
 
     /**
