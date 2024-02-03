@@ -125,10 +125,6 @@ public class SwerveModule extends SubsystemBase {
 
     /** Stop drive and steering motor of swerve module and set desired state to nothing */
     public void stop() {
-
-        // Make sure we have no desired state, or else we would just start driving again 
-        toDefaultState();
-
         // Manually stop both motors in swerve module
         driveMotor.stopMotor();
         steeringMotor.stopMotor();

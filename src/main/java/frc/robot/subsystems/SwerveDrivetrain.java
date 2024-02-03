@@ -38,12 +38,6 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     private final SwerveDriveOdometry odometry;
 
-    /** 
-     * The ChassisSpeeds object represents the speeds of a robot chassis.
-     * @see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/intro-and-chassis-speeds.html#the-chassis-speeds-class
-     */
-    private ChassisSpeeds desiredSpeeds;
-
     // Our 4 swerve Modules
     private final SwerveModule moduleFL, moduleFR, moduleBL, moduleBR;
     private final SwerveModule[] modules;
@@ -192,9 +186,7 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     public void setDesiredState(ChassisSpeeds speeds, boolean powerDriveMode) {
 
-        this.desiredSpeeds = speeds;
-
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(desiredSpeeds);
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
 
         for (int i = 0; i < modules.length; i++) {
             modules[i].setDesiredState(states[i], powerDriveMode);
@@ -222,16 +214,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
         setDesiredState(speeds, powerDriveMode);
     }
-
-    /**
-     * Get the desired speeds of robot
-     *
-     * @return the value
-     */
-    public ChassisSpeeds getDesiredState() {
-        return desiredSpeeds;
-    }
-
+    
     /**
      * Get all the swerve module positions
      * 

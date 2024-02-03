@@ -44,11 +44,8 @@ public class AutoRotateTo extends Command {
         final double currentAngle = drivetrain.getHeading().getRadians();
 
         double turnsSeed = rotatePID.calculate(currentAngle,this.angleGoal);
-
-        ChassisSpeeds speeds = drivetrain.getDesiredState();
-        speeds.omegaRadiansPerSecond=turnsSeed;
         
-        drivetrain.setDesiredState(speeds);
+        drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
 
         if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS) atSetpointCounter += TimedRobot.kDefaultPeriod;
         else atSetpointCounter=0;
