@@ -21,7 +21,7 @@ public class OptionButton {
      * Different modes which a OptionButton can be in
      */
     public static enum ActivationMode {
-        /** Like toggle, but stays on until manfully toggled off. Probably just use .onTrue() instead */
+        /** Like toggle, but stays on until manually toggled off with .toggleOff(). Probably just use .onTrue() instead */
         TAP,
 
         /** standard button behavior, on when pressed, off when released */
@@ -60,18 +60,20 @@ public class OptionButton {
         }
     }
 
+    /** Manually toggle state, has no effect if it is hold button */
     public void toggle() {
         isToggled = !isToggled;
     }
 
+    /** Manually toggle state on, has no effect if it is hold button */
     public void toggleOn() {
         isToggled = true;
     }
 
+    /** Manually toggle state off, has no effect if it is hold button */
     public void toggleOff() {
         isToggled = false;
     }
-
 
     /**
      * <p>Get the state of the button</p>
@@ -93,6 +95,11 @@ public class OptionButton {
         }
     }
 
+    /**
+     * Get state, but return it as a int instead of a boolean
+     * 
+     * @return 1 if true, 0 is false
+     */
     public int getStateAsInt() {
         return getState() ? 1 : 0;
     }

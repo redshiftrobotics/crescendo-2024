@@ -45,11 +45,7 @@ public class SwerveDrivetrain extends SubsystemBase {
     private ChassisSpeeds desiredSpeeds;
 
     // Our 4 swerve Modules
-    private final SwerveModule moduleFL;
-    private final SwerveModule moduleFR;
-    private final SwerveModule moduleBL;
-    private final SwerveModule moduleBR;
-
+    private final SwerveModule moduleFL, moduleFR, moduleBL, moduleBR;
     private final SwerveModule[] modules;
 
     /**
@@ -176,6 +172,7 @@ public class SwerveDrivetrain extends SubsystemBase {
     public void enablePowerDriveMode() {
         modulesMap(SwerveModule::enablePowerDriveMode);
     }
+    
     public void disablePowerDriveMode() {
         modulesMap(SwerveModule::disablePowerDriveMode);
     }
