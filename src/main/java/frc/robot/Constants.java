@@ -11,12 +11,7 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public final class Constants {
     public static enum Bot { WOOD_BOT, PRACTICE_BOT, COMPETITION_BOT }
-
-    public static class RobotDimensions {
-        public static final double ROBOT_LENGTH_X = 1;
-        public static final double ROBOT_LENGTH_Y = 1;
-    }
-
+    
     public static final Bot currentBot;
 
     /**
@@ -194,9 +189,27 @@ public final class Constants {
     }
 
     public static class SwerveDrivetrainConstants {
+        static { switch (currentBot) {
+            case WOOD_BOT:
+                MODULE_LOCATION_X = 26.0 / 100;
+                MODULE_LOCATION_Y = 28.5 / 100;
+                break;
+        
+            case PRACTICE_BOT:
+            default: // Temporary default to practice bot 
+                MODULE_LOCATION_X = 54 / 100;
+                MODULE_LOCATION_Y = 54 / 100;
+                break;
+
+            // case COMPETITION_BOT:
+            // default:
+            
+            //     break;
+        }}
+
         // distance of swerve modules from center of robot, in meters
-        public static final double MODULE_LOCATION_Y = 28.5 / 100;
-        public static final double MODULE_LOCATION_X = 26.0 / 100;
+        public static final double MODULE_LOCATION_Y;
+        public static final double MODULE_LOCATION_X;
     }
 }
 
