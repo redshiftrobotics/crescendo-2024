@@ -4,8 +4,10 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.HangerMove;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
+import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -27,6 +29,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+    private final Hanger hanger = new Hanger(0, 0, 0, 0, 0);
+    private final CommandJoystick joystick = new CommandJoystick(1);
+
 
     // The robot's subsystems and commands are defined here...
     private final SwerveModule swerveModuleFL = new SwerveModule(
@@ -89,6 +95,7 @@ public class RobotContainer {
 
     /** Use this method to define your trigger->command mappings. */
     private void configureBindings() {
+        joystick.button(6).whileTrue(new HangerMove());
     }
 
     /**
