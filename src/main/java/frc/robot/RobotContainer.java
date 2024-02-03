@@ -67,6 +67,8 @@ public class RobotContainer {
         SmartDashboard.putData(autoChooser);
 
         configureBindings();
+
+        setUpDriveController();
     }
 
     public void setUpDriveController() {
