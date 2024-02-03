@@ -169,12 +169,16 @@ public class SwerveDrivetrain extends SubsystemBase {
         return speeds;
     }
 
-    public void enablePowerDriveMode() {
-        modulesMap(SwerveModule::enablePowerDriveMode);
-    }
-    
-    public void disablePowerDriveMode() {
-        modulesMap(SwerveModule::disablePowerDriveMode);
+    /**
+     * Set robot relative speeds of robot in meters per second mode.
+     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.</p>
+     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
+     * <p>omega: The angular velocity of the robot in radians per second.</p>
+     * 
+     * @param speeds Desired speeds of drivetrain (using swerve modules)
+     */
+    public void setDesiredState(ChassisSpeeds speeds) {
+        setDesiredState(speeds, false);
     }
 
     /**
@@ -183,16 +187,17 @@ public class SwerveDrivetrain extends SubsystemBase {
      * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
      * <p>omega: The angular velocity of the robot in radians per second.</p>
      * 
+     * @param powerDriveMode whether the ChassisSpeeds is in meters per second (false) or motor power (true)
      * @param speeds Desired speeds of drivetrain (using swerve modules)
      */
-    public void setDesiredState(ChassisSpeeds speeds) {
+    public void setDesiredState(ChassisSpeeds speeds, boolean powerDriveMode) {
 
         this.desiredSpeeds = speeds;
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(desiredSpeeds);
 
         for (int i = 0; i < modules.length; i++) {
-            modules[i].setDesiredState(states[i]);
+            modules[i].setDesiredState(states[i], powerDriveMode);
         }
     }
 
@@ -205,16 +210,17 @@ public class SwerveDrivetrain extends SubsystemBase {
      * @see https://ibb.co/dJrL259
      * 
      * @param speeds Desired speeds of drivetrain (using swerve modules)
+     * @param powerDriveMode whether the ChassisSpeeds is in meters per second (false) or motor power (true)
      * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate system. If field relative, forward will be directly away from driver, no matter the rotation of the robot.
      * If robot relative, forward will be whatever direction the robot is facing in.
      */
-    public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative) {
+    public void setDesiredState(ChassisSpeeds speeds, boolean powerDriveMode, boolean fieldRelative) {
 
         if (fieldRelative) {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
         }
 
-        setDesiredState(speeds);
+        setDesiredState(speeds, powerDriveMode);
     }
 
     /**

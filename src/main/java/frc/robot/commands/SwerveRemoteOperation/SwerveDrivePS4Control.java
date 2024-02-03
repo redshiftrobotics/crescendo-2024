@@ -54,6 +54,6 @@ public class SwerveDrivePS4Control extends SwerveDriveBaseControl {
         SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);        
         SmartDashboard.putBoolean("Field Relieve", false);
 
-        drivetrain.setDesiredState(speeds, false);
+        drivetrain.setDesiredState(speeds,  true, false);
     }
 }

@@ -66,6 +66,6 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
         SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);        
         SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
 
-        drivetrain.setDesiredState(speeds, isFieldRelative);
+        drivetrain.setDesiredState(speeds, true, isFieldRelative);
     }
 }

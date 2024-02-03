@@ -43,13 +43,8 @@ public class SwerveModule extends SubsystemBase {
     /** Default state, forward and still */
     private final static SwerveModuleState defaultState = new SwerveModuleState();
 
-    /** Represents the state the swerve module wants to be in */
-    private SwerveModuleState desiredState;
-
     /** Locations of the wheel relative to the physical center of the robot. */
     private final Translation2d distanceFromCenter;
-
-    private boolean powerDriveMode = false;
 
     /**
      * Constructor for an individual Swerve Module.
@@ -122,43 +117,8 @@ public class SwerveModule extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        if (desiredState != null) { 
-
-            // --- Set drive motor ---
-
-            if (desiredState.speedMetersPerSecond == 0) {
-                // If our desired speed is 0, just use the built in motor stop, no matter the mode.
-                
-                // Stops motor movement. Motor can be moved again by calling set without having to re-enable the motor.
-                driveMotor.stopMotor();
-            }
-            else if (powerDriveMode) {
-                // If we are in power drive mode just directly set power to our desired speed.
-
-                // This is a bit of an abuse of the SwerveModuleState object as we treat speeds as power values from 0 to 1.
-                // We do this because we don't want to have to deal with a PID controller when we are just driving, as a human driver does not care about they exact speed mapping.
-                driveMotor.set(desiredState.speedMetersPerSecond);
-            }
-            else {
-                // If we are in normal drive mode use the motor controller to set our target velocity
-
-                // The CANSparkMaxes have a builtin PID controller on them we can use to set a target velocity
-                // We first convert our speed from meters per second to rotations per minute, as that is the native unit of our devices
-                final double desiredDriveRotationsPerMinute = (desiredState.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
-                drivePIDController.setReference(desiredDriveRotationsPerMinute, ControlType.kVelocity);
-            }
-
-            // --- Set steering motor ---
-
-            // Get our current angle and our desired angle, as we need both
-            final double desiredRotations = desiredState.angle.getRotations();
-            final double measuredRotations = getSteeringAngleRotations();
-
-            // Calculate how fast to spin the motor to get to the desired angle using our PID controller
-            final double steeringMotorSpeed = steeringPIDController.calculate(measuredRotations, desiredRotations);
-            // Then set the motor to spin at that speed
-            steeringMotor.set(steeringMotorSpeed);
-        }
+        // Calculate how fast to spin the motor to get to the desired angle using our PID controller, then set the motor to spin at that speed
+        steeringMotor.set(steeringPIDController.calculate(getSteeringAngleRotations()));
     }
 
     // --- Direct control methods ---
@@ -167,7 +127,7 @@ public class SwerveModule extends SubsystemBase {
     public void stop() {
 
         // Make sure we have no desired state, or else we would just start driving again 
-        setDesiredState(null);
+        toDefaultState();
 
         // Manually stop both motors in swerve module
         driveMotor.stopMotor();
@@ -179,7 +139,7 @@ public class SwerveModule extends SubsystemBase {
      * This should have the module facing forward and not spinning.
      */
     public void toDefaultState() {
-        setDesiredState(defaultState);
+        setDesiredState(defaultState, false);
     }
 
     // --- Getters and setters for modules desired SwerveModuleState ---
@@ -201,15 +161,41 @@ public class SwerveModule extends SubsystemBase {
      * You can use {@code Rotation2d.fromDegrees()} to create angle.
      * 
      * @param state New state of swerve module, contains speed in meters per second and angle as {@link Rotation2d}
+     * @param powerDriveMode whether the SwerveModuleState is in meters per second (false) or motor power (true)
      * @param shouldOptimize Whether to optimize the way the swerve module gets to the desired state
      */
-    public void setDesiredState(SwerveModuleState state, boolean shouldOptimize) {
+    public void setDesiredState(SwerveModuleState state, boolean powerDriveMode, boolean shouldOptimize) {
         if (shouldOptimize && state != null) {
             // Optimize the reference state to avoid spinning further than 90 degrees
             state = optimize(state,  getState().angle);
         }
+
+        // --- Set steering motor ---
+        steeringPIDController.setSetpoint(state.angle.getRotations());
         
-        this.desiredState = state;
+        // --- Set drive motor ---
+
+        if (state.speedMetersPerSecond == 0) {
+            // If our desired speed is 0, just use the builtin motor stop, no matter the mode.
+            
+            // Stops motor movement. Motor can be moved again by calling set without having to re-enable the motor.
+            driveMotor.stopMotor();
+        }
+        else if (powerDriveMode) {
+            // If we are in power drive mode just directly set power to our desired speed.
+
+            // This is a bit of an abuse of the SwerveModuleState object as we treat speeds as power values from -1 to 1.
+            // We do this because we don't want to have to deal with a PID controller when we are just driving, as a human driver does not care about they exact speed mapping.
+            driveMotor.set(state.speedMetersPerSecond);
+        }
+        else {
+            // If we are in normal drive mode use the motor controller to set our target velocity
+
+            // The CANSparkMaxes have a builtin PID controller on them we can use to set a target velocity.
+            // We first convert our speed from meters per second to rotations per minute, as that is the native unit of our devices
+            final double desiredDriveRotationsPerMinute = (state.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
+            drivePIDController.setReference(desiredDriveRotationsPerMinute, ControlType.kVelocity);
+        }
     }
 
     /**
@@ -219,28 +205,8 @@ public class SwerveModule extends SubsystemBase {
      * 
      * @param state New state of swerve module, contains speed in meters per second and angle.
      */
-    public void setDesiredState(SwerveModuleState state) {
-        setDesiredState(state, true);
-    }
-
-    /**
-     * Get the desired state of the swerve module. The state is the speed and angle of the swerve module.
-     * 
-     * @return State that the swerve module is trying to achieve, contains speed in meters per second and angle.
-     */
-    public SwerveModuleState getDesiredState() {
-        return desiredState;
-    }
-
-
-    // --- Power Drive Mode control ---
-
-    public void enablePowerDriveMode() {
-        this.powerDriveMode = true;
-    }
-
-    public void disablePowerDriveMode() {
-        this.powerDriveMode = false;
+    public void setDesiredState(SwerveModuleState state, boolean powerDriveMode) {
+        setDesiredState(state, powerDriveMode, true);
     }
 
     // --- Public info getters ---

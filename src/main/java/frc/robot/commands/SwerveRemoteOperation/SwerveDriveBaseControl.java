@@ -36,7 +36,6 @@ public abstract class SwerveDriveBaseControl extends Command {
     */
    @Override
    public void initialize() {
-      drivetrain.enablePowerDriveMode();
       drivetrain.toDefaultStates();
 
       SmartDashboard.putBoolean("ControlActive", true);
@@ -50,6 +49,7 @@ public abstract class SwerveDriveBaseControl extends Command {
 
       // Position display
       final Pose2d robotPosition = drivetrain.getPosition();
+      
       SmartDashboard.putNumber("PoseX", robotPosition.getX());
       SmartDashboard.putNumber("PoseY", robotPosition.getX());
       SmartDashboard.putNumber("PoseDegrees", robotPosition.getRotation().getDegrees());
@@ -79,7 +79,6 @@ public abstract class SwerveDriveBaseControl extends Command {
     */
    @Override
    public void end(boolean interrupted) {
-      drivetrain.disablePowerDriveMode();
       drivetrain.stop();
 
       SmartDashboard.putBoolean("ControlActive", false);
