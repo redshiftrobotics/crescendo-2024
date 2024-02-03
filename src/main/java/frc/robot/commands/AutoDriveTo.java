@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
@@ -65,7 +66,7 @@ public class AutoDriveTo extends Command {
         SmartDashboard.putNumber("PoseX", position.getX());
 		SmartDashboard.putNumber("PoseDegrees", position.getRotation().getDegrees()); 
 
-        if (Math.abs(x - goalX) < RobotMovementConstants.POS_TOLERANCE && Math.abs(y - goalY)<RobotMovementConstants.POS_TOLERANCE) atSetpointCounter+=20;
+        if (Math.abs(x - goalX) < RobotMovementConstants.POSITION_TOLERANCE_METERS && Math.abs(y - goalY)<RobotMovementConstants.POSITION_TOLERANCE_METERS) atSetpointCounter+=TimedRobot.kDefaultPeriod;
         else atSetpointCounter=0;
 
         double xSpeed = xMovePID.calculate(x, goalX);
@@ -81,7 +82,7 @@ public class AutoDriveTo extends Command {
 
     @Override
     public boolean isFinished() {
-        return atSetpointCounter > RobotMovementConstants.MOVE_PID_TOLERANCE_TIME;
+        return atSetpointCounter > RobotMovementConstants.AT_SETPOINT_TOLERANCE_TIME_SECONDS;
     }
 
     @Override

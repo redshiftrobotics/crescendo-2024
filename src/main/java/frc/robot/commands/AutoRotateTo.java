@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.Constants.RobotMovementConstants;
 
 // How to make Command (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html
@@ -49,13 +50,13 @@ public class AutoRotateTo extends Command {
         
         drivetrain.setDesiredState(speeds);
 
-        if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE) atSetpointCounter+=20;
+        if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS) atSetpointCounter += TimedRobot.kDefaultPeriod;
         else atSetpointCounter=0;
     }
 
     @Override
     public boolean isFinished() {
-        return atSetpointCounter>RobotMovementConstants.ROTATE_PID_TOLERANCE_TIME;
+        return atSetpointCounter > RobotMovementConstants.ROTATE_AT_SETPOINT_TIME_SECONDS;
     }
 
     @Override

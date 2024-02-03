@@ -64,14 +64,11 @@ public final class Constants {
     }
     
     public static class RobotMovementConstants {
-        public static final double maxSpeed = 1;
-        public static final double maxTurnSpeed = 1;
+        public static final double AT_SETPOINT_TOLERANCE_TIME_SECONDS = 1;
+        public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 1;
 
-        public static final double MOVE_PID_TOLERANCE_TIME = 500 / 20;
-        public static final double ROTATE_PID_TOLERANCE_TIME = 500 / 20;
-
-        public static final double POS_TOLERANCE = 0.01;
-        public static final double ANGLE_TOLERANCE = Math.PI / 30;
+        public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(5);
+        public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(5);
 
         public static final double ROTATION_PID_P = 0.5;
         public static final double ROTATION_PID_I = 0;
