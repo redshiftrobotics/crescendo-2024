@@ -1,6 +1,7 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -16,6 +17,7 @@ import frc.robot.utils.OptionButton.ActivationMode;
 public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
     private final OptionButton preciseModeButton;
     private final OptionButton boostModeButton;
+    private final OptionButton fieldRelativeButton;
 
     // private final OptionButton fieldRelativeButton;
     
@@ -32,6 +34,7 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
         // OptionButton exampleToggleButton = new OptionButton(controller::a, ActivationMode.TOGGLE);
         preciseModeButton = new OptionButton(driverXboxController::b, ActivationMode.TOGGLE);
         boostModeButton = new OptionButton(driverXboxController::leftStick, ActivationMode.HOLD);
+        fieldRelativeButton = new OptionButton(driverXboxController::povUp, ActivationMode.TOGGLE);
 
         // fieldRelativeButton = new OptionButton(driverXboxController::, ActivationMode.TOGGLE)
 
@@ -39,75 +42,30 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
         addRequirements(drivetrain);
     }
 
-    /**
-     * The initial subroutine of a command. Called once when the command is initially scheduled.
-     * Puts all swerve modules to the default state, staying still and facing forwards.
-     */
-    @Override
-    public void initialize() {
-        drivetrain.enablePowerDriveMode();
-        drivetrain.toDefaultStates();
-    }
-
-    /**
-     * The main body of a command. Called repeatedly while the command is scheduled (Every 20 ms).
-     */
     @Override
     public void execute() {
         final CommandXboxController xboxController = (CommandXboxController) controller;
 
-        double leftX = applyJoystickDeadzone(xboxController.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
-        double leftY = applyJoystickDeadzone(xboxController.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
+        final double leftX = applyJoystickDeadzone(xboxController.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
+        final double leftY = applyJoystickDeadzone(xboxController.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
 
-        double rightX = -applyJoystickDeadzone(xboxController.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
+        final double rightX = -applyJoystickDeadzone(xboxController.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
 
-        int speedLevel = 1
-        - preciseModeButton.getStateAsInt()
-        + boostModeButton.getStateAsInt();
+        final boolean isFieldRelative = fieldRelativeButton.getState();
+
+        final int speedLevel = 1
+            - preciseModeButton.getStateAsInt()
+            + boostModeButton.getStateAsInt();
 
         final ChassisSpeeds speeds = new ChassisSpeeds(
             leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
             leftY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
             rightX * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
 
-        drivetrain.setDesiredState(speeds, false);
+        // Display relevant data on shuffleboard.
+        SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);        
+        SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
+
+        drivetrain.setDesiredState(speeds, isFieldRelative);
     }
-
-    /**
-     * Whether the command has finished. Once a command finishes, the scheduler will call its end() method and un-schedule it.
-     * Always return false since we never want to end in this case.
-     */
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
-
-    /**
-     * The action to take when the command ends. Called when either the command finishes normally, or when it interrupted/canceled.
-     * Here, this should only happen in this case if we get interrupted.
-     */
-    @Override
-    public void end(boolean interrupted) {
-        drivetrain.disablePowerDriveMode();
-        drivetrain.stop();
-    }
-
-    // --- Util ---
-
-    /**
-     * Utility method. Apply a deadzone to the joystick output to account for stick drift and small bumps.
-     * 
-     * @param joystickValue Value in [-1, 1] from joystick axis
-     * @return {@code 0} if {@code |joystickValue| <= deadzone}, else the {@code joystickValue} scaled to the new control area
-     */
-    public static double applyJoystickDeadzone(double joystickValue, double deadzone) {
-        if (Math.abs(joystickValue) <= deadzone) {
-            // If the joystick |value| is in the deadzone than zero it out
-            return 0;
-        }
-
-        // scale value from the range [0, 1] to (deadzone, 1]
-        return joystickValue * (1 + deadzone) - Math.signum(joystickValue) * deadzone;
-    }
-
 }

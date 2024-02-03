@@ -63,13 +63,6 @@ public class SwerveDriveJoystickControl extends SwerveDriveBaseControl {
         SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);        
         SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
 
-        SmartDashboard.putNumber("Heading Degrees", drivetrain.getHeading().getDegrees());
-
-        final ChassisSpeeds currentSpeeds = drivetrain.getState();
-        final double speedMetersPerSecond = Math.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
-        final double metersPerSecondToMilesPerHourConversion = 2.237;
-        SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
-
         drivetrain.setDesiredState(speeds, isFieldRelative);
     }
 }

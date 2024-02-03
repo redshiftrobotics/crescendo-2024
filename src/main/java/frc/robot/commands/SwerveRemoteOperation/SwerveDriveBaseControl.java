@@ -1,6 +1,7 @@
 package frc.robot.commands.SwerveRemoteOperation;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -46,11 +47,21 @@ public abstract class SwerveDriveBaseControl extends Command {
     */
    @Override
    public void execute() {
-      final Pose2d robotPosition = drivetrain.getPosition();
 
+      // Position display
+      final Pose2d robotPosition = drivetrain.getPosition();
       SmartDashboard.putNumber("PoseX", robotPosition.getX());
       SmartDashboard.putNumber("PoseY", robotPosition.getX());
       SmartDashboard.putNumber("PoseDegrees", robotPosition.getRotation().getDegrees());
+
+      
+      // Speed degrees
+      final ChassisSpeeds currentSpeeds = drivetrain.getState();
+      final double speedMetersPerSecond = Math.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
+      
+      final double metersPerSecondToMilesPerHourConversion = 2.237;
+      SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
+      SmartDashboard.putNumber("Heading Degrees", drivetrain.getHeading().getDegrees());
    }
 
    /**
