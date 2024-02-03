@@ -83,6 +83,8 @@ public class SwerveModule extends SubsystemBase {
         // --- Steering Motor ---
         steeringMotor = new CANSparkMax(steeringMotorDeviceId, MotorType.kBrushless);
 
+        steeringMotor.setIdleMode(IdleMode.kBrake);
+
         // --- Steering Encoder ---
         steeringEncoder = new CANcoder(steeringAbsoluteEncoderId);
 
