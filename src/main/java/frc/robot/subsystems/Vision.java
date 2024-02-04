@@ -6,7 +6,9 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,8 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // Subsystem Documentation documentation: https://docs.wpilib.org/en/stable/docs/software/commandbased/subsystems.html
 
 /**
- * How to make a Subsystem:
- * 1. Copy this file, remember that class name has to match 
+ * 
  */
 
 public class Vision extends SubsystemBase {
@@ -71,8 +72,33 @@ public class Vision extends SubsystemBase {
         targets = result.getTargets();
         if(bestTag != null) {
             SmartDashboard.putNumber("Tag ID", bestTag.getFiducialId());
+            Transform3d tagPose = bestTag.getBestCameraToTarget();
+            Rotation3d tagRot = tagPose.getRotation();
+            // SmartDashboard.putNumberArray("Tag X Y Z", new double[] {tagPose.getX(), tagPose.getY(), tagPose.getZ()});
+            // SmartDashboard.putNumberArray("Tag Yaw, Pitch, Roll", new double[] {
+            //     Units.radiansToDegrees(tagRot.getZ()),
+            //     Units.radiansToDegrees(tagRot.getY()),
+            //     Units.radiansToDegrees(tagRot.getX())});
+            SmartDashboard.putNumber("Tag Pose X", tagPose.getX());
+            SmartDashboard.putNumber("Tag Pose Y", tagPose.getY());
+            SmartDashboard.putNumber("Tag Pose Z", tagPose.getZ());
+            SmartDashboard.putNumber("Tag Pose Yaw", tagRot.getZ());
+            SmartDashboard.putNumber("Tag Pose Pitch", tagRot.getY());
+            SmartDashboard.putNumber("Tag Pose Roll", tagRot.getX());
+            SmartDashboard.putNumber("Tag Yaw", bestTag.getYaw());
+            SmartDashboard.putNumber("Tag Pitch", bestTag.getPitch());
         } else {
-            SmartDashboard.putNumber("Tag ID", -1);
+            SmartDashboard.putNumber("Tag Pose ID", -1);
+            SmartDashboard.putNumber("Tag Pose X", -1);
+            SmartDashboard.putNumber("Tag Pose Y", -1);
+            SmartDashboard.putNumber("Tag Pose Z", -1);
+            SmartDashboard.putNumber("Tag Pose Yaw", -1);
+            SmartDashboard.putNumber("Tag Pose Pitch", -1);
+            SmartDashboard.putNumber("Tag Pose Roll", -1);
+            SmartDashboard.putNumber("Tag Yaw", 0);
+            SmartDashboard.putNumber("Tag Pitch", 0);
+            // SmartDashboard.putNumberArray("Tag X Y Z", new double[] {0, 0, 0});
+            // SmartDashboard.putNumberArray("Tag Yaw, Pitch, Roll", new double[] {0, 0, 0});
         }
 
         
