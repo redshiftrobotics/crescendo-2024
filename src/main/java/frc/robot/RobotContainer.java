@@ -4,9 +4,9 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.SwerveRemoteOperation.SwerveDriveBaseControl;
-import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
-import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
+import frc.robot.commands.SwerveRemoteOperation.BaseControl;
+import frc.robot.commands.SwerveRemoteOperation.JoystickControl;
+import frc.robot.commands.SwerveRemoteOperation.XboxControl;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -81,12 +81,12 @@ public class RobotContainer {
 
         drivetrain.removeDefaultCommand();
 
-        SwerveDriveBaseControl control;
+        BaseControl control;
 
         if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
-            control = new SwerveDriveJoystickControl(drivetrain, new CommandJoystick(genericHID.getPort()));
+            control = new JoystickControl(drivetrain, new CommandJoystick(genericHID.getPort()));
         } else {
-            control = new SwerveDriveXboxControl(drivetrain, new CommandXboxController(genericHID.getPort()));
+            control = new XboxControl(drivetrain, new CommandXboxController(genericHID.getPort()));
         }
 
         drivetrain.setDefaultCommand(control);

@@ -11,7 +11,7 @@ import frc.robot.utils.OptionButton.ActivationMode;
 /**
  * This is the default command for the drivetrain, allowing for remote operation with PS4 controller
  */
-public class SwerveDrivePS4Control extends SwerveDriveBaseControl {
+public class PS4Control extends BaseControl {
     private final OptionButton preciseModeButton;
     private final OptionButton boostModeButton;
 
@@ -21,7 +21,7 @@ public class SwerveDrivePS4Control extends SwerveDriveBaseControl {
      * @param drivetrain The drive train of the robot
      * @param driverPS4Controller The PS4 controller used to control the drive train
      */
-    public SwerveDrivePS4Control(SwerveDrivetrain drivetrain, CommandPS4Controller driverPS4Controller){
+    public PS4Control(SwerveDrivetrain drivetrain, CommandPS4Controller driverPS4Controller){
         super(drivetrain, driverPS4Controller);
 
         // Create and configure buttons
