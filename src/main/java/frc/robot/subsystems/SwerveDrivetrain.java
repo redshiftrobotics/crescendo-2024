@@ -88,11 +88,11 @@ public class SwerveDrivetrain extends SubsystemBase {
             modulesMap(SwerveModule::getPosition, SwerveModulePosition[]::new)
         );
 
+        // Set up name and children for sendable registry
+        setName(toString());
         for (SwerveModule module : modules) {
             addChild(module.getName(), module);
         }
-
-        pose = new Pose2d();
     }
 
     // --- Pose Related Methods ---
@@ -104,11 +104,14 @@ public class SwerveDrivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         // use odometry to update the estimated pose
-        pose = odometry.update(getHeading(), getWheelPositions());
+        pose = odometry.update(
+            getHeading(),
+            getWheelPositions()
+        );
     }
 
     /**
-     * Get the pose of robot, as calculated by 
+     * Get the pose of robot, as calculated by odometry from gyro and distances swerve modules have traveled
      * 
      * @return The current positions of the robot, contains translational and rotational elements.
      */
@@ -122,7 +125,7 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     public void resetPosition() {
         odometry.resetPosition(
-            gyro.getRotation2d(),
+            getHeading(),
             getWheelPositions(),
             pose
         );
@@ -143,90 +146,81 @@ public class SwerveDrivetrain extends SubsystemBase {
     }
 
 
-    // --- Chassis Speeds to Swerve Module State Methods ---
-
+    // --- Chassis Speeds to Swerve Module States methods ---
 
     /**
-     * Get speeds of robot.
-     * <p>vx: The velocity of the robot in the x (forward) direction in meter per second.</p>
-     * <p>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</p>
-     * <p>omega: The angular velocity of the robot in radians per second.</p>
+     * Get field relative speeds of robot.
      * 
      * @return Speeds of drivetrain (from swerve modules)
      */
     public ChassisSpeeds getState() {
         // get all module states and convert them into chassis speeds
-        ChassisSpeeds speeds = kinematics.toChassisSpeeds(
+        return kinematics.toChassisSpeeds(
             modulesMap(SwerveModule::getState, SwerveModuleState[]::new)
         );
+    }
 
+    /**
+     * Get speeds of robot.
+     * 
+     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate system.
+     * @return Speeds of drivetrain (from swerve modules)
+     */
+    public ChassisSpeeds getState(boolean fieldRelative) {
+        ChassisSpeeds speeds = getState();
+        if (fieldRelative) speeds = ChassisSpeeds.fromRobotRelativeSpeeds(speeds, getHeading());
         return speeds;
     }
 
     /**
-     * Set robot relative speeds of robot in meters per second mode.
-     * <li>vx: The velocity of the robot in the x (forward) direction in meter per second.</li>
-     * <li>vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).</li>
-     * <li>omega: The angular velocity of the robot in radians per second.</li>
+     * Set robot relative speeds of robot using default speeds units.
      * 
-     * @param speeds Desired speeds of drivetrain (using swerve modules)
+     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate syste
      */
     public void setDesiredState(ChassisSpeeds speeds) {
         setDesiredState(speeds, false);
     }
 
     /**
-     * Set robot relative speeds of robot.
-     * <li>vx: The velocity of the robot in the x (forward) direction</li>
-     * <li>vy: The velocity of the robot in the y (sideways) direction. (Positive values mean the robot is moving to the left).</li>
-     * <li>omega: The angular velocity of the robot.</li>
+     * Set speeds of robot using default speeds units.
      * 
-     * <p>
-     * If power drive mode then speeds X, Y, and Omega are in motor powers from -1 to 1.
-     * If normal drive mode then X and Y are in meters per second and Omega is in radians per second
-     * </p>
-     * 
-     * @param speeds desired speeds of drivetrain (using swerve modules)
-     * @param powerDriveMode if {@code true} speeds are in motor power (-1 to 1), if not then they are in default unit
+     * @param speeds Desired speeds of drivetrain (using swerve modules)
+     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate syste
      */
-    public void setDesiredState(ChassisSpeeds speeds, boolean powerDriveMode) {
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
-        for (int i = 0; i < modules.length; i++) {
-            modules[i].setDesiredState(states[i], powerDriveMode);
-        }
+    public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative) {
+        setDesiredState(speeds, fieldRelative, false);
     }
 
     /**
      * Set speeds of robot.
      * 
      * <p>
-     * vx: The velocity of the robot in the x (forward) direction in meter per second.
-     * vy: The velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).
-     * omega: The angular velocity of the robot in radians per second.
-     * </p>
-     * 
-     * <p>
-     * If power drive mode then speeds X, Y, and Omega are in motor powers from -1 to 1.
-     * If normal drive mode then X and Y are in meters per second and Omega is in radians per second
-     * </p>
+     * Vx: the velocity of the robot in the x (forward) direction in meter per second.
+     * Vy: the velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).
+     * Omega: the angular velocity of the robot in radians per second.
      * 
      * <p>
      * If field relative, forward will be directly away from driver, no matter the rotation of the robot.
      * If robot relative, forward will be whatever direction the robot is facing in.
-     * </p>
      * 
-     * @see https://ibb.co/dJrL259
+     * <p>
+     * If power drive mode then speeds X, Y, and Omega are in motor powers from -1 to 1.
+     * If normal drive mode then X and Y are in meters per second and Omega is in radians per second
      * 
      * @param speeds Desired speeds of drivetrain (using swerve modules)
+     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate system.
      * @param powerDriveMode True if in power drive mode with motor powers, false if in normal drive mode with default units
-     * @param fieldRelative True if the robot is using a field relative coordinate system, false if using a robot relive coordinate system.     */
-    public void setDesiredState(ChassisSpeeds speeds, boolean powerDriveMode, boolean fieldRelative) {
+     */
+    public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative, boolean powerDriveMode) {
 
-        if (fieldRelative) {
-            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
+        if (fieldRelative) speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
+
+        setDesiredState(speeds);
+
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
+        for (int i = 0; i < modules.length; i++) {
+            modules[i].setDesiredState(states[i], powerDriveMode);
         }
-
-        setDesiredState(speeds, powerDriveMode);
     }
     
     /**
@@ -269,24 +263,6 @@ public class SwerveDrivetrain extends SubsystemBase {
         return gyro.getRotation3d();
     }
 
-    /** Reset the gyro. */
-    public void resetGyro() {
-        gyro.reset();
-    }
-
-    /**
-     * Zero the yaw of the gyro. Can only change zero yaw when sensor is done calibrating
-     * 
-     * @return successful?
-     */
-    public boolean zeroGyroYaw() {
-        if (gyro.isCalibrating()) return false;
-
-        gyro.zeroYaw();
-
-        return true;
-    }
-
     // --- Util ---
 
     /**
@@ -313,5 +289,10 @@ public class SwerveDrivetrain extends SubsystemBase {
         // and returns something of type T or something lower on the inheritance chain. (For example if T is Object: Integer)
         // Also takes a T array initializer
         return Arrays.stream(modules).map(func).toArray(arrayInitializer);
-    }   
+    }  
+    
+    @Override
+    public String toString() {
+        return "SwerveDrivetrain";
+    }
 }

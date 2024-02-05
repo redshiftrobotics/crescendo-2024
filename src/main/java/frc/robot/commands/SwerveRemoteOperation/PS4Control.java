@@ -54,6 +54,6 @@ public class PS4Control extends BaseControl {
         SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);        
         SmartDashboard.putBoolean("Field Relieve", false);
 
-        drivetrain.setDesiredState(speeds,  true, false);
+        drivetrain.setDesiredState(speeds, false, true);
     }
 }

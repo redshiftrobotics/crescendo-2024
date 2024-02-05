@@ -63,6 +63,6 @@ public class JoystickControl extends BaseControl {
         SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);        
         SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
 
-        drivetrain.setDesiredState(speeds, true, isFieldRelative);
+        drivetrain.setDesiredState(speeds, isFieldRelative, true);
     }
 }

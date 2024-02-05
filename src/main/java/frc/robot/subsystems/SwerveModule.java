@@ -46,6 +46,9 @@ public class SwerveModule extends SubsystemBase {
     /** Locations of the wheel relative to the physical center of the robot. */
     private final Translation2d distanceFromCenter;
 
+    /** Whether swerve module is stopped */
+    private boolean stopped = false;
+
     /**
      * Constructor for an individual Swerve Module.
      * Sets up both drive and angular motor for swerve module as well as systems to monitor and control them
@@ -120,14 +123,18 @@ public class SwerveModule extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        // Calculate how fast to spin the motor to get to the desired angle using our PID controller, then set the motor to spin at that speed
-        steeringMotor.set(steeringPIDController.calculate(getSteeringAngleRotations()));
+        if (!stopped) {
+            // Calculate how fast to spin the motor to get to the desired angle using our PID controller, then set the motor to spin at that speed
+            steeringMotor.set(steeringPIDController.calculate(getSteeringAngleRotations()));
+        }
     }
 
     // --- Direct control methods ---
 
-    /** Stop drive and steering motor of swerve module and set desired state to nothing */
+    /** Stop drive and steering motor of swerve module, module can be moved again by calling setDesiredState. */
     public void stop() {
+        stopped = true;
+
         // Manually stop both motors in swerve module
         driveMotor.stopMotor();
         steeringMotor.stopMotor();
@@ -161,14 +168,18 @@ public class SwerveModule extends SubsystemBase {
      * 
      * @param state New state of swerve module, contains speed in meters per second and angle as {@link Rotation2d}
      * @param powerDriveMode whether the SwerveModuleState is in meters per second (false) or motor power (true)
-     * @param shouldOptimize Whether to optimize the way the swerve module gets to the desired state
      */
-    public void setDesiredState(SwerveModuleState state, boolean powerDriveMode, boolean shouldOptimize) {
-        if (shouldOptimize && state != null) {
-            // Optimize the reference state to avoid spinning further than 90 degrees
-            state = optimize(state,  getState().angle);
+    public void setDesiredState(SwerveModuleState state, boolean powerDriveMode) {
+
+        // If state is null, then stop robot and don't set any states
+        if (state == null) {
+            stop();
+            return;
         }
 
+        // Optimize the reference state to avoid spinning further than 90 degrees
+        state = optimize(state, Rotation2d.fromRotations(getSteeringAngleRotations()));
+        
         // --- Set steering motor ---
         steeringPIDController.setSetpoint(state.angle.getRotations());
         
@@ -195,17 +206,6 @@ public class SwerveModule extends SubsystemBase {
             final double desiredDriveRotationsPerMinute = (state.speedMetersPerSecond * 60) / SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
             drivePIDController.setReference(desiredDriveRotationsPerMinute, ControlType.kVelocity);
         }
-    }
-
-    /**
-     * Set the state of the swerve module. Will automatically optimize.
-     * The state is the speed and angle of the swerve module.
-     * You can use {@code Rotation2d.fromDegrees()} to create angle.
-     * 
-     * @param state New state of swerve module, contains speed in meters per second and angle.
-     */
-    public void setDesiredState(SwerveModuleState state, boolean powerDriveMode) {
-        setDesiredState(state, powerDriveMode, true);
     }
 
     // --- Public info getters ---
@@ -236,19 +236,10 @@ public class SwerveModule extends SubsystemBase {
     /**
      * Get the velocity of the drive motor.
      * 
-     * @return Rotations per minute of the drive motor
-     */
-    private double getDriveSpeedRotationsPerMinute() {
-        return driveEncoder.getVelocity();
-    }
-
-    /**
-     * Get the velocity of the drive motor.
-     * 
      * @return Meters per second of the drive wheel
      */
     private double getDriveSpeedMetersPerSecond() {
-        return (SwerveModuleConstants.WHEEL_CIRCUMFERENCE * getDriveSpeedRotationsPerMinute()) / 60;
+        return (SwerveModuleConstants.WHEEL_CIRCUMFERENCE * driveEncoder.getVelocity()) / 60;
     }
 
     /**
@@ -257,16 +248,7 @@ public class SwerveModule extends SubsystemBase {
      * @return Meters traveled by the drive wheel
      */
     private double getDriveDistanceMeters() {
-        return SwerveModuleConstants.WHEEL_CIRCUMFERENCE * getDriveDistanceRotations();
-    }
-
-    /**
-     * Get the position of the drive motor.
-     * 
-     * @return Total number of rotations of the drive motor
-     */
-    private double getDriveDistanceRotations() {
-        return driveEncoder.getPosition();
+        return SwerveModuleConstants.WHEEL_CIRCUMFERENCE * driveEncoder.getPosition();
     }
 
     /**
