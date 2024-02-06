@@ -12,7 +12,7 @@ import frc.robot.utils.OptionButton.ActivationMode;
 /**
  * This is the default command for the drivetrain, allowing for remote operation with joystick
  */
-public class JoystickControl extends BaseControl {
+public class SwerveDriveJoystickControl extends SwerveDriveBaseControl {
     private final OptionButton preciseModeButton;
     private final OptionButton boostModeButton;
     private final OptionButton fieldRelativeButton;
@@ -23,7 +23,7 @@ public class JoystickControl extends BaseControl {
 	 * @param drivetrain The drivetrain of the robot
 	 * @param driverJoystick The joystick used to control drivetrain
 	 */
-    public JoystickControl(SwerveDrivetrain drivetrain, CommandJoystick driverJoystick) {
+    public SwerveDriveJoystickControl(SwerveDrivetrain drivetrain, CommandJoystick driverJoystick) {
         super(drivetrain, driverJoystick);
 
         // Create and configure buttons
@@ -31,7 +31,7 @@ public class JoystickControl extends BaseControl {
         boostModeButton = new OptionButton(driverJoystick, 1, ActivationMode.HOLD);
         fieldRelativeButton = new OptionButton(driverJoystick, 3, ActivationMode.TOGGLE);
 
-        driverJoystick.button(5).onTrue(new InstantCommand(drivetrain::resetPosition));
+        driverJoystick.button(5).onTrue(new InstantCommand(drivetrain::zeroGyroYaw));
     }
 
     @Override
