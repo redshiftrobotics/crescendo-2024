@@ -12,60 +12,63 @@ import frc.robot.utils.OptionButton.ActivationMode;
 // https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj2/command/button/CommandXboxController.html
 
 /**
- * This is the default command for the drivetrain, allowing for remote operation with xbox controller
+ * This is the default command for the drivetrain, allowing for remote operation
+ * with xbox controller
  */
 public class DriveXboxControl extends BaseControl {
-    private final OptionButton preciseModeButton;
-    private final OptionButton boostModeButton;
-    private final OptionButton fieldRelativeButton;
+	private final OptionButton preciseModeButton;
+	private final OptionButton boostModeButton;
+	private final OptionButton fieldRelativeButton;
 
-    // private final OptionButton fieldRelativeButton;
-    
-    /**
-     * Creates a new SwerveDriveXboxControl Command.
-     *
-     * @param drivetrain           The drivetrain of the robot
-     * @param driverXboxController The xbox controller used to control drivetrain
-     */
-    public DriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
-        super(drivetrain, driverXboxController);
-        
-        // Create and configure buttons
-        // OptionButton exampleToggleButton = new OptionButton(controller::a, ActivationMode.TOGGLE);
-        preciseModeButton = new OptionButton(driverXboxController::b, ActivationMode.TOGGLE);
-        boostModeButton = new OptionButton(driverXboxController::leftStick, ActivationMode.HOLD);
-        fieldRelativeButton = new OptionButton(driverXboxController::povUp, ActivationMode.TOGGLE);
+	// private final OptionButton fieldRelativeButton;
 
-        // fieldRelativeButton = new OptionButton(driverXboxController::, ActivationMode.TOGGLE)
+	/**
+	 * Creates a new SwerveDriveXboxControl Command.
+	 *
+	 * @param drivetrain           The drivetrain of the robot
+	 * @param driverXboxController The xbox controller used to control drivetrain
+	 */
+	public DriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
+		super(drivetrain, driverXboxController);
 
-        // Tell the command schedular we are using the drivetrain
-        addRequirements(drivetrain);
-    }
+		// Create and configure buttons
+		// OptionButton exampleToggleButton = new OptionButton(controller::a,
+		// ActivationMode.TOGGLE);
+		preciseModeButton = new OptionButton(driverXboxController::b, ActivationMode.TOGGLE);
+		boostModeButton = new OptionButton(driverXboxController::leftStick, ActivationMode.HOLD);
+		fieldRelativeButton = new OptionButton(driverXboxController::povUp, ActivationMode.TOGGLE);
 
-    @Override
-    public void execute() {
-        final CommandXboxController xboxController = (CommandXboxController) controller;
+		// fieldRelativeButton = new OptionButton(driverXboxController::,
+		// ActivationMode.TOGGLE)
 
-        final double leftX = applyJoystickDeadzone(xboxController.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
-        final double leftY = applyJoystickDeadzone(xboxController.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
+		// Tell the command schedular we are using the drivetrain
+		addRequirements(drivetrain);
+	}
 
-        final double rightX = -applyJoystickDeadzone(xboxController.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
+	@Override
+	public void execute() {
+		final CommandXboxController xboxController = (CommandXboxController) controller;
 
-        final boolean isFieldRelative = fieldRelativeButton.getState();
+		final double leftX = applyJoystickDeadzone(xboxController.getLeftX(), DriverConstants.XBOX_DEAD_ZONE);
+		final double leftY = applyJoystickDeadzone(xboxController.getLeftY(), DriverConstants.XBOX_DEAD_ZONE);
 
-        final int speedLevel = 1
-            - preciseModeButton.getStateAsInt()
-            + boostModeButton.getStateAsInt();
+		final double rightX = -applyJoystickDeadzone(xboxController.getRightX(), DriverConstants.XBOX_DEAD_ZONE);
 
-        final ChassisSpeeds speeds = new ChassisSpeeds(
-            leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
-            leftY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
-            rightX * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
+		final boolean isFieldRelative = fieldRelativeButton.getState();
 
-        // Display relevant data on shuffleboard.
-        SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);        
-        SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
+		final int speedLevel = 1
+				- preciseModeButton.getStateAsInt()
+				+ boostModeButton.getStateAsInt();
 
-        drivetrain.setDesiredState(speeds, isFieldRelative, true);
-    }
+		final ChassisSpeeds speeds = new ChassisSpeeds(
+				leftX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
+				leftY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
+				rightX * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
+
+		// Display relevant data on shuffleboard.
+		SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);
+		SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
+
+		drivetrain.setDesiredState(speeds, isFieldRelative, true);
+	}
 }
