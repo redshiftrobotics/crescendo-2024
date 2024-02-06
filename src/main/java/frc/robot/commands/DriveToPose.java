@@ -11,93 +11,97 @@ import frc.robot.Constants.RobotMovementConstants;
 
 /** Command to automatically drive to a certain Pose on the field */
 public class DriveToPose extends Command {
-    private final SwerveDrivetrain drivetrain;
-    private final PIDController xController, yController, rotationController;
+	private final SwerveDrivetrain drivetrain;
+	private final PIDController xController, yController, rotationController;
 
-    /**
-     * Create a new DriveToPose command. Tries to drive to a certain Pose based on odometry 
-     * 
-     * <p>This drives relative to the robot starting position, so a pose of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,
-     * where forward is whatever direction the robot started in</p>
-     * 
-     * <p>The last place the drivetrain position was reset counts as the starting position</p>
-     * 
-     * @param drivetrain The drivetrain of the robot
-     * @param targetPose Target pose
-     */
-    public DriveToPose(SwerveDrivetrain drivetrain, Pose2d targetPose) {
+	/**
+	 * Create a new DriveToPose command. Tries to drive to a certain Pose based on
+	 * odometry
+	 * 
+	 * <p>
+	 * This drives relative to the robot starting position, so a pose of +2x and +1y
+	 * will drive to the position 2 meters forward and 1 meter left of whether the
+	 * robot started,
+	 * where forward is whatever direction the robot started in
+	 * </p>
+	 * 
+	 * <p>
+	 * The last place the drivetrain position was reset counts as the starting
+	 * position
+	 * </p>
+	 * 
+	 * @param drivetrain The drivetrain of the robot
+	 * @param targetPose Target pose
+	 */
+	public DriveToPose(SwerveDrivetrain drivetrain, Pose2d targetPose) {
 
-        // Save drivetrain
-        this.drivetrain = drivetrain;
+		// Save drivetrain
+		this.drivetrain = drivetrain;
 
-        // Setup all PID controllers
-        xController = new PIDController(
-            RobotMovementConstants.TRANSLATION_PID_P,
-            RobotMovementConstants.TRANSLATION_PID_I,
-            RobotMovementConstants.TRANSLATION_PID_D
-        );
-        xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		// Setup all PID controllers
+		xController = new PIDController(
+				RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I,
+				RobotMovementConstants.TRANSLATION_PID_D);
+		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 
-        yController = new PIDController(
-            RobotMovementConstants.TRANSLATION_PID_P,
-            RobotMovementConstants.TRANSLATION_PID_I,
-            RobotMovementConstants.TRANSLATION_PID_D
-        );
-        yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		yController = new PIDController(
+				RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I,
+				RobotMovementConstants.TRANSLATION_PID_D);
+		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 
-        rotationController = new PIDController(
-            RobotMovementConstants.ROTATION_PID_P,
-            RobotMovementConstants.ROTATION_PID_I,
-            RobotMovementConstants.ROTATION_PID_D
-        );
-        rotationController.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
+		rotationController = new PIDController(
+				RobotMovementConstants.ROTATION_PID_P,
+				RobotMovementConstants.ROTATION_PID_I,
+				RobotMovementConstants.ROTATION_PID_D);
+		rotationController.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 
-        // Set setpoints 
-        xController.setSetpoint(targetPose.getX());
-        yController.setSetpoint(targetPose.getY());
-        rotationController.setSetpoint(targetPose.getRotation().getRadians());
+		// Set setpoints
+		xController.setSetpoint(targetPose.getX());
+		yController.setSetpoint(targetPose.getY());
+		rotationController.setSetpoint(targetPose.getRotation().getRadians());
 
-        // Add drivetrain as a requirement so no other commands try to use it
-        addRequirements(this.drivetrain);
-    }
+		// Add drivetrain as a requirement so no other commands try to use it
+		addRequirements(this.drivetrain);
+	}
 
-    @Override
-    public void initialize() {
-        // Put all swerve modules in default position
-        drivetrain.toDefaultStates();
-    }
+	@Override
+	public void initialize() {
+		// Put all swerve modules in default position
+		drivetrain.toDefaultStates();
+	}
 
-    @Override
-    public void execute() {
+	@Override
+	public void execute() {
 
-        // Get our current pose
-        final Pose2d measuredPosition = drivetrain.getPosition();
+		// Get our current pose
+		final Pose2d measuredPosition = drivetrain.getPosition();
 
-        // Put current pose position on SmartDashboard
-        SmartDashboard.putNumber("PoseY", measuredPosition.getY());
-        SmartDashboard.putNumber("PoseX", measuredPosition.getX());
-		SmartDashboard.putNumber("PoseDegrees", measuredPosition.getRotation().getDegrees()); 
+		// Put current pose position on SmartDashboard
+		SmartDashboard.putNumber("PoseY", measuredPosition.getY());
+		SmartDashboard.putNumber("PoseX", measuredPosition.getX());
+		SmartDashboard.putNumber("PoseDegrees", measuredPosition.getRotation().getDegrees());
 
-        // Calculate our robot speeds with the PID controllers
-        final ChassisSpeeds speeds = new ChassisSpeeds(
-            xController.calculate(measuredPosition.getX()),
-            yController.calculate(measuredPosition.getY()),
-            rotationController.calculate(measuredPosition.getRotation().getRadians())
-        );
+		// Calculate our robot speeds with the PID controllers
+		final ChassisSpeeds speeds = new ChassisSpeeds(
+				xController.calculate(measuredPosition.getX()),
+				yController.calculate(measuredPosition.getY()),
+				rotationController.calculate(measuredPosition.getRotation().getRadians()));
 
-        // Set those speeds
-        drivetrain.setDesiredState(speeds);
-    }
+		// Set those speeds
+		drivetrain.setDesiredState(speeds);
+	}
 
-    @Override
-    public boolean isFinished() {
-        // Finish once all controllers are within tolerance
-        return xController.atSetpoint() && yController.atSetpoint() && rotationController.atSetpoint();
-    }
+	@Override
+	public boolean isFinished() {
+		// Finish once all controllers are within tolerance
+		return xController.atSetpoint() && yController.atSetpoint() && rotationController.atSetpoint();
+	}
 
-    @Override
-    public void end(boolean interrupted) {
-        // Stop all swerve modules at end
-        drivetrain.stop();
-    }
+	@Override
+	public void end(boolean interrupted) {
+		// Stop all swerve modules at end
+		drivetrain.stop();
+	}
 }
