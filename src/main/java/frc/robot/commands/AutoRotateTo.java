@@ -15,49 +15,51 @@ import frc.robot.Constants.RobotMovementConstants;
 
 /** An example command that uses an example subsystem. */
 public class AutoRotateTo extends Command {
-    private final SwerveDrivetrain drivetrain;
+	private final SwerveDrivetrain drivetrain;
 
-    private final PIDController rotatePID;
-    private final double angleGoal;
+	private final PIDController rotatePID;
+	private final double angleGoal;
 
-    private double atSetpointCounter = 0;
+	private double atSetpointCounter = 0;
 
-    public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
-        
-        rotatePID = new PIDController(
-            RobotMovementConstants.ROTATION_PID_P,
-            RobotMovementConstants.ROTATION_PID_I,
-            RobotMovementConstants.ROTATION_PID_D
-        );
+	public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
 
-        this.drivetrain = subsystem;
-        this.angleGoal = direction.getRadians();
+		rotatePID = new PIDController(
+				RobotMovementConstants.ROTATION_PID_P,
+				RobotMovementConstants.ROTATION_PID_I,
+				RobotMovementConstants.ROTATION_PID_D);
 
-        addRequirements(this.drivetrain);
-    }
+		this.drivetrain = subsystem;
+		this.angleGoal = direction.getRadians();
 
-    @Override
-    public void initialize() {}
+		addRequirements(this.drivetrain);
+	}
 
-    @Override
-    public void execute() {
-        final double currentAngle = drivetrain.getHeading().getRadians();
+	@Override
+	public void initialize() {
+	}
 
-        double turnsSeed = rotatePID.calculate(currentAngle,this.angleGoal);
-        
-        drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
+	@Override
+	public void execute() {
+		final double currentAngle = drivetrain.getHeading().getRadians();
 
-        if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS) atSetpointCounter += TimedRobot.kDefaultPeriod;
-        else atSetpointCounter=0;
-    }
+		double turnsSeed = rotatePID.calculate(currentAngle, this.angleGoal);
 
-    @Override
-    public boolean isFinished() {
-        return atSetpointCounter > RobotMovementConstants.ROTATE_AT_SETPOINT_TIME_SECONDS;
-    }
+		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
 
-    @Override
-    public void end(boolean interrupted) {
-        drivetrain.stop();
-    }
+		if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS)
+			atSetpointCounter += TimedRobot.kDefaultPeriod;
+		else
+			atSetpointCounter = 0;
+	}
+
+	@Override
+	public boolean isFinished() {
+		return atSetpointCounter > RobotMovementConstants.ROTATE_AT_SETPOINT_TIME_SECONDS;
+	}
+
+	@Override
+	public void end(boolean interrupted) {
+		drivetrain.stop();
+	}
 }
