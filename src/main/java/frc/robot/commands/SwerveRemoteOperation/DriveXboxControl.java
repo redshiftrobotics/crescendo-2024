@@ -14,7 +14,7 @@ import frc.robot.utils.OptionButton.ActivationMode;
 /**
  * This is the default command for the drivetrain, allowing for remote operation with xbox controller
  */
-public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
+public class DriveXboxControl extends BaseControl {
     private final OptionButton preciseModeButton;
     private final OptionButton boostModeButton;
     private final OptionButton fieldRelativeButton;
@@ -27,7 +27,7 @@ public class SwerveDriveXboxControl extends SwerveDriveBaseControl {
      * @param drivetrain           The drivetrain of the robot
      * @param driverXboxController The xbox controller used to control drivetrain
      */
-    public SwerveDriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
+    public DriveXboxControl(SwerveDrivetrain drivetrain, CommandXboxController driverXboxController) {
         super(drivetrain, driverXboxController);
         
         // Create and configure buttons

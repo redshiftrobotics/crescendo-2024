@@ -11,7 +11,7 @@ import frc.robot.subsystems.SwerveDrivetrain;
  * This can be the default command for the drivetrain, allowing for remote
  * operation with a controller
  */
-public abstract class SwerveDriveBaseControl extends Command {
+public abstract class BaseControl extends Command {
 	protected final SwerveDrivetrain drivetrain;
 	protected final CommandGenericHID controller;
 
@@ -21,7 +21,7 @@ public abstract class SwerveDriveBaseControl extends Command {
 	 * @param drivetrain       The drivetrain of the robot
 	 * @param driverController The device used to control drivetrain
 	 */
-	public SwerveDriveBaseControl(SwerveDrivetrain drivetrain, CommandGenericHID driverController) {
+	public BaseControl(SwerveDrivetrain drivetrain, CommandGenericHID driverController) {
 
 		// save parameters
 		this.controller = driverController;
