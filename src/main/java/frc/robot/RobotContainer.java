@@ -4,6 +4,8 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 
@@ -46,6 +48,11 @@ public class RobotContainer {
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BR,
             new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+
+    private final Arm arm = new Arm(
+        ArmConstants.LEFT_MOTOR_ID,
+        ArmConstants.RIGHT_MOTOR_ID,
+        ArmConstants.RIGHT_ENCODER_ID);
 
     private final AHRS gyro = new AHRS(I2C.Port.kMXP);
 

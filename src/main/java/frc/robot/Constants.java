@@ -100,6 +100,11 @@ public final class Constants {
         public static final double ARM_AMP_SHOOTING_DEGREES = 0;
         public static final double ARM_SPEAKER_SHOOTING_DEGREES = 0;
         public static final double ARM_INTAKE_DEGREES = 0;
+
+        public static final int LEFT_MOTOR_ID = 0;
+        //public static final int LEFT_ENCODER_ID = 0;
+        public static final int RIGHT_MOTOR_ID = 0;
+        public static final int RIGHT_ENCODER_ID = 0;
     }
 }
 

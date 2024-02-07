@@ -49,12 +49,12 @@ public class SwerveDriveJoystickControl extends Command {
         drivetrain.toDefaultStates();
     }
 
-    /**
+    
+/**
      * The main body of a command. Called repeatedly while the command is scheduled (Every 20 ms).
      */
     @Override
     public void execute() {
-
         // Get joystick inputs
         final double speedX = -applyJoystickDeadzone(joystick.getX(), DriverConstants.JOYSTICK_DEAD_ZONE);
 		final double speedY = -applyJoystickDeadzone(joystick.getY(), DriverConstants.JOYSTICK_DEAD_ZONE);

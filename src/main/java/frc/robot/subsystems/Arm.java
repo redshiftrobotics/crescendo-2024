@@ -2,14 +2,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 // How to make Subsystem (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/subsystems/subsystems.html
 // Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
@@ -20,8 +21,10 @@ import com.ctre.phoenix6.hardware.CANcoder;
 public class Arm extends SubsystemBase {
 
     private final CANSparkMax leftArmMotor;
-    private final CANcoder leftArmEncoder;
-    //<p>leftArmEncoder may be useless, as the right arm equivelent is used for the position for both.</p>
+    //private final CANcoder leftArmEncoder;
+
+    //leftArmEncoder may be useless, as the right arm equivelent is used for the position for both.</p>
+
     private final CANSparkMax rightArmMotor;
     private final CANcoder rightArmEncoder;
 
@@ -33,11 +36,11 @@ public class Arm extends SubsystemBase {
 
     
 
-    /** Constructor. Creates a new ExampleSubsystem. */
-    public Arm(int leftMotorId, int leftEncoderId, int rightMotorId, int rightEncoderId) {
+    /** Constructor. Creates a new Arm Subsystem. */
+    public Arm(int leftMotorId, int rightMotorId, int rightEncoderId) {
 
         leftArmMotor = new CANSparkMax(leftMotorId,MotorType.kBrushless);
-        leftArmEncoder = new CANcoder(leftEncoderId);
+        //leftArmEncoder = new CANcoder(leftEncoderId);
 
         rightArmMotor = new CANSparkMax(rightMotorId,MotorType.kBrushless);
         rightArmEncoder = new CANcoder(rightEncoderId);
@@ -49,6 +52,9 @@ public class Arm extends SubsystemBase {
             );
 
         armPosition = rightArmEncoder.getAbsolutePosition();
+
+        leftArmMotor.setIdleMode(IdleMode.kBrake);
+        rightArmMotor.setIdleMode(IdleMode.kBrake);
 
     }
 
@@ -73,18 +79,15 @@ public class Arm extends SubsystemBase {
 
     /**
      * This method is called periodically by the CommandScheduler, about every 20ms.
-     * It should be used for updating subsystem-specific state that you don't want to offload to a Command.
-     * Try to avoid "doing to much" in this method (for example no driver control here).
      */
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
 
         final double armSpeed = armRaisePIDController.calculate(armPosition.refresh().getValueAsDouble(),armRotation2d.getRotations());
-        if(armSpeed != 0){
-            leftArmMotor.set(armSpeed);
-            rightArmMotor.set(armSpeed);
-        }
+        leftArmMotor.set(armSpeed);
+        rightArmMotor.set(armSpeed);
+            
         
     }
 }
