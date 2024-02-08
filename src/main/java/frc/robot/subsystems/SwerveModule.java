@@ -160,6 +160,16 @@ public class SwerveModule extends SubsystemBase {
 		setDesiredState(defaultState, false);
 	}
 
+	/**
+	 * 
+	 * 
+	 */
+	public void toInwardPosition() {
+		setDesiredState(new SwerveModuleState(
+			0, distanceFromCenter.getAngle()
+		), false);
+	}
+
 	// --- Getters and setters for modules desired SwerveModuleState ---
 
 	/**

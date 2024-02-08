@@ -153,6 +153,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 		modulesMap(SwerveModule::toDefaultState);
 	}
 
+	/** Put all swerve modules to inward state, making the swerve modules face in a X pattern. This prevents robot from slipping around. */
+	public void brakeMode() {
+		modulesMap(SwerveModule::toInwardPosition);
+	}
+
 	// --- Chassis Speeds to Swerve Module States methods ---
 
 	/**
