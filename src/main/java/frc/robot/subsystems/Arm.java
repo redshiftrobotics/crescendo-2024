@@ -58,7 +58,7 @@ public class Arm extends SubsystemBase {
 
     }
 
-    public void setArmAngleRadians(double desiredDegree) {
+    public void setArmAngleDegrees(double desiredDegree) {
         //maximum should ALWAYS be a greater value then minimum
         if (desiredDegree < ArmConstants.MAXIMUM_ARM_DEGREES || ArmConstants.MINIMUM_ARM_DEGREES > desiredDegree) {
             armRotation2d = Rotation2d.fromDegrees(desiredDegree);
