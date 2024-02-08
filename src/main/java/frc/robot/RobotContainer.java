@@ -4,11 +4,12 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.SwerveRemoteOperation.BaseControl;
-import frc.robot.commands.SwerveRemoteOperation.JoystickControl;
-import frc.robot.commands.SwerveRemoteOperation.DriveXboxControl;
+import frc.robot.commands.DriverControl;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
+import frc.robot.utils.ChassisDriveInputs;
+import frc.robot.utils.OptionButton;
+import frc.robot.utils.OptionButton.ActivationMode;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -74,7 +75,7 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
-		SmartDashboard.putData(autoChooser);
+		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
 
@@ -87,16 +88,32 @@ public class RobotContainer {
 		final HIDType genericHIDType = genericHID.getType();
 
 		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " " + Constants.serialNumber);
+		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		drivetrain.removeDefaultCommand();
 
-		BaseControl control;
+		DriverControl control;
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
-			control = new JoystickControl(drivetrain, new CommandJoystick(genericHID.getPort()));
+			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
+			control = new DriverControl(drivetrain,
+				new ChassisDriveInputs(
+					joystick::getX, joystick::getY, joystick::getTwist,
+					-1, -1, Constants.DriverConstants.DEAD_ZONE),
+				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
+				new OptionButton(joystick, 1, ActivationMode.HOLD),
+				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
+			);
 		} else {
-			control = new DriveXboxControl(drivetrain, new CommandXboxController(genericHID.getPort()));
+			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+			control = new DriverControl(drivetrain,
+				new ChassisDriveInputs(
+					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
+					+1, -1, Constants.DriverConstants.DEAD_ZONE),
+				new OptionButton(xbox::b, ActivationMode.TOGGLE),
+				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
+				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
+			);
 		}
 
 		drivetrain.setDefaultCommand(control);

@@ -103,17 +103,126 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "9,2": {
+          "7,1": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Bot Name",
               "_title": "Bot Name",
-              "_glyph": 148,
-              "_showGlyph": false
+              "_glyph": 474,
+              "_showGlyph": true
+            }
+          },
+          "1,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/PoseX",
+              "_title": "PoseX",
+              "_glyph": 114,
+              "_showGlyph": true
+            }
+          },
+          "0,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/PoseY",
+              "_title": "PoseY",
+              "_glyph": 115,
+              "_showGlyph": true
+            }
+          },
+          "2,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/PoseDegrees",
+              "_title": "PoseDegrees",
+              "_glyph": 419,
+              "_showGlyph": true
+            }
+          },
+          "7,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto Chooser",
+              "_title": "Auto Chooser",
+              "_glyph": 167,
+              "_showGlyph": true
+            }
+          },
+          "5,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/SpeedX",
+              "_title": "SpeedX",
+              "_glyph": 114,
+              "_showGlyph": true,
+              "Range/Min": -1.0,
+              "Range/Max": 1.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
+            }
+          },
+          "4,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/SpeedY",
+              "_title": "SpeedY",
+              "_glyph": 115,
+              "_showGlyph": true,
+              "Range/Min": -1.0,
+              "Range/Max": 1.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Speed",
+              "_title": "Speed",
+              "_glyph": 419,
+              "_showGlyph": true,
+              "Range/Min": -1.0,
+              "Range/Max": 1.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
             }
           }
         }

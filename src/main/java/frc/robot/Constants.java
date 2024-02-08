@@ -31,7 +31,7 @@ public final class Constants {
 	 * @author Aceius E.
 	 */
 	static {
-		serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "-default-";
+		serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "Simulation";
 
 		switch (serialNumber) {
 			case "03282B00": // Wood Bot Serial Number
@@ -42,7 +42,6 @@ public final class Constants {
 				currentBot = Bot.PRACTICE_BOT;
 				break;
 
-			case "-default-": // Competition Bot Serial Number
 			default: // Also use competition bot as default
 				currentBot = Bot.COMPETITION_BOT;
 				break;
@@ -52,9 +51,7 @@ public final class Constants {
 	public static class DriverConstants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 
-		public static final double JOYSTICK_DEAD_ZONE = 0.25;
-		public static final double XBOX_DEAD_ZONE = 0.10;
-		public static final double PS4_DEAD_ZONE = 0.12;
+		public static final double DEAD_ZONE = 0.25;
 
 		// Names of options for displaying
 		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost" };
