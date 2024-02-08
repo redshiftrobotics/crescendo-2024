@@ -64,6 +64,8 @@ public class FollowTag extends DriveToPoseBase {
 		final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
 
 		setDesiredPosition(getPosition().plus(driveTransform));
+
+		super.execute();
 	}
 
 	@Override
