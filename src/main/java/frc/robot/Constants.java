@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -94,6 +96,10 @@ public final class Constants {
         // distance of swerve modules from center of robot
         public static final double MODULE_LOCATION_X = 0.25;
         public static final double MODULE_LOCATION_Y = 0.25;
+    }
+    public static class VisionConstants {
+
+        public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d());
     }
 }
 

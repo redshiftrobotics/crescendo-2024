@@ -88,7 +88,7 @@ public class Vision extends SubsystemBase {
             SmartDashboard.putNumber("Tag Yaw", bestTag.getYaw());
             SmartDashboard.putNumber("Tag Pitch", bestTag.getPitch());
         } else {
-            SmartDashboard.putNumber("Tag Pose ID", -1);
+            SmartDashboard.putNumber("Tag ID", -1);
             SmartDashboard.putNumber("Tag Pose X", -1);
             SmartDashboard.putNumber("Tag Pose Y", -1);
             SmartDashboard.putNumber("Tag Pose Z", -1);
