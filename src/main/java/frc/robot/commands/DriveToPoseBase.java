@@ -15,20 +15,13 @@ public class DriveToPoseBase extends Command {
 	private final PIDController xController, yController, rotationController;
 
 	/**
-	 * Create a new DriveToPose command. Tries to drive to a set Pose based on
-	 * odometry
+	 * Create a new DriveToPose command. Tries to drive to a set Pose based on odometry.
 	 * 
-	 * <p>
-	 * This drives relative to the robot starting position, so a pose of +2x and +1y
-	 * will drive to the position 2 meters forward and 1 meter left of whether the
-	 * robot started,
-	 * where forward is whatever direction the robot started in
-	 * </p>
-	 * 
-	 * <p>
-	 * The last place the drivetrain position was reset counts as the starting
-	 * position
-	 * </p>
+     * <p>This drives relative to the robot starting position,
+	 * so a pose of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,
+     * where forward is whatever direction the robot started in</p>
+     * 
+     * <p>The last place the drivetrain position was reset counts as the starting position</p>
 	 * 
 	 * @param drivetrain the drivetrain of the robot
 	 */

@@ -11,10 +11,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
-// How to make Command (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html
-// Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
-// Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
-
 public class AutoDriveTo extends Command {
 	private final SwerveDrivetrain drivetrain;
 

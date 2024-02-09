@@ -51,8 +51,7 @@ public class OptionButton {
 	 * 
 	 * @param commandDevice device that button is on
 	 * @param button        button number
-	 * @param mode          whether or not we want button to act as toggle or hold
-	 *                      button
+	 * @param mode          whether or not we want button to act as toggle or hold button
 	 */
 	public OptionButton(Supplier<Trigger> button, ActivationMode mode) {
 		this.button = button;
@@ -81,35 +80,21 @@ public class OptionButton {
 	}
 
 	/**
-	 * <p>
 	 * Get the state of the button
-	 * </p>
 	 * 
-	 * <p>
-	 * for TAP buttons this returns true if the button has been tapped
-	 * </p>
+	 * <li>for TAP buttons this returns true if the button has been tapped
 	 * 
-	 * <p>
-	 * for HOLD buttons this returns true if the button is currently being held down
-	 * </p>
+	 * <li>for HOLD buttons this returns true if the button is currently being held down
 	 * 
-	 * <p>
-	 * for TOGGLE buttons this returns true if the button has been tapped an odd
-	 * number of times
-	 * </p>
+	 * <li> for TOGGLE buttons this returns true if the button has been tapped an odd number of times
 	 * 
 	 * @return boolean with true being the button is active
 	 */
 	public boolean getState() {
 		switch (mode) {
-			case HOLD:
-				return button.get().getAsBoolean();
-			case TAP:
-				return isToggled;
-			case TOGGLE:
-				return isToggled;
-			default:
-				return false;
+			case HOLD: return button.get().getAsBoolean();
+			case TAP: case TOGGLE: return isToggled;
+			default: return false;
 		}
 	}
 

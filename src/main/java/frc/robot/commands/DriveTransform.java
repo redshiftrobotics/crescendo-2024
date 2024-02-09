@@ -13,12 +13,10 @@ public class DriveTransform extends DriveToPoseBase {
 	 * Create a new DriveToPose command. Tries to drive a certain transform using
 	 * the DriveToPose command.
 	 * 
-	 * <p>
-	 * This drives relative to the robot, so a transform of +2x and +1y will drive 2
-	 * meters forward and 1 meter left,
-	 * where forward is whatever direction the robot is currently facing
-	 * </p>
-	 * 
+	 * <p>This drives relative to the robot starting position,
+	 * so a transform of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,
+     * where forward is whatever direction the robot is currently facing</p>
+     *  
 	 * @param drivetrain the drivetrain of the robot
 	 * @param transform  target transform to drive to, will be added to current
 	 *                   position to get target pose

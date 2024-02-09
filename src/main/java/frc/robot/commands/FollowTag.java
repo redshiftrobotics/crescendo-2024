@@ -16,8 +16,7 @@ public class FollowTag extends DriveToPoseBase {
 	private double secondsSinceTagLastSeen;
 
 	/**
-	 * Create a new FollowTag command. Tries to follow a tag while staying a certain
-	 * distance away.
+	 * Create a new FollowTag command. Tries to follow a tag while staying a certain distance away.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param tagID               the numerical ID of the the tag to follow
@@ -34,8 +33,7 @@ public class FollowTag extends DriveToPoseBase {
 	}
 
 	/**
-	 * Create a new FollowTag command. Tries to follow a tag while staying a certain
-	 * distance away.
+	 * Create a new FollowTag command. Tries to follow a tag while staying a certain distance away.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param tagID               the numerical ID of the the tag to follow
