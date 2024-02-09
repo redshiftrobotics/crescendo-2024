@@ -13,9 +13,7 @@ public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command testingAuto(SwerveDrivetrain drivetrain) {
 		return Commands.sequence(
-				new AutoDriveTo(drivetrain, new Translation2d(1, 0))
-		// new WaitCommand(1),
-		// new AutoDriveTo(drivetrain, new Translation2d(-1, 0))
+				new DriveTransform(drivetrain, new Translation2d(1, 0), new Rotation2d())
 		);
 	}
 

@@ -20,16 +20,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared.
- * Since Command-based is a "declarative" paradigm, very little robot logic
- * should actually be handled in the {@link Robot} periodic methods (other than
- * the scheduler calls).
- * Instead, the structure of the robot (including subsystems, commands, and
- * trigger mappings) should be declared here.
+ * Since Command-based is a "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
+ * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
 
@@ -97,23 +95,32 @@ public class RobotContainer {
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 			control = new DriverControl(drivetrain,
+
 				new ChassisDriveInputs(
 					joystick::getX, joystick::getY, joystick::getTwist,
 					-1, -1, Constants.DriverConstants.DEAD_ZONE),
+
 				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
 				new OptionButton(joystick, 1, ActivationMode.HOLD),
 				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
 			);
+			
+			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 			control = new DriverControl(drivetrain,
+
 				new ChassisDriveInputs(
 					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
 					+1, -1, Constants.DriverConstants.DEAD_ZONE),
+
 				new OptionButton(xbox::b, ActivationMode.TOGGLE),
 				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
 				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
 			);
+
+
 		}
 
 		drivetrain.setDefaultCommand(control);

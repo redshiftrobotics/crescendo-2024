@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 import java.util.function.Supplier;
 
+/** Class that stores supplies for main controls of ChassisSpeeds */
 public class ChassisDriveInputs {
 
 	private final Supplier<Double> xSupplier;
@@ -13,6 +14,16 @@ public class ChassisDriveInputs {
 	private final double translationCoefficient;
 	private final double rotationCoefficient;
 
+	/**
+	 * Create a new ChassisDriveInputs
+	 * 
+	 * @param getX Get the value mapped to forward
+	 * @param getY Get the value mapped to left
+	 * @param getRotation Get the value mapped to rotation
+	 * @param translationCoefficient Coefficient that forward (x) and left (Y) are multiped by
+	 * @param rotationCoefficient Coefficient that rotation is multiplied by
+	 * @param deadzone Deadzone for all axises
+	 */
 	public ChassisDriveInputs(
 			Supplier<Double> getX, Supplier<Double> getY, Supplier<Double> getRotation,
 			double translationCoefficient, double rotationCoefficient, double deadzone) {
