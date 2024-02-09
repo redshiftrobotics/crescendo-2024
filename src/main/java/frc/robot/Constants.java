@@ -20,11 +20,13 @@ public final class Constants {
 	public static final String serialNumber;
 
 	/**
-	 * This code determines what bot is being deployed and sets constants accordingly.
+	 * This code determines what bot is being deployed and sets constants
+	 * accordingly.
 	 * 
 	 * Simulated bots cannot have a RoboRIO ID, so we must check if the bot is real.
 	 * If it isn't, load production config.
-	 * The production bot is always default, so if we do anything crazy to our bot during the tourney like switch the RoboRIO the code works.
+	 * The production bot is always default, so if we do anything crazy to our bot
+	 * during the tourney like switch the RoboRIO the code works.
 	 * 
 	 * @author Aceius E.
 	 */
@@ -79,6 +81,16 @@ public final class Constants {
 
 	public static class OperatorConstants {
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
+	}
+
+	public static class ArmConstants {
+		public static final int armMotor1ID = 1;
+		public static final int armMotor2ID = 2;
+		public static final int UpperLimitSwitchID = 3;
+		public static final int LowerLimitSwitchID = 4;
+		public static final boolean armMotor1isInverted = false;
+		public static final boolean armMotor2isInverted = false;
+
 	}
 
 	public static class SwerveModuleConstants {

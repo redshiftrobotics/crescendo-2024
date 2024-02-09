@@ -1,10 +1,12 @@
 package frc.robot;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriverControl;
+import frc.robot.subsystems.LimitSwitchArmSubsystem;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.utils.ChassisDriveInputs;
@@ -26,8 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared.
- * Since Command-based is a "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
- * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
+ * Since Command-based is a "declarative" paradigm, very little robot logic
+ * should actually be handled in the {@link Robot} periodic methods (other than
+ * the scheduler calls).
+ * Instead, the structure of the robot (including subsystems, commands, and
+ * trigger mappings) should be declared here.
  */
 public class RobotContainer {
 
@@ -68,6 +73,10 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
+	private final LimitSwitchArmSubsystem LimitSwitchArm = new LimitSwitchArmSubsystem(ArmConstants.armMotor1ID,
+			ArmConstants.armMotor2ID, ArmConstants.UpperLimitSwitchID, ArmConstants.LowerLimitSwitchID,
+			ArmConstants.armMotor1isInverted, ArmConstants.armMotor2isInverted);
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -96,30 +105,29 @@ public class RobotContainer {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 			control = new DriverControl(drivetrain,
 
-				new ChassisDriveInputs(
-					joystick::getX, joystick::getY, joystick::getTwist,
-					-1, -1, Constants.DriverConstants.DEAD_ZONE),
+					new ChassisDriveInputs(
+							joystick::getX, joystick::getY, joystick::getTwist,
+							-1, -1, Constants.DriverConstants.DEAD_ZONE),
 
-				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
-				new OptionButton(joystick, 1, ActivationMode.HOLD),
-				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
-			);
-			
+					new OptionButton(joystick, 2, ActivationMode.TOGGLE),
+					new OptionButton(joystick, 1, ActivationMode.HOLD),
+					new OptionButton(joystick, 3, ActivationMode.TOGGLE));
+
 			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			joystick.button(5).onTrue(Commands.run(() -> LimitSwitchArm.setState(true), LimitSwitchArm));
+			joystick.button(6).onTrue(Commands.run(() -> LimitSwitchArm.setState(false), LimitSwitchArm));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 			control = new DriverControl(drivetrain,
 
-				new ChassisDriveInputs(
-					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
-					+1, -1, Constants.DriverConstants.DEAD_ZONE),
+					new ChassisDriveInputs(
+							xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
+							+1, -1, Constants.DriverConstants.DEAD_ZONE),
 
-				new OptionButton(xbox::b, ActivationMode.TOGGLE),
-				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
-				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
-			);
-
+					new OptionButton(xbox::b, ActivationMode.TOGGLE),
+					new OptionButton(xbox::leftStick, ActivationMode.HOLD),
+					new OptionButton(xbox::povUp, ActivationMode.TOGGLE));
 
 		}
 
