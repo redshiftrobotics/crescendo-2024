@@ -76,6 +76,16 @@ public final class Constants {
 		public static final double TRANSLATION_PID_I = 1;
 		public static final double TRANSLATION_PID_D = 0.5;
 	}
+	// START
+
+	public static class ShooterConstants {
+		public static final double SHOOTER_PID_P = 0;
+		public static final double SHOOTER_PID_I = 0;
+		public static final double SHOOTER_PID_D = 0;
+	}
+
+	//END
+
 
 	public static class OperatorConstants {
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
