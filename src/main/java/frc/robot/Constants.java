@@ -94,7 +94,7 @@ public final class Constants {
 
     public static class ArmConstants {
 
-        public static final double MAXIMUM_ARM_DEGREES = 3;
+        public static final double MAXIMUM_ARM_DEGREES = 1;
         public static final double MINIMUM_ARM_DEGREES = 0;
 
         public static final double ARM_AMP_SHOOTING_DEGREES = 0;
@@ -105,6 +105,8 @@ public final class Constants {
         //public static final int LEFT_ENCODER_ID = 0;
         public static final int RIGHT_MOTOR_ID = 0;
         public static final int RIGHT_ENCODER_ID = 0;
+
+        public static final double DEGREES_PER_SECOND = 2.0;
     }
 }
 

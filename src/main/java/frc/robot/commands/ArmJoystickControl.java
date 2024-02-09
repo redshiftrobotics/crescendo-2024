@@ -1,11 +1,13 @@
 package frc.robot.commands;
 
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 
 import frc.robot.utils.OptionButton;
 import frc.robot.utils.OptionButton.ActivationMode;
-
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 
 public class ArmJoystickControl extends Command {
@@ -15,6 +17,8 @@ public class ArmJoystickControl extends Command {
     private final OptionButton raiseArmButton;
     private final OptionButton lowerArmButton;
 
+
+
     private double armPos;
 
     public ArmJoystickControl(Arm arm, CommandJoystick joystick) {
@@ -22,8 +26,12 @@ public class ArmJoystickControl extends Command {
         this.joystick = joystick;
 
 
-        lowerArmButton = new OptionButton(joystick, 101, ActivationMode.HOLD);
-        raiseArmButton = new OptionButton(joystick, 202, ActivationMode.HOLD);
+        lowerArmButton = new OptionButton(joystick, 11, ActivationMode.HOLD);
+        raiseArmButton = new OptionButton(joystick, 12, ActivationMode.HOLD);
+
+        joystick.povUp().onTrue(Commands.run(arm::setArmToSpeakerPosition));
+        joystick.povRight().onTrue(Commands.run(arm::setArmToAmpPosition));
+        joystick.povDown().onTrue(Commands.run(arm::setArmToIntakePosition));
 
         addRequirements(arm);
     }
@@ -35,10 +43,9 @@ public class ArmJoystickControl extends Command {
     @Override
     public void execute() {
 
-        armPos += raiseArmButton.getStateAsInt();
-        armPos -= lowerArmButton.getStateAsInt();
-        
 
-        arm.setArmAngleDegrees(armPos);
+        //two buttons determining the raising and lowering of the arm
+        arm.changeArmAngleDegreesBy(Double.valueOf(raiseArmButton.getStateAsInt()) * TimedRobot.kDefaultPeriod * ArmConstants.DEGREES_PER_SECOND);
+        arm.changeArmAngleDegreesBy(Double.valueOf(-lowerArmButton.getStateAsInt()) * TimedRobot.kDefaultPeriod * ArmConstants.DEGREES_PER_SECOND);
     }
 }

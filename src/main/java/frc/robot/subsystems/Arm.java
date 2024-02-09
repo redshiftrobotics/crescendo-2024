@@ -58,12 +58,19 @@ public class Arm extends SubsystemBase {
 
     }
 
-    public void setArmAngleDegrees(double desiredDegree) {
-        //maximum should ALWAYS be a greater value then minimum
-        if (desiredDegree < ArmConstants.MAXIMUM_ARM_DEGREES || ArmConstants.MINIMUM_ARM_DEGREES > desiredDegree) {
-            armRotation2d = Rotation2d.fromDegrees(desiredDegree);
+    // public void setArmAngleDegrees(double desiredDegree) {
+    //     //maximum should ALWAYS be a greater value then minimum
+    //     if (desiredDegree < ArmConstants.MAXIMUM_ARM_DEGREES || ArmConstants.MINIMUM_ARM_DEGREES > desiredDegree) {
+    //         armRotation2d = Rotation2d.fromDegrees(desiredDegree);
+    //     }
+    // }
+
+     public void changeArmAngleDegreesBy(double desiredDegrees) {
+        if (armRotation2d.getDegrees() < ArmConstants.MAXIMUM_ARM_DEGREES || ArmConstants.MINIMUM_ARM_DEGREES > armRotation2d.getDegrees()) {
+            armRotation2d = Rotation2d.fromDegrees(armRotation2d.getDegrees() + desiredDegrees);
         }
     }
+
 
     public void setArmToAmpPosition() {
         armRotation2d = Rotation2d.fromRadians(ArmConstants.ARM_AMP_SHOOTING_DEGREES);
@@ -83,6 +90,8 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+
+        
 
         final double armSpeed = armRaisePIDController.calculate(armPosition.refresh().getValueAsDouble(),armRotation2d.getRotations());
         leftArmMotor.set(armSpeed);
