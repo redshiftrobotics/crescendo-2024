@@ -20,11 +20,13 @@ public final class Constants {
 	public static final String serialNumber;
 
 	/**
-	 * This code determines what bot is being deployed and sets constants accordingly.
+	 * This code determines what bot is being deployed and sets constants
+	 * accordingly.
 	 * 
 	 * Simulated bots cannot have a RoboRIO ID, so we must check if the bot is real.
 	 * If it isn't, load production config.
-	 * The production bot is always default, so if we do anything crazy to our bot during the tourney like switch the RoboRIO the code works.
+	 * The production bot is always default, so if we do anything crazy to our bot
+	 * during the tourney like switch the RoboRIO the code works.
 	 * 
 	 * @author Aceius E.
 	 */
@@ -82,10 +84,13 @@ public final class Constants {
 		public static final double SHOOTER_PID_P = 0;
 		public static final double SHOOTER_PID_I = 0;
 		public static final double SHOOTER_PID_D = 0;
+
+		// Note to self: find final speeds later
+		public static final double outputSpeed = 1;
+		public static final double intakeSpeed = 0;
 	}
 
-	//END
-
+	// END
 
 	public static class OperatorConstants {
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
