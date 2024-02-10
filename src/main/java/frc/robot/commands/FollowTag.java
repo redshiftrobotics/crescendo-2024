@@ -1,14 +1,15 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /** Command to automatically drive a follow a tag a certain translation away */
 public class FollowTag extends DriveToPoseBase {
+	private final Vision camera;
 	private final int tagID;
 	private final Transform2d targetDistance;
 
@@ -24,10 +25,12 @@ public class FollowTag extends DriveToPoseBase {
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to -1 to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, int tagID, Transform2d targetDistanceToTag, int loseTagAfterSeconds) {
+	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, int tagID, Transform2d targetDistanceToTag, int loseTagAfterSeconds) {
 		super(drivetrain);
 
+		this.camera = camera;
 		this.tagID = tagID;
+
 		this.targetDistance = targetDistanceToTag;
 		this.loseTagAfterSeconds = loseTagAfterSeconds;
 	}
@@ -41,15 +44,15 @@ public class FollowTag extends DriveToPoseBase {
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to -1 to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, int tagID, Translation2d targetDistanceToTag, int loseTagAfterSeconds) {
-		this(drivetrain, tagID, new Transform2d(targetDistanceToTag, new Rotation2d()), loseTagAfterSeconds);
+	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, int tagID, Translation2d targetDistanceToTag, int loseTagAfterSeconds) {
+		this(drivetrain, camera, tagID, new Transform2d(targetDistanceToTag, new Rotation2d()), loseTagAfterSeconds);
 	}
 
 	@Override
 	public void execute() {
 
 		// Sudo code, assume distance from front center of robot
-		final Transform3d tagPosition3d = new Transform3d();
+		final Transform3d tagPosition3d = camera.getDistToTag(tagID);
 
 		if (tagPosition3d != null) {
 			// https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/coordinate-systems.html
