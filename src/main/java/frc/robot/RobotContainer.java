@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.VisionConstants;
@@ -25,46 +26,46 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 public class RobotContainer {
 
     // The robot's subsystems and commands are defined here...
-    // private final SwerveModule swerveModuleFL = new SwerveModule(
-    //         SwerveModuleConstants.VELOCITY_MOTOR_ID_FL,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ID_FL,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FL,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FL,
-    //         new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
-	// private final SwerveModule swerveModuleFR = new SwerveModule(
-    //         SwerveModuleConstants.VELOCITY_MOTOR_ID_FR,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ID_FR,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FR,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FR,
-    //         new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
-	// private final SwerveModule swerveModuleBL = new SwerveModule(
-    //         SwerveModuleConstants.VELOCITY_MOTOR_ID_BL,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ID_BL,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BL,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BL,
-    //         new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
-	// private final SwerveModule swerveModuleBR = new SwerveModule(
-    //         SwerveModuleConstants.VELOCITY_MOTOR_ID_BR,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ID_BR,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BR,
-	// 		SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BR,
-    //         new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+    private final SwerveModule swerveModuleFL = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_FL,
+			SwerveModuleConstants.ANGULAR_MOTOR_ID_FL,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FL,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FL,
+            new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+	private final SwerveModule swerveModuleFR = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_FR,
+			SwerveModuleConstants.ANGULAR_MOTOR_ID_FR,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FR,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FR,
+            new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+	private final SwerveModule swerveModuleBL = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_BL,
+			SwerveModuleConstants.ANGULAR_MOTOR_ID_BL,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BL,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BL,
+            new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+	private final SwerveModule swerveModuleBR = new SwerveModule(
+            SwerveModuleConstants.VELOCITY_MOTOR_ID_BR,
+			SwerveModuleConstants.ANGULAR_MOTOR_ID_BR,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BR,
+			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BR,
+            new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
     private final AHRS gyro = new AHRS(I2C.Port.kMXP);
 
-    // private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR, swerveModuleBL, swerveModuleBR);
+    private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR, swerveModuleBL, swerveModuleBR);
 
     private final Vision vision = new Vision(VisionConstants.CAMERA_NAME);
 
     // Create joysticks
     private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
-    // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
+    private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
 
-        // SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
-        // drivetrain.setDefaultCommand(control);
+        SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
+        drivetrain.setDefaultCommand(control);
 
         // Configure the trigger bindings
         configureBindings();
