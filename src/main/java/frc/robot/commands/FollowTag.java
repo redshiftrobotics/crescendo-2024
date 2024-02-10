@@ -41,8 +41,7 @@ public class FollowTag extends DriveToPoseBase {
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to -1 to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, int tagID, Translation2d targetDistanceToTag,
-			int loseTagAfterSeconds) {
+	public FollowTag(SwerveDrivetrain drivetrain, int tagID, Translation2d targetDistanceToTag, int loseTagAfterSeconds) {
 		this(drivetrain, tagID, new Transform2d(targetDistanceToTag, new Rotation2d()), loseTagAfterSeconds);
 	}
 
@@ -50,18 +49,23 @@ public class FollowTag extends DriveToPoseBase {
 	public void execute() {
 
 		// Sudo code, assume distance from front center of robot
-		final Transform3d tagPosition3d = new Transform3d(tagID * 5, 0, 0, new Rotation3d());
+		final Transform3d tagPosition3d = new Transform3d();
 
-		// https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/coordinate-systems.html
-		// https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation3d.html#getZ()
-		final Transform2d tagPosition = new Transform2d(
-				tagPosition3d.getZ(),
-				tagPosition3d.getX(),
-				Rotation2d.fromRadians(-tagPosition3d.getRotation().getZ()));
-
-		final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
-
-		setDesiredPosition(getPosition().plus(driveTransform));
+		if (tagPosition3d != null) {
+			// https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/coordinate-systems.html
+			// https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation3d.html#getZ()
+			final Transform2d tagPosition = new Transform2d(
+					tagPosition3d.getZ(),
+					tagPosition3d.getX(),
+					Rotation2d.fromRadians(-tagPosition3d.getRotation().getZ()));
+	
+			final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
+	
+			setDesiredPosition(getPosition().plus(driveTransform));
+		}
+		else {
+			stop();
+		}
 
 		super.execute();
 	}

@@ -14,6 +14,8 @@ public class DriveToPoseBase extends Command {
 	private final SwerveDrivetrain drivetrain;
 	private final PIDController xController, yController, rotationController;
 
+	private boolean stopped = false;
+
 	/**
 	 * Create a new DriveToPose command. Tries to drive to a set Pose based on odometry.
 	 * 
@@ -54,18 +56,30 @@ public class DriveToPoseBase extends Command {
 	}
 
 	/**
-	 * 
+	 * Set PID controller setpoints to get ot pose
 	 * 
 	 * @param targetPose Pose that robot will drive to once command is scheduled
 	 */
 	public void setDesiredPosition(Pose2d targetPose) {
+		stopped = false;
 		xController.setSetpoint(targetPose.getX());
 		yController.setSetpoint(targetPose.getY());
 		rotationController.setSetpoint(targetPose.getRotation().getRadians());
 	}
 
+	/**
+	 * Get current drivetrain pose
+	 * 
+	 * @return current drivetrain pose
+	 */
 	public Pose2d getPosition() {
 		return drivetrain.getPosition();
+	}
+
+	/** Stop from setting new states, can be started by calling setDesiredPositions again */
+	public void stop() {
+		stopped = true;
+		drivetrain.stop();
 	}
 
 	/** Put all swerve modules in default positions */
@@ -76,6 +90,7 @@ public class DriveToPoseBase extends Command {
 
 	@Override
 	public void execute() {
+		if (stopped) return;
 
 		// Get our current pose
 		final Pose2d measuredPosition = getPosition();
