@@ -57,7 +57,7 @@ public class FollowTag extends DriveToPoseBase {
 		final Transform2d tagPosition = new Transform2d(
 				tagPosition3d.getZ(),
 				tagPosition3d.getX(),
-				Rotation2d.fromRadians(tagPosition3d.getRotation().getZ()));
+				Rotation2d.fromRadians(-tagPosition3d.getRotation().getZ()));
 
 		final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
 

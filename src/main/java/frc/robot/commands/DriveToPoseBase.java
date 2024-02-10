@@ -9,7 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
-/** Base Command for automatically driving to a certain Pose on the field */
+/** Base Command for child commands that need to automatically drive to a certain Pose on the field */
 public class DriveToPoseBase extends Command {
 	private final SwerveDrivetrain drivetrain;
 	private final PIDController xController, yController, rotationController;
@@ -53,6 +53,11 @@ public class DriveToPoseBase extends Command {
 		addRequirements(this.drivetrain);
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param targetPose Pose that robot will drive to once command is scheduled
+	 */
 	public void setDesiredPosition(Pose2d targetPose) {
 		xController.setSetpoint(targetPose.getX());
 		yController.setSetpoint(targetPose.getY());
@@ -63,9 +68,9 @@ public class DriveToPoseBase extends Command {
 		return drivetrain.getPosition();
 	}
 
+	/** Put all swerve modules in default positions */
 	@Override
 	public void initialize() {
-		// Put all swerve modules in default position
 		drivetrain.toDefaultStates();
 	}
 
@@ -90,15 +95,15 @@ public class DriveToPoseBase extends Command {
 		drivetrain.setDesiredState(speeds);
 	}
 
+	/** Finish once all controllers are within tolerance */
 	@Override
 	public boolean isFinished() {
-		// Finish once all controllers are within tolerance
 		return xController.atSetpoint() && yController.atSetpoint() && rotationController.atSetpoint();
 	}
 
+	/** Stop all swerve modules at end */
 	@Override
 	public void end(boolean interrupted) {
-		// Stop all swerve modules at end
 		drivetrain.stop();
 	}
 }

@@ -21,6 +21,7 @@ public class DriveToPose extends DriveToPoseBase {
     public DriveToPose(SwerveDrivetrain drivetrain, Pose2d targetPosition) {
         super(drivetrain);
 
+		// Set desired pose so once we initialize we go there
         setDesiredPosition(targetPosition);
     }
 }
