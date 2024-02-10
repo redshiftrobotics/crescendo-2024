@@ -107,6 +107,15 @@ public class SwerveDrivetrain extends SubsystemBase {
 		}
 	}
 
+	public SwerveDriveKinematics getKinematics() {
+		return kinematics;
+	}
+
+	public void setSwerveModuleStates(SwerveModuleState[] states) {
+		for (int i = 0; i < modules.length; i++) {
+			modules[i].setDesiredState(states[i], false);
+		}
+	}
 	// --- Pose Related Methods ---
 
 	/**
@@ -155,7 +164,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 		modulesMap(SwerveModule::toDefaultState);
 	}
 
-	/** Put all swerve modules to inward state, making the swerve modules face in a X pattern. This prevents robot from slipping around. */
+	/**
+	 * Put all swerve modules to inward state, making the swerve modules face in a X
+	 * pattern. This prevents robot from slipping around.
+	 */
 	public void brakeMode() {
 		modulesMap(SwerveModule::toInwardPosition);
 	}
@@ -332,6 +344,5 @@ public class SwerveDrivetrain extends SubsystemBase {
 		// Also takes a T array initializer
 		return Arrays.stream(modules).map(func).toArray(arrayInitializer);
 	}
-
 
 }

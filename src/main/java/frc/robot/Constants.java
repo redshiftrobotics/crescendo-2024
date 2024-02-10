@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -21,11 +22,13 @@ public final class Constants {
 	public static final String serialNumber;
 
 	/**
-	 * This code determines what bot is being deployed and sets constants accordingly.
+	 * This code determines what bot is being deployed and sets constants
+	 * accordingly.
 	 * 
 	 * Simulated bots cannot have a RoboRIO ID, so we must check if the bot is real.
 	 * If it isn't, load production config.
-	 * The production bot is always default, so if we do anything crazy to our bot during the tourney like switch the RoboRIO the code works.
+	 * The production bot is always default, so if we do anything crazy to our bot
+	 * during the tourney like switch the RoboRIO the code works.
 	 * 
 	 * @author Aceius E.
 	 */
@@ -220,5 +223,14 @@ public final class Constants {
 		// distance of swerve modules from center of robot, in meters
 		public static final double MODULE_LOCATION_Y;
 		public static final double MODULE_LOCATION_X;
+	}
+
+	public static class AutoConstants {
+		public static final double kMaxAutoVelocitySpeedMetersPerSecond = 0.1;
+		public static final double kMaxAutoRotationSpeedMetersPerSecond = 0.1;
+		public static final double kAngularControllerP = 0.1;
+		public static final double kVelocityControllerP = 0.1;
+		public static final TrapezoidProfile.Constraints kRotationControllerConstraints = new TrapezoidProfile.Constraints(
+				kMaxAutoVelocitySpeedMetersPerSecond, 1);
 	}
 }

@@ -12,6 +12,7 @@ import frc.robot.utils.ChassisDriveInputs;
 import frc.robot.utils.OptionButton;
 import frc.robot.utils.OptionButton.ActivationMode;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -39,8 +40,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared.
- * Since Command-based is a "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
- * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
+ * Since Command-based is a "declarative" paradigm, very little robot logic
+ * should actually be handled in the {@link Robot} periodic methods (other than
+ * the scheduler calls).
+ * Instead, the structure of the robot (including subsystems, commands, and
+ * trigger mappings) should be declared here.
  */
 public class RobotContainer {
 
@@ -79,15 +83,14 @@ public class RobotContainer {
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
 
-    // Create joysticks
-    private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
-    // private final CommandJoystick operatorJoystick = new CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
+	// Create joysticks
+	private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
+	// private final CommandJoystick operatorJoystick = new
+	// CommandJoystick(OperatorConstants.OPERATOR_JOYSTICK_PORT);
 
-
-
-
-    //private final CommandXboxController xboxController = new CommandXboxController(0);
-    private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+	// private final CommandXboxController xboxController = new
+	// CommandXboxController(0);
+	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -111,37 +114,33 @@ public class RobotContainer {
 
 		drivetrain.removeDefaultCommand();
 
-
 		DriverControl control;
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 			control = new DriverControl(drivetrain,
 
-				new ChassisDriveInputs(
-					joystick::getX, joystick::getY, joystick::getTwist,
-					-1, -1, Constants.DriverConstants.DEAD_ZONE),
+					new ChassisDriveInputs(
+							joystick::getX, joystick::getY, joystick::getTwist,
+							-1, -1, Constants.DriverConstants.DEAD_ZONE),
 
-				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
-				new OptionButton(joystick, 1, ActivationMode.HOLD),
-				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
-			);
-			
+					new OptionButton(joystick, 2, ActivationMode.TOGGLE),
+					new OptionButton(joystick, 1, ActivationMode.HOLD),
+					new OptionButton(joystick, 3, ActivationMode.TOGGLE));
+
 			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 			control = new DriverControl(drivetrain,
 
-				new ChassisDriveInputs(
-					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
-					+1, -1, Constants.DriverConstants.DEAD_ZONE),
+					new ChassisDriveInputs(
+							xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
+							+1, -1, Constants.DriverConstants.DEAD_ZONE),
 
-				new OptionButton(xbox::b, ActivationMode.TOGGLE),
-				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
-				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
-			);
-
+					new OptionButton(xbox::b, ActivationMode.TOGGLE),
+					new OptionButton(xbox::leftStick, ActivationMode.HOLD),
+					new OptionButton(xbox::povUp, ActivationMode.TOGGLE));
 
 		}
 
@@ -157,24 +156,32 @@ public class RobotContainer {
 	 *
 	 * @return the command to run in autonomous
 	 */
-	    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        // An example command will be run in autonomous
+	/**
+	 * Use this to pass the autonomous command to the main {@link Robot} class.
+	 *
+	 * @return the command to run in autonomous
+	 */
+	public Command getAutonomousCommand() {
+		// An example command will be run in autonomous
 
-        //Trajectory Config
-        final TrajectoryConfig exampleConfig = new TrajectoryConfig(AutoConstants.kMaxAutoVelocitySpeedMetersPerSecond,AutoConstants.kMaxAutoRotationSpeedMetersPerSecond).setKinematics(drivetrain.getKinematics());
-        //Example Trajectory (1 meter forward then backward)
-        final Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0,0,new Rotation2d(0)),List.of(new Translation2d(1,0)),new Pose2d(0,0,new Rotation2d(0)), exampleConfig);
-        //Profiled PID Controller for trajectory rotation
-        final ProfiledPIDController rotationPidController = new ProfiledPIDController(AutoConstants.kAngularControllerP, 0, 0, AutoConstants.kRotationControllerConstraints);
-        rotationPidController.enableContinuousInput(-Math.PI, Math.PI);
-        //SwerveControllerCommand Test (Trajectory Auto Drive)
-        final SwerveControllerCommand trajectoryTestCommand = new SwerveControllerCommand(exampleTrajectory, drivetrain::getPosition, drivetrain.getKinematics(), new PIDController(AutoConstants.kVelocityControllerP, 0, 0), new PIDController(AutoConstants.kVelocityControllerP, 0, 0), rotationPidController, drivetrain::setDesiredStateDriveSwerveModuleStates, drivetrain);
+		// Trajectory Config
+		final TrajectoryConfig exampleConfig = new TrajectoryConfig(AutoConstants.kMaxAutoVelocitySpeedMetersPerSecond,
+				AutoConstants.kMaxAutoRotationSpeedMetersPerSecond).setKinematics(drivetrain.getKinematics());
+		// Example Trajectory (1 meter forward then backward)
+		final Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
+				List.of(new Translation2d(1, 0)), new Pose2d(0, 0, new Rotation2d(0)), exampleConfig);
+		// Profiled PID Controller for trajectory rotation
+		final ProfiledPIDController rotationPidController = new ProfiledPIDController(AutoConstants.kAngularControllerP,
+				0, 0, AutoConstants.kRotationControllerConstraints);
+		rotationPidController.enableContinuousInput(-Math.PI, Math.PI);
+		// SwerveControllerCommand Test (Trajectory Auto Drive)
+		final SwerveControllerCommand trajectoryTestCommand = new SwerveControllerCommand(exampleTrajectory,
+				drivetrain::getPosition, drivetrain.getKinematics(),
+				new PIDController(AutoConstants.kVelocityControllerP, 0, 0),
+				new PIDController(AutoConstants.kVelocityControllerP, 0, 0), rotationPidController,
+				drivetrain::setSwerveModuleStates, drivetrain);
 
-        return Commands.sequence(new InstantCommand(() -> drivetrain.resetPosition()), trajectoryTestCommand, new InstantCommand(()-> drivetrain.setDesiredState(new ChassisSpeeds(0,0,0))));
-    }
+		return Commands.sequence(new InstantCommand(() -> drivetrain.resetPosition()), trajectoryTestCommand,
+				new InstantCommand(() -> drivetrain.setDesiredState(new ChassisSpeeds(0, 0, 0))));
+	}
 }
