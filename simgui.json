@@ -6,6 +6,11 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     }
   },
+  "NetworkTables": {
+    "Transitory Values": {
+      "open": false
+    }
+  },
   "NetworkTables Info": {
     "Connections": {
       "open": true
@@ -14,5 +19,8 @@
       "open": true
     },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
