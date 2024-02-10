@@ -1,40 +1,40 @@
 {
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "java.server.launchMode": "Standard",
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "bin/": true,
-    "**/.classpath": true,
-    "**/.project": true,
-    "**/.settings": true,
-    "**/.factorypath": true,
-    "**/*~": true
-  },
-  "java.test.config": [
-    {
-      "name": "WPIlibUnitTests",
-      "workingDirectory": "${workspaceFolder}/build/jni/release",
-      "vmargs": [ "-Djava.library.path=${workspaceFolder}/build/jni/release" ],
-      "env": {
-        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release" ,
-        "DYLD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release"
-      }
-    },
-  ],
-  "java.test.defaultConfig": "WPIlibUnitTests",
-  "cSpell.words": [
-    "AHRS",
-    "Brushless",
-    "Deadzone",
-    "Odometry",
-    "Robo",
-    "setpoint",
-    "teleop",
-    "teleoperated"
-  ]
+	"java.configuration.updateBuildConfiguration": "automatic",
+	"java.server.launchMode": "Standard",
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"bin/": true,
+		"**/.classpath": true,
+		"**/.project": true,
+		"**/.settings": true,
+		"**/.factorypath": true,
+		"**/*~": true
+	},
+	"java.test.config": [
+		{
+			"name": "WPIlibUnitTests",
+			"workingDirectory": "${workspaceFolder}/build/jni/release",
+			"vmargs": [
+				"-Djava.library.path=${workspaceFolder}/build/jni/release"
+			],
+			"env": {
+				"LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release",
+				"DYLD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release"
+			}
+		},
+	],
+	"java.test.defaultConfig": "WPIlibUnitTests",
+	// Style guide - most of this came from clicking buttons and then copying from my user settings.json
+	// General editor stuff
+	"editor.formatOnSave": true, // So you cant forget
+	"editor.tabSize": 4, // 4 char width indentation
+	"editor.detectIndentation": false, // Prevent above from being overridden
+	"editor.insertSpaces": false, // use tab character instead of spaces
+	"java.cleanup.actionsOnSave": [
+		"addOverride",
+	]
 }
-

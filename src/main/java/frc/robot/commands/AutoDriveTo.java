@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
@@ -15,77 +16,87 @@ import frc.robot.Constants.RobotMovementConstants;
 // Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
 
 public class AutoDriveTo extends Command {
-    private final SwerveDrivetrain drivetrain;
+	private final SwerveDrivetrain drivetrain;
 
-    private final PIDController xMovePID, yMovePID;
-    private double initX, initY, goalX, goalY;
+	private final PIDController xMovePID, yMovePID;
+	private double initX, initY, goalX, goalY;
 
-    private double atSetpointCounter = 0;
+	private double atSetpointCounter = 0;
 
-    public AutoDriveTo(SwerveDrivetrain subsystem, Translation2d translation) {
-        this.drivetrain = subsystem;
+	private boolean xOnlyMode;
 
-        goalX = translation.getX();
-        goalY = translation.getY();
+	public AutoDriveTo(SwerveDrivetrain subsystem, Translation2d translation) {
+		this.drivetrain = subsystem;
 
-        xMovePID = new PIDController(
-            RobotMovementConstants.TRANSLATION_PID_P,
-            RobotMovementConstants.TRANSLATION_PID_I,
-            RobotMovementConstants.TRANSLATION_PID_D
-        );
+		goalX = translation.getX();
+		goalY = translation.getY();
 
-        yMovePID = new PIDController(
-            RobotMovementConstants.TRANSLATION_PID_P,
-            RobotMovementConstants.TRANSLATION_PID_I,
-            RobotMovementConstants.TRANSLATION_PID_D
-        );
+		xOnlyMode = Math.abs(goalX) > Math.abs(goalY);
 
-        addRequirements(this.drivetrain);
-    }
+		xMovePID = new PIDController(
+				RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I,
+				RobotMovementConstants.TRANSLATION_PID_D);
 
-    @Override
-    public void initialize() {
+		yMovePID = new PIDController(
+				RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I,
+				RobotMovementConstants.TRANSLATION_PID_D);
 
-        drivetrain.resetPosition();
+		addRequirements(this.drivetrain);
+	}
 
-        final Pose2d position = drivetrain.getPosition();
+	@Override
+	public void initialize() {
 
-        initX = position.getX();
-        initY = position.getY();
-    }
+		drivetrain.resetPosition();
 
-    @Override
-    public void execute() {
-        Pose2d position=this.drivetrain.getPosition();
+		final Pose2d position = drivetrain.getPosition();
 
-        double x = position.getX() - initX;
-        double y = position.getY() - initY;
+		initX = position.getX();
+		initY = position.getY();
+	}
 
-        SmartDashboard.putNumber("PoseY", position.getY());
-        SmartDashboard.putNumber("PoseX", position.getX());
-		SmartDashboard.putNumber("PoseDegrees", position.getRotation().getDegrees()); 
+	@Override
+	public void execute() {
+		Pose2d position = this.drivetrain.getPosition();
 
-        if (Math.abs(x - goalX) < RobotMovementConstants.POS_TOLERANCE && Math.abs(y - goalY)<RobotMovementConstants.POS_TOLERANCE) atSetpointCounter+=20;
-        else atSetpointCounter=0;
+		double x = position.getX() - initX;
+		double y = position.getY() - initY;
 
-        double xSpeed = xMovePID.calculate(x, goalX);
-        double ySpeed = yMovePID.calculate(y, goalY);
+		SmartDashboard.putNumber("PoseY", position.getY());
+		SmartDashboard.putNumber("PoseX", position.getX());
+		SmartDashboard.putNumber("PoseDegrees", position.getRotation().getDegrees());
 
-        final ChassisSpeeds speeds = new ChassisSpeeds(
-            xSpeed,
-            ySpeed,
-            0);
-        
-        drivetrain.setDesiredState(speeds);
-    }
+		if (Math.abs(x - goalX) < RobotMovementConstants.POSITION_TOLERANCE_METERS
+				&& Math.abs(y - goalY) < RobotMovementConstants.POSITION_TOLERANCE_METERS)
+			atSetpointCounter += TimedRobot.kDefaultPeriod;
+		else
+			atSetpointCounter = 0;
 
-    @Override
-    public boolean isFinished() {
-        return atSetpointCounter > RobotMovementConstants.MOVE_PID_TOLERANCE_TIME;
-    }
+		double xSpeed = xMovePID.calculate(x, goalX);
+		double ySpeed = yMovePID.calculate(y, goalY);
 
-    @Override
-    public void end(boolean interrupted) {
-        drivetrain.stop();
-    }
+		if (xOnlyMode)
+			ySpeed = 0;
+		else
+			xSpeed = 0;
+
+		final ChassisSpeeds speeds = new ChassisSpeeds(
+				xSpeed,
+				ySpeed,
+				0);
+
+		drivetrain.setDesiredState(speeds);
+	}
+
+	@Override
+	public boolean isFinished() {
+		return atSetpointCounter > RobotMovementConstants.AT_SETPOINT_TOLERANCE_TIME_SECONDS;
+	}
+
+	@Override
+	public void end(boolean interrupted) {
+		drivetrain.stop();
+	}
 }

@@ -5,10 +5,12 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.SwerveRemoteOperation.SwerveDriveJoystickControl;
-import frc.robot.commands.SwerveRemoteOperation.SwerveDriveXboxControl;
+import frc.robot.commands.DriverControl;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
+import frc.robot.utils.ChassisDriveInputs;
+import frc.robot.utils.OptionButton;
+import frc.robot.utils.OptionButton.ActivationMode;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -42,35 +44,40 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  */
 public class RobotContainer {
 
-    // The robot's subsystems and commands are defined here...
-    private final SwerveModule swerveModuleFL = new SwerveModule(
-            SwerveModuleConstants.VELOCITY_MOTOR_ID_FL,
+	// The robot's subsystems and commands are defined here...
+	private final SwerveModule swerveModuleFL = new SwerveModule(
+			SwerveModuleConstants.VELOCITY_MOTOR_ID_FL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_FL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FL,
-            new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+			new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X,
+					SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 	private final SwerveModule swerveModuleFR = new SwerveModule(
-            SwerveModuleConstants.VELOCITY_MOTOR_ID_FR,
+			SwerveModuleConstants.VELOCITY_MOTOR_ID_FR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_FR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_FR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_FR,
-            new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+			new Translation2d(SwerveDrivetrainConstants.MODULE_LOCATION_X,
+					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 	private final SwerveModule swerveModuleBL = new SwerveModule(
-            SwerveModuleConstants.VELOCITY_MOTOR_ID_BL,
+			SwerveModuleConstants.VELOCITY_MOTOR_ID_BL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_BL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BL,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BL,
-            new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
+					SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 	private final SwerveModule swerveModuleBR = new SwerveModule(
-            SwerveModuleConstants.VELOCITY_MOTOR_ID_BR,
+			SwerveModuleConstants.VELOCITY_MOTOR_ID_BR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ID_BR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_ID_BR,
 			SwerveModuleConstants.ANGULAR_MOTOR_ENCODER_OFFSET_BR,
-            new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X, -SwerveDrivetrainConstants.MODULE_LOCATION_Y));
+			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
+					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
-    private final AHRS gyro = new AHRS(I2C.Port.kMXP);
+	private final AHRS gyro = new AHRS(I2C.Port.kOnboard);
 
-    private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR, swerveModuleBL, swerveModuleBR);
+	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
+			swerveModuleBL, swerveModuleBR);
 
     // Create joysticks
     private final CommandJoystick driverJoystick = new CommandJoystick(DriverConstants.DRIVER_JOYSTICK_PORT);
@@ -82,38 +89,75 @@ public class RobotContainer {
     //private final CommandXboxController xboxController = new CommandXboxController(0);
     private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
-        autoChooser.addOption("Testing Auto", Autos.testingAuto(drivetrain));
+	/**
+	 * The container for the robot. Contains subsystems, OI devices, and commands.
+	 */
+	public RobotContainer() {
+		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
+		SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        setUpDriveController();
-        configureBindings();
-    }
+		configureBindings();
 
-    public void setUpDriveController() {
-        // Create joysticks
-        final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
-        final HIDType genericHIDType = genericHID.getType();
+		setUpDriveController();
+	}
 
-        SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-        SmartDashboard.putString("Bot Name", Constants.currentBot.toString());
+	public void setUpDriveController() {
+		// Create joysticks
+		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
+		final HIDType genericHIDType = genericHID.getType();
 
-        if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
-            final CommandJoystick driverJoystick = new CommandJoystick(genericHID.getPort());
-            SwerveDriveJoystickControl control = new SwerveDriveJoystickControl(drivetrain, driverJoystick);
-            drivetrain.setDefaultCommand(control);
-        } else {
-            final CommandXboxController xboxController = new CommandXboxController(genericHID.getPort());
-            SwerveDriveXboxControl control = new SwerveDriveXboxControl(drivetrain, xboxController);
-            drivetrain.setDefaultCommand(control);
-        }
-    }
+		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
+		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
-    /** Use this method to define your trigger->command mappings. */
-    private void configureBindings() {
-    }
+		drivetrain.removeDefaultCommand();
 
-    /**
+
+		DriverControl control;
+
+		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
+			control = new DriverControl(drivetrain,
+
+				new ChassisDriveInputs(
+					joystick::getX, joystick::getY, joystick::getTwist,
+					-1, -1, Constants.DriverConstants.DEAD_ZONE),
+
+				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
+				new OptionButton(joystick, 1, ActivationMode.HOLD),
+				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
+			);
+			
+			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+
+		} else {
+			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+			control = new DriverControl(drivetrain,
+
+				new ChassisDriveInputs(
+					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
+					+1, -1, Constants.DriverConstants.DEAD_ZONE),
+
+				new OptionButton(xbox::b, ActivationMode.TOGGLE),
+				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
+				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
+			);
+
+
+		}
+
+		drivetrain.setDefaultCommand(control);
+	}
+
+	/** Use this method to define your trigger->command mappings. */
+	private void configureBindings() {
+	}
+
+	/**
+	 * Use this to pass the autonomous command to the main {@link Robot} class.
+	 *
+	 * @return the command to run in autonomous
+	 */
+	    /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
