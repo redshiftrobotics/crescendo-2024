@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 // Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
 
 /** An example command that uses an example subsystem. */
-public class ShootHigh extends Command {
+public class ShootBegin extends Command {
 	private final ShooterSubsystem shooterSubsystem;
 
 	/**
@@ -24,7 +24,7 @@ public class ShootHigh extends Command {
 	 * configuring objects for the class like PID controllers, and adding subsystem
 	 * requirements
 	 */
-	public ShootHigh(ShooterSubsystem shooterSubsystem) {
+	public ShootBegin(ShooterSubsystem shooterSubsystem) {
 		// use "this" to access member variable subsystem rather than local subsystem
 		this.shooterSubsystem = shooterSubsystem;
 
@@ -44,6 +44,9 @@ public class ShootHigh extends Command {
 	 */
 	@Override
 	public void initialize() {
+		shooterSubsystem.stopIntake();
+		shooterSubsystem.stopOutput();
+
 	}
 
 	/**
@@ -57,6 +60,7 @@ public class ShootHigh extends Command {
 	 */
 	@Override
 	public void execute() {
+		shooterSubsystem.engageOutput();
 	}
 
 	/**
@@ -85,5 +89,7 @@ public class ShootHigh extends Command {
 	 */
 	@Override
 	public void end(boolean interrupted) {
+		shooterSubsystem.stopIntake();
+		shooterSubsystem.stopOutput();
 	}
 }

@@ -45,6 +45,15 @@ public class ShooterSubsystem extends SubsystemBase {
 		greyMotorTwo.set(ShooterConstants.outputSpeed);
 	}
 
+	public void stopIntake() {
+		greenMotor.set(0);
+	}
+
+	public void stopOutput() {
+		greyMotorOne.set(0);
+		greyMotorTwo.set(0);
+	}
+
 	/**
 	 * This method is called periodically by the CommandScheduler, about every 20ms.
 	 * It should be used for updating subsystem-specific state that you don't want

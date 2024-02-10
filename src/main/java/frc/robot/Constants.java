@@ -87,7 +87,7 @@ public final class Constants {
 
 		// Note to self: find final speeds later
 		public static final double outputSpeed = 1;
-		public static final double intakeSpeed = 0;
+		public static final double intakeSpeed = 0.5;
 	}
 
 	// END
