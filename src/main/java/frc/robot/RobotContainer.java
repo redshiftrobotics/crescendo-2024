@@ -107,8 +107,10 @@ public class RobotContainer {
 			control = new DriverControl(drivetrain,
 
 				new ChassisDriveInputs(
-					joystick::getY, joystick::getX, joystick::getTwist,
-					-1, -1, Constants.DriverConstants.DEAD_ZONE),
+					joystick::getY, -1,
+					joystick::getX, -1,
+					joystick::getTwist, -1,
+					Constants.DriverConstants.DEAD_ZONE),
 
 					new OptionButton(joystick, 2, ActivationMode.TOGGLE),
 					new OptionButton(joystick, 1, ActivationMode.HOLD),
@@ -121,8 +123,10 @@ public class RobotContainer {
 			control = new DriverControl(drivetrain,
 
 				new ChassisDriveInputs(
-					xbox::getLeftY, xbox::getLeftX, xbox::getRightX,
-					+1, -1, Constants.DriverConstants.DEAD_ZONE),
+					xbox::getLeftY, +1,
+					xbox::getLeftX, +1,
+					xbox::getRightX, -1,
+					Constants.DriverConstants.DEAD_ZONE),
 
 				new OptionButton(xbox::b, ActivationMode.TOGGLE),
 				new OptionButton(xbox::leftStick, ActivationMode.HOLD),

@@ -5,45 +5,50 @@ import java.util.function.Supplier;
 /** Class that stores supplies for main controls of ChassisSpeeds */
 public class ChassisDriveInputs {
 
-	private final Supplier<Double> xSupplier;
-	private final Supplier<Double> ySupplier;
-	private final Supplier<Double> rotationSupplier;
+	private final Supplier<Double> xSupplier, ySupplier, rotationSupplier;
+
+	private final double xCoefficient, yCoefficient, rotationCoefficient;
 
 	private final double deadzone;
 
-	private final double translationCoefficient;
-	private final double rotationCoefficient;
 
 	/**
 	 * Create a new ChassisDriveInputs
 	 * 
-	 * @param getX Get the value mapped to forward
-	 * @param getY Get the value mapped to left
-	 * @param getRotation Get the value mapped to rotation
-	 * @param translationCoefficient Coefficient that forward (x) and left (Y) are multiped by
+	 * @param getForward Get the value mapped to X, -1 full backward to +1 full forward
+	 * @param forwardCoefficient Coefficient that forward (X) multiped by
+	 * 
+	 * @param getLeft Get the value mapped to Y, -1 full right to +1 full left
+	 * @param leftCoefficient Coefficient that forward left (Y) are multiped by
+	 * 
+	 * @param getRotation Get the value mapped to rotation, -1 full clock
 	 * @param rotationCoefficient Coefficient that rotation is multiplied by
+	 * 
 	 * @param deadzone Deadzone for all axises
 	 */
 	public ChassisDriveInputs(
-			Supplier<Double> getX, Supplier<Double> getY, Supplier<Double> getRotation,
-			double translationCoefficient, double rotationCoefficient, double deadzone) {
+			Supplier<Double> getForward, double forwardCoefficient, 
+			Supplier<Double> getLeft, double leftCoefficient,
+			Supplier<Double> getRotation, double rotationCoefficient,
+			double deadzone) {
 
-		this.xSupplier = getX;
-		this.ySupplier = getY;
+		this.ySupplier = getForward;
+		this.xSupplier = getLeft;
 		this.rotationSupplier = getRotation;
 
-		this.deadzone = deadzone;
-
-		this.translationCoefficient = translationCoefficient;
+		this.yCoefficient = forwardCoefficient;
+		this.xCoefficient = leftCoefficient;
 		this.rotationCoefficient = rotationCoefficient;
+
+		this.deadzone = deadzone;
 	}
 
 	public double getX() {
-		return applyJoystickDeadzone(xSupplier.get(), deadzone) * translationCoefficient;
+		return applyJoystickDeadzone(xSupplier.get(), deadzone) * xCoefficient;
 	}
 
 	public double getY() {
-		return applyJoystickDeadzone(ySupplier.get(), deadzone) * translationCoefficient;
+		return applyJoystickDeadzone(ySupplier.get(), deadzone) * yCoefficient;
 	}
 
 	public double getRotation() {
