@@ -74,13 +74,14 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME);
+	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, Constants.VisionConstants.CAMERA_POSE);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
+		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
@@ -116,7 +117,8 @@ public class RobotContainer {
 					new OptionButton(joystick, 1, ActivationMode.HOLD),
 					new OptionButton(joystick, 3, ActivationMode.TOGGLE));
 
-			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			joystick.button(10).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			joystick.button(11).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());

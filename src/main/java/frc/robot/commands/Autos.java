@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveDrivetrain;
-
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +15,10 @@ public final class Autos {
 		return Commands.sequence(
 				new DriveTransform(drivetrain, new Translation2d(1, 0), new Rotation2d())
 		);
+	}
+
+	public static Command tagFollowAuto(SwerveDrivetrain drivetrain, Vision camera, Integer tagId) {
+		return new FollowTag(drivetrain, camera, new Translation2d(1, 0), tagId, null);
 	}
 
 	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, boolean invertY) {

@@ -33,7 +33,7 @@ public final class Constants {
 	 * @author Aceius E.
 	 */
 	static {
-		serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "Simulation";
+		serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "simulation";
 
 		switch (serialNumber) {
 			case "03282B00": // Wood Bot Serial Number

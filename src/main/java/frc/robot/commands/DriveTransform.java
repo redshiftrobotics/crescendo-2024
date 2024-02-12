@@ -3,10 +3,12 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 /** Command to automatically drive a certain transform */
-public class DriveTransform extends DriveToPoseBase {
+public class DriveTransform extends Command {
+	private final SwerveDrivetrain drivetrain;
 	private final Transform2d transform;
 
 	/**
@@ -22,7 +24,7 @@ public class DriveTransform extends DriveToPoseBase {
 	 *                   position to get target pose
 	 */
 	public DriveTransform(SwerveDrivetrain drivetrain, Transform2d transform) {
-		super(drivetrain);
+		this.drivetrain = drivetrain;
 		this.transform = transform;
 	}
 
@@ -46,6 +48,17 @@ public class DriveTransform extends DriveToPoseBase {
 
 	@Override
 	public void initialize() {
-		setDesiredPosition(getPosition().plus(transform));
+		drivetrain.setDesiredPosition(drivetrain.getPosition().plus(transform));
+	}
+
+	@Override
+	public boolean isFinished() {
+		return drivetrain.isAtDesiredPosition();
+	}
+
+	@Override
+	public void end(boolean interrupted) {
+		drivetrain.clearDesiredPosition();
+		drivetrain.stop();
 	}
 }

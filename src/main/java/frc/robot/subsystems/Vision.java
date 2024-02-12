@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -8,6 +8,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,91 +16,94 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
 // Subsystem Documentation documentation: https://docs.wpilib.org/en/stable/docs/software/commandbased/subsystems.html
 
-/**
- * 
- */
-
+/** Vision subsystem */
 public class Vision extends SubsystemBase {
-    /** Constructor. Creates a new ExampleSubsystem. */
-    PhotonCamera camera;
-    
-    
-    PhotonTrackedTarget bestTag = null;
-    List<PhotonTrackedTarget> targets = null;
-    
-    public Vision(String cameraName) {
-        camera = new PhotonCamera(cameraName);
 
-    }
+	private final static boolean DEBUG_INFO = true;
 
-    /**
-     * Gives Transform3d from the robot center to the desired target
-     * @return
-     */
-    public Transform3d getDistToTag() {
-        return bestTag.getBestCameraToTarget();
-    }
+	final PhotonCamera camera;
+	final Transform3d cameraToFrontCenter;
 
-    /**
-     * Gives Transform3d from robot center to the desired target
-     * @param tagID The fiducial ID of the desired April Tag
-     * @return Returns null if the tag cannot be found
-     * 
-     */
-    public Transform3d getDistToTag(int tagID) {
-        Transform3d dist = null;
-        for(int i = 0; i < targets.size(); i++)
-        {
-            if (targets.get(i).getFiducialId() == tagID) {
-                dist = targets.get(i).getBestCameraToTarget();
-                break;
-            }
-        }
-        
-        return dist;
-    }
-    /**
-     * This method is called periodically by the CommandScheduler, about every 20ms.
-     * It should be used for updating subsystem-specific state that you don't want to offload to a Command.
-     * Try to avoid "doing to much" in this method (for example no driver control here).
-     */
-    @Override
-    public void periodic() {
-        PhotonPipelineResult result = camera.getLatestResult();
-        // This method will be called once per scheduler run
-        bestTag = result.getBestTarget();
-        targets = result.getTargets();
-        if(bestTag != null) {
-            SmartDashboard.putNumber("Tag ID", bestTag.getFiducialId());
-            Transform3d tagPose = bestTag.getBestCameraToTarget();
-            Rotation3d tagRot = tagPose.getRotation();
-            // SmartDashboard.putNumberArray("Tag X Y Z", new double[] {tagPose.getX(), tagPose.getY(), tagPose.getZ()});
-            // SmartDashboard.putNumberArray("Tag Yaw, Pitch, Roll", new double[] {
-            //     Units.radiansToDegrees(tagRot.getZ()),
-            //     Units.radiansToDegrees(tagRot.getY()),
-            //     Units.radiansToDegrees(tagRot.getX())});
-            SmartDashboard.putNumber("Tag Pose X", tagPose.getX());
-            SmartDashboard.putNumber("Tag Pose Y", tagPose.getY());
-            SmartDashboard.putNumber("Tag Pose Z", tagPose.getZ());
-            SmartDashboard.putNumber("Tag Pose Yaw", tagRot.getZ());
-            SmartDashboard.putNumber("Tag Pose Pitch", tagRot.getY());
-            SmartDashboard.putNumber("Tag Pose Roll", tagRot.getX());
-            SmartDashboard.putNumber("Tag Yaw", bestTag.getYaw());
-            SmartDashboard.putNumber("Tag Pitch", bestTag.getPitch());
-        } else {
-            SmartDashboard.putNumber("Tag ID", -1);
-            SmartDashboard.putNumber("Tag Pose X", -1);
-            SmartDashboard.putNumber("Tag Pose Y", -1);
-            SmartDashboard.putNumber("Tag Pose Z", -1);
-            SmartDashboard.putNumber("Tag Pose Yaw", -1);
-            SmartDashboard.putNumber("Tag Pose Pitch", -1);
-            SmartDashboard.putNumber("Tag Pose Roll", -1);
-            SmartDashboard.putNumber("Tag Yaw", 0);
-            SmartDashboard.putNumber("Tag Pitch", 0);
-            // SmartDashboard.putNumberArray("Tag X Y Z", new double[] {0, 0, 0});
-            // SmartDashboard.putNumberArray("Tag Yaw, Pitch, Roll", new double[] {0, 0, 0});
-        }
+	/**
+	 * Create new PhotonCamera subsystem
+	 * 
+	 * @param cameraName          name of PhotonCamera
+	 * @param cameraToFrontCenter distance from the camera to the front center point
+	 *                            of the robot
+	 */
+	public Vision(String cameraName, Transform3d cameraToFrontCenter) {
+		camera = new PhotonCamera(cameraName);
+		this.cameraToFrontCenter = cameraToFrontCenter;
+	}
 
-        
-    }
+	/**
+	 * Get best april tag target
+	 * 
+	 * @return Object of best target
+	 */
+	public PhotonTrackedTarget getDistToTag() {
+		return camera
+				.getLatestResult()
+				.getBestTarget();
+	}
+
+	/**
+	 * Gives Transform3d from robot center to the desired target
+	 * 
+	 * @param tagID The fiducial ID of the desired April Tag
+	 * @return returns first tag with matching ID, null if None are found
+	 */
+	public PhotonTrackedTarget getDistToTag(int tagID) {
+		for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
+			if (target.getFiducialId() == tagID)
+				return target;
+		}
+		return null;
+	}
+
+	public Transform3d getDistanceToTarget(PhotonTrackedTarget tag) {
+		return tag
+				.getBestCameraToTarget()
+				.plus(cameraToFrontCenter);
+	}
+
+	/**
+	 * This method is called periodically by the CommandScheduler, about every 20ms.
+	 * It should be used for updating subsystem-specific state that you don't want
+	 * to offload to a Command.
+	 * Try to avoid "doing to much" in this method (for example no driver control
+	 * here).
+	 */
+	@Override
+	public void periodic() {
+		if (!DEBUG_INFO)
+			return;
+
+		PhotonPipelineResult result = camera.getLatestResult();
+
+		PhotonTrackedTarget bestTag = result.getBestTarget();
+
+		if (bestTag == null) {
+			bestTag = new PhotonTrackedTarget(-1, -1, -1, -1, -1,
+					new Transform3d(new Translation3d(-1, -1, -1), new Rotation3d(-1, -1, -1)), null, 0,
+					new ArrayList<>(), new ArrayList<>());
+		}
+
+		SmartDashboard.putNumber("Tag ID", bestTag.getFiducialId());
+		SmartDashboard.putNumber("Tag Yaw", bestTag.getYaw());
+		SmartDashboard.putNumber("Tag Pitch", bestTag.getPitch());
+		SmartDashboard.putNumber("Tag Skew", bestTag.getSkew());
+
+		Transform3d tagPose = bestTag.getBestCameraToTarget();
+
+		SmartDashboard.putNumber("Tag Pose X", tagPose.getX());
+		SmartDashboard.putNumber("Tag Pose Y", tagPose.getY());
+		SmartDashboard.putNumber("Tag Pose Z", tagPose.getZ());
+
+		Rotation3d tagPoseRotation = tagPose.getRotation();
+
+		SmartDashboard.putNumber("Tag Pose Yaw", tagPoseRotation.getZ());
+		SmartDashboard.putNumber("Tag Pose Pitch", tagPoseRotation.getY());
+		SmartDashboard.putNumber("Tag Pose Roll", tagPoseRotation.getX());
+	}
 }
