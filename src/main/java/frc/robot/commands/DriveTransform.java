@@ -12,7 +12,7 @@ public class DriveTransform extends Command {
 	private final Transform2d transform;
 
 	/**
-	 * Create a new DriveToPose command. Tries to drive a certain transform using
+	 * Create a new DriveTransform command. Tries to drive a certain transform using
 	 * the DriveToPose command.
 	 * 
 	 * <p>This drives relative to the robot starting position,
