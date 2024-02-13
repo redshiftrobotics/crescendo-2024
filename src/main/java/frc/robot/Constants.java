@@ -62,23 +62,23 @@ public final class Constants {
 		public static final double[] maxSpeedOptionsTranslation = { 0.1, 0.75, 1 };
 
 		// max angular velocity for drivetrain, in radians per second
-		public static final double[] maxSpeedOptionsRotation = { 0.1, 0.75, 1 };
+		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
 	}
 
 	public static class RobotMovementConstants {
 		public static final double AT_SETPOINT_TOLERANCE_TIME_SECONDS = 1;
 		public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 1;
 
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(5);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(5);
 
 		public static final double ROTATION_PID_P = 0.5;
 		public static final double ROTATION_PID_I = 0;
 		public static final double ROTATION_PID_D = 0;
 
-		public static final double TRANSLATION_PID_P = 75;
-		public static final double TRANSLATION_PID_I = 1;
-		public static final double TRANSLATION_PID_D = 0.5;
+		public static final double TRANSLATION_PID_P = 30;
+		public static final double TRANSLATION_PID_I = 0.5;
+		public static final double TRANSLATION_PID_D = 15;
 	}
 
 	public static class OperatorConstants {
@@ -106,7 +106,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_BL = 3;
 					ANGULAR_MOTOR_ID_BL = 2;
 					ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.9260253906;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.91748046875;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 42;
