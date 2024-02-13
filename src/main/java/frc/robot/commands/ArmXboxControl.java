@@ -8,27 +8,27 @@ import frc.robot.utils.OptionButton.ActivationMode;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
-public class ArmJoystickControl extends Command {
+public class ArmXboxControl extends Command {
     private final Arm arm;
-    private final CommandJoystick joystick;
+    private final CommandXboxController xbox;
 
     private final OptionButton raiseArmButton;
     private final OptionButton lowerArmButton;
 
 
-    public ArmJoystickControl(Arm arm, CommandJoystick joystick) {
+    public ArmXboxControl(Arm arm, CommandXboxController xbox ) {
         this.arm = arm;
-        this.joystick = joystick;
+        this.xbox = xbox;
 
 
-        lowerArmButton = new OptionButton(joystick, 11, ActivationMode.HOLD);
-        raiseArmButton = new OptionButton(joystick, 12, ActivationMode.HOLD);
+        lowerArmButton = new OptionButton(xbox, 5, ActivationMode.HOLD);
+        raiseArmButton = new OptionButton(xbox, 6, ActivationMode.HOLD);
 
-        joystick.povUp().onTrue(Commands.run(arm::setArmToSpeakerPosition));
-        joystick.povRight().onTrue(Commands.run(arm::setArmToAmpPosition));
-        joystick.povDown().onTrue(Commands.run(arm::setArmToIntakePosition));
+        xbox.povUp().onTrue(Commands.run(arm::setArmToSpeakerPosition));
+        xbox.povRight().onTrue(Commands.run(arm::setArmToAmpPosition));
+        xbox.povDown().onTrue(Commands.run(arm::setArmToIntakePosition));
 
         addRequirements(arm);
     }
