@@ -64,7 +64,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private Pose2d pose;
 
 	/**
-	 * Desired pose of robot. The desired pose is the the X, Y and Rotation the robot wants to be in, relative to the last reset.
+	 * Desired pose of robot. The desired pose is the X, Y and Rotation the robot wants to be in, relative to the last reset.
 	 * It can be set to null to not have any desired pose.
 	 * 
 	 * @see https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/pose.html#pose
@@ -126,10 +126,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 	// --- Pose Related Methods ---
 
-	/**
-	 * This is the periodic function of the swerve drivetrain.
-	 * This method is called periodically by the CommandScheduler, about every 20ms.
-	 */
+	/** This is the periodic function of the swerve drivetrain, called periodically by the CommandScheduler, about every 20ms. */
 	@Override
 	public void periodic() {
 		// use odometry to update the estimated pose
