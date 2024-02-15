@@ -37,9 +37,9 @@ public class OptionButton {
 	/**
 	 * Create Option button.
 	 * 
-	 * @param commandDevice device that button is on
+	 * @param controller    device that button is on
 	 * @param button        button number
-	 * @param mode          whether or not we want button to act as toggle or hold
+	 * @param mode          whether we want button to act as toggle or hold
 	 *                      button
 	 */
 	public OptionButton(CommandGenericHID controller, int button, ActivationMode mode) {
@@ -48,10 +48,9 @@ public class OptionButton {
 
 	/**
 	 * Create Option button.
-	 * 
-	 * @param commandDevice device that button is on
+	 *
 	 * @param button        button number
-	 * @param mode          whether or not we want button to act as toggle or hold button
+	 * @param mode          whether we want button to act as toggle or hold button
 	 */
 	public OptionButton(Supplier<Trigger> button, ActivationMode mode) {
 		this.button = button;

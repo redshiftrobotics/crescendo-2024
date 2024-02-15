@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class FollowTag extends Command {
 	private final SwerveDrivetrain drivetrain;
 
-	private final Vision camera;
+	private final Vision vision;
 	private final Integer tagID;
 	private final Transform2d targetDistance;
 
@@ -28,18 +28,18 @@ public class FollowTag extends Command {
 	 * distance away.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
-	 * @param camera              the vision subsystem of the robot
+	 * @param vision              the vision subsystem of the robot
 	 * @param tagID               the numerical ID of the the tag to follow, null
 	 *                            for whatever best is
 	 * @param targetDistanceToTag the target distance away from the tag to be
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to null to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, Transform2d targetDistanceToTag, Integer tagID,
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Transform2d targetDistanceToTag, Integer tagID,
 			Double loseTagAfterSeconds) {
 		this.drivetrain = drivetrain;
 
-		this.camera = camera;
+		this.vision = vision;
 		this.tagID = tagID;
 
 		this.targetDistance = targetDistanceToTag;
@@ -53,16 +53,16 @@ public class FollowTag extends Command {
 	 * distance away.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
-	 * @param camera              the vision subsystem of the robot
+	 * @param vision              the vision subsystem of the robot
 	 * @param tagID               the numerical ID of the the tag to follow, null
 	 *                            for whatever best is
 	 * @param targetDistanceToTag the target distance away from the tag to be
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to null to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, Translation2d targetDistanceToTag, Integer tagID,
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Translation2d targetDistanceToTag, Integer tagID,
 			Double loseTagAfterSeconds) {
-		this(drivetrain, camera, new Transform2d(targetDistanceToTag, new Rotation2d()), tagID, loseTagAfterSeconds);
+		this(drivetrain, vision, new Transform2d(targetDistanceToTag, new Rotation2d()), tagID, loseTagAfterSeconds);
 	}
 
 	@Override
@@ -74,14 +74,14 @@ public class FollowTag extends Command {
 	@Override
 	public void execute() {
 
-		final PhotonTrackedTarget tag = (tagID == null) ? camera.getTag() : camera.getTag(tagID);
+		final PhotonTrackedTarget tag = (tagID == null) ? vision.getTag() : vision.getTag(tagID);
 
 		if (tag == null) {
 			secondsSinceTagLastSeen += TimedRobot.kDefaultPeriod;
 
 			drivetrain.stop();
 		} else {
-			final Transform3d tagPosition3d = camera.getDistanceToTarget(tag);
+			final Transform3d tagPosition3d = vision.getDistanceToTarget(tag);
 
 			secondsSinceTagLastSeen = 0;
 
