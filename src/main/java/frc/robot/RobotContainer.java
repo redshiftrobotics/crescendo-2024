@@ -101,7 +101,7 @@ public class RobotContainer {
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
-			control = new DriverControl(drivetrain,
+			control = new DriverControl(drivetrain, arm,
 
 				new ChassisDriveInputs(
 					joystick::getX, joystick::getY, joystick::getTwist,
@@ -109,14 +109,17 @@ public class RobotContainer {
 
 				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
 				new OptionButton(joystick, 1, ActivationMode.HOLD),
-				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
+				new OptionButton(joystick, 3, ActivationMode.TOGGLE),
+				
+				new OptionButton(joystick,11,ActivationMode.HOLD),
+				new OptionButton(joystick,12,ActivationMode.HOLD)
 			);
 			
 			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
-			control = new DriverControl(drivetrain,
+			control = new DriverControl(drivetrain, arm,
 
 				new ChassisDriveInputs(
 					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
@@ -124,7 +127,10 @@ public class RobotContainer {
 
 				new OptionButton(xbox::b, ActivationMode.TOGGLE),
 				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
-				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
+				new OptionButton(xbox::povUp, ActivationMode.TOGGLE),
+
+				new OptionButton(xbox::rightBumper,ActivationMode.HOLD),
+				new OptionButton(xbox::leftBumper,ActivationMode.HOLD)
 			);
 
 

@@ -2,9 +2,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriverConstants;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.utils.ChassisDriveInputs;
 import frc.robot.utils.OptionButton;
@@ -13,7 +16,9 @@ import frc.robot.utils.OptionButton;
  * This can be the default command for the drivetrain, allowing for remote operation with a controller.
  */
 public class DriverControl extends Command {
-	protected final SwerveDrivetrain drivetrain;
+	private final SwerveDrivetrain drivetrain;
+
+	private final Arm arm;
 
 	private final OptionButton preciseModeButton;
 	private final OptionButton boostModeButton;
@@ -21,14 +26,18 @@ public class DriverControl extends Command {
 
 	private final ChassisDriveInputs chassisDriveInputs;
 
+	private final OptionButton raiseArmButton;
+    private final OptionButton lowerArmButton;
+
 	/**
 	 * Creates a new SwerveDriveBaseControl Command.
 	 *
 	 * @param drivetrain       The drivetrain of the robot
 	 * @param driverController The device used to control drivetrain
 	 */
-	public DriverControl(SwerveDrivetrain drivetrain, ChassisDriveInputs chassisDriveInputs,
-			OptionButton preciseModeButton, OptionButton boostModeButton, OptionButton fieldRelativeButton) {
+	public DriverControl(SwerveDrivetrain drivetrain, Arm arm, ChassisDriveInputs chassisDriveInputs,
+			OptionButton preciseModeButton, OptionButton boostModeButton, OptionButton fieldRelativeButton,
+			OptionButton raiseArmButton, OptionButton lowerArmButton) {
 
 		this.chassisDriveInputs = chassisDriveInputs;
 
@@ -37,6 +46,13 @@ public class DriverControl extends Command {
 		this.fieldRelativeButton = fieldRelativeButton;
 
 		this.drivetrain = drivetrain;
+
+		this.arm = arm;
+
+		this.raiseArmButton = raiseArmButton;
+		this.lowerArmButton = lowerArmButton;
+
+		
 
 		// Tell the command schedular we are using the drivetrain
 		addRequirements(drivetrain);
@@ -103,6 +119,10 @@ public class DriverControl extends Command {
 		final double metersPerSecondToMilesPerHourConversion = 2.237;
 		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
 		SmartDashboard.putNumber("Heading Degrees", drivetrain.getHeading().getDegrees());
+
+		// Arm Motor
+		arm.changeArmAngleDegreesBy(Double.valueOf(raiseArmButton.getStateAsInt()) * TimedRobot.kDefaultPeriod * ArmConstants.DEGREES_PER_SECOND);
+        arm.changeArmAngleDegreesBy(Double.valueOf(-lowerArmButton.getStateAsInt()) * TimedRobot.kDefaultPeriod * ArmConstants.DEGREES_PER_SECOND);
 	}
 
 	/**

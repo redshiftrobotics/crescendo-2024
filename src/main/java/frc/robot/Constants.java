@@ -76,7 +76,13 @@ public final class Constants {
         public static final int RIGHT_ENCODER_ID = 0;
 
         public static final double DEGREES_PER_SECOND = 2.0;
+
+		public static final double ROTATION_PID_P = 0;
+		public static final double ROTATION_PID_I = 0;
+		public static final double ROTATION_PID_D = 0;
+
     }
+
 	public static class RobotMovementConstants {
 		public static final double AT_SETPOINT_TOLERANCE_TIME_SECONDS = 1;
 		public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 1;
