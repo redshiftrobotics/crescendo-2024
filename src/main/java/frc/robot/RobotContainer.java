@@ -8,10 +8,10 @@ import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
 import frc.robot.commands.Autos;
-import frc.robot.commands.DriverControl;
-import frc.robot.utils.ChassisDriveInputs;
-import frc.robot.utils.OptionButton;
-import frc.robot.utils.OptionButton.ActivationMode;
+import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.inputs.ChassisDriveInputs;
+import frc.robot.inputs.OptionButtonInput;
+import frc.robot.inputs.OptionButtonInput.ActivationMode;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -101,42 +101,40 @@ public class RobotContainer {
 
 		drivetrain.removeDefaultCommand();
 
-		DriverControl control;
+		ChassisDriveInputs inputs;
+		OptionButtonInput preciseModeButton, boostModeButton, fieldRelativeButton;
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
-			control = new DriverControl(drivetrain,
-
-				new ChassisDriveInputs(
+			
+			inputs = new ChassisDriveInputs(
 					joystick::getY, -1,
 					joystick::getX, -1,
 					joystick::getTwist, -1,
-					Constants.DriverConstants.DEAD_ZONE),
+					Constants.DriverConstants.DEAD_ZONE);
 
-					new OptionButton(joystick, 2, ActivationMode.TOGGLE),
-					new OptionButton(joystick, 1, ActivationMode.HOLD),
-					new OptionButton(joystick, 3, ActivationMode.TOGGLE));
+			preciseModeButton = new OptionButtonInput(joystick, 2, ActivationMode.TOGGLE);
+			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
+			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
 
 			joystick.button(10).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 			joystick.button(11).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
-			control = new DriverControl(drivetrain,
 
-				new ChassisDriveInputs(
+			inputs = new ChassisDriveInputs(
 					xbox::getLeftY, +1,
 					xbox::getLeftX, +1,
 					xbox::getRightX, -1,
-					Constants.DriverConstants.DEAD_ZONE),
+					Constants.DriverConstants.DEAD_ZONE);
 
-				new OptionButton(xbox::b, ActivationMode.TOGGLE),
-				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
-				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
-			);
+			preciseModeButton = new OptionButtonInput(xbox::b, ActivationMode.TOGGLE);
+			boostModeButton = new OptionButtonInput(xbox::leftStick, ActivationMode.HOLD);
+			fieldRelativeButton = new OptionButtonInput(xbox::povUp, ActivationMode.TOGGLE);
 		}
 
-		drivetrain.setDefaultCommand(control);
+		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
 	}
 
 	/** Use this method to define your trigger->command mappings. */

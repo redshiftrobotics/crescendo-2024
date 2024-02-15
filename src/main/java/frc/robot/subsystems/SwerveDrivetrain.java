@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotMovementConstants;
 
@@ -177,6 +178,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 */
 	public void setDesiredPosition(Pose2d desiredPose) {
 		this.desiredPose = desiredPose;
+	}
+
+	/** Gets the desired position, returns null if the pose has been cleared */
+	public Pose2d getDesiredPose() {
+		return desiredPose;
 	}
 
 	/** Sets desired position to null, stops robot from continue to try and get to the last set pose  */
@@ -341,6 +347,33 @@ public class SwerveDrivetrain extends SubsystemBase {
 	}
 
 	// --- Util ---
+
+	/** Update SmartDashboard with */
+	public void updateSmartDashboard() {
+		// Position display
+		final Pose2d robotPosition = getPosition();
+
+		SmartDashboard.putNumber("PoseX", robotPosition.getX());
+		SmartDashboard.putNumber("PoseY", robotPosition.getY());
+		SmartDashboard.putNumber("PoseDegrees", robotPosition.getRotation().getDegrees());
+
+		// Speed and Heading
+		final ChassisSpeeds currentSpeeds = getState();
+		final double speedMetersPerSecond = Math.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
+
+		final double metersPerSecondToMilesPerHourConversion = 2.237;
+		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+
+
+		final boolean hasTargetPose = desiredPose != null;
+		final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
+
+		SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
+		SmartDashboard.putNumber("tPoseX", targetPose.getX());
+		SmartDashboard.putNumber("tPoseY", targetPose.getY());
+		SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
+	}
 
 	/**
 	 * Utility method. Function to easily run a function on each swerve module

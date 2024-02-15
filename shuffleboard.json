@@ -161,7 +161,7 @@
               1
             ],
             "content": {
-              "_type": "ComboBox Chooser",
+              "_type": "Split Button Chooser",
               "_source0": "network_table:///SmartDashboard/Auto Chooser",
               "_title": "Auto Chooser",
               "_glyph": 167,
@@ -213,8 +213,8 @@
             ],
             "content": {
               "_type": "Number Bar",
-              "_source0": "network_table:///SmartDashboard/Speed",
-              "_title": "Speed",
+              "_source0": "network_table:///SmartDashboard/Spin",
+              "_title": "Spin",
               "_glyph": 419,
               "_showGlyph": true,
               "Range/Min": -1.0,
@@ -223,6 +223,60 @@
               "Visuals/Num tick marks": 5,
               "Visuals/Show text": true,
               "Visuals/Orientation": "HORIZONTAL"
+            }
+          },
+          "7,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseX",
+              "_title": "tPoseX",
+              "_glyph": 110,
+              "_showGlyph": true
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseY",
+              "_title": "tPoseY",
+              "_glyph": 111,
+              "_showGlyph": true
+            }
+          },
+          "8,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseDegrees",
+              "_title": "tPoseDegrees",
+              "_glyph": 419,
+              "_showGlyph": true
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/tPoseActive",
+              "_title": "tPoseActive",
+              "_glyph": 288,
+              "_showGlyph": true,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -240,25 +294,12 @@
         "titleType": 0,
         "tiles": {}
       }
-    },
-    {
-      "title": "Tab 5",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "titleType": 0,
-        "tiles": {}
-      }
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
-    "y": -7.0,
-    "width": 1551.0,
-    "height": 831.0
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
+    "width": 1551.199951171875,
+    "height": 831.2000122070312
   }
 }

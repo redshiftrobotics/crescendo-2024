@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.inputs;
 
 import java.util.function.Supplier;
 
@@ -10,7 +10,6 @@ public class ChassisDriveInputs {
 	private final double xCoefficient, yCoefficient, rotationCoefficient;
 
 	private final double deadzone;
-
 
 	/**
 	 * Create a new ChassisDriveInputs

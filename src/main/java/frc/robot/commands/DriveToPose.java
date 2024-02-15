@@ -37,6 +37,11 @@ public class DriveToPose extends Command {
 	}
 
 	@Override
+	public void execute() {
+		drivetrain.updateSmartDashboard();
+	}
+
+	@Override
 	public void end(boolean interrupted) {
 		drivetrain.clearDesiredPosition();
 		drivetrain.stop();

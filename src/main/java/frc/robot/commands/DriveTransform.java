@@ -50,6 +50,11 @@ public class DriveTransform extends Command {
 	}
 
 	@Override
+	public void execute() {
+		drivetrain.updateSmartDashboard();
+	}
+
+	@Override
 	public boolean isFinished() {
 		return drivetrain.isAtDesiredPosition();
 	}
