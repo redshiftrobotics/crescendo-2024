@@ -24,15 +24,19 @@ public class FollowTag extends Command {
 	private double secondsSinceTagLastSeen;
 
 	/**
-	 * Create a new FollowTag command. Tries to follow a tag while staying a certain distance away.
+	 * Create a new FollowTag command. Tries to follow a tag while staying a certain
+	 * distance away.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
-	 * @param camera          	  the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, null for whatever best is
+	 * @param camera              the vision subsystem of the robot
+	 * @param tagID               the numerical ID of the the tag to follow, null
+	 *                            for whatever best is
 	 * @param targetDistanceToTag the target distance away from the tag to be
-	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover tag, set to null to never finish
+	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
+	 *                            tag, set to null to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, Transform2d targetDistanceToTag, Integer tagID, Double loseTagAfterSeconds) {
+	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, Transform2d targetDistanceToTag, Integer tagID,
+			Double loseTagAfterSeconds) {
 		this.drivetrain = drivetrain;
 
 		this.camera = camera;
@@ -45,15 +49,19 @@ public class FollowTag extends Command {
 	}
 
 	/**
-	 * Create a new FollowTag command. Tries to follow a tag while staying a certain distance away.
+	 * Create a new FollowTag command. Tries to follow a tag while staying a certain
+	 * distance away.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
-	 * @param camera          	  the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, null for whatever best is
+	 * @param camera              the vision subsystem of the robot
+	 * @param tagID               the numerical ID of the the tag to follow, null
+	 *                            for whatever best is
 	 * @param targetDistanceToTag the target distance away from the tag to be
-	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover tag, set to null to never finish
+	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
+	 *                            tag, set to null to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, Translation2d targetDistanceToTag, Integer tagID, Double loseTagAfterSeconds) {
+	public FollowTag(SwerveDrivetrain drivetrain, Vision camera, Translation2d targetDistanceToTag, Integer tagID,
+			Double loseTagAfterSeconds) {
 		this(drivetrain, camera, new Transform2d(targetDistanceToTag, new Rotation2d()), tagID, loseTagAfterSeconds);
 	}
 
@@ -66,7 +74,7 @@ public class FollowTag extends Command {
 	@Override
 	public void execute() {
 
-		final PhotonTrackedTarget tag = (tagID == null) ? camera.getDistToTag() : camera.getDistToTag(tagID);
+		final PhotonTrackedTarget tag = (tagID == null) ? camera.getTag() : camera.getTag(tagID);
 
 		if (tag == null) {
 			secondsSinceTagLastSeen += TimedRobot.kDefaultPeriod;
@@ -92,7 +100,12 @@ public class FollowTag extends Command {
 
 	@Override
 	public boolean isFinished() {
-		drivetrain.clearDesiredPosition();
 		return (loseTagAfterSeconds != null) && (secondsSinceTagLastSeen < loseTagAfterSeconds);
+	}
+
+	@Override
+	public void end(boolean interrupted) {
+		drivetrain.clearDesiredPosition();
+		drivetrain.stop();
 	}
 }

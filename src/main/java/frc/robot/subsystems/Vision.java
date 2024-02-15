@@ -41,7 +41,7 @@ public class Vision extends SubsystemBase {
 	 * 
 	 * @return Object of best target
 	 */
-	public PhotonTrackedTarget getDistToTag() {
+	public PhotonTrackedTarget getTag() {
 		return camera
 				.getLatestResult()
 				.getBestTarget();
@@ -53,7 +53,7 @@ public class Vision extends SubsystemBase {
 	 * @param tagID The fiducial ID of the desired April Tag
 	 * @return returns first tag with matching ID, null if None are found
 	 */
-	public PhotonTrackedTarget getDistToTag(int tagID) {
+	public PhotonTrackedTarget getTag(int tagID) {
 		for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
 			if (target.getFiducialId() == tagID)
 				return target;
