@@ -128,11 +128,11 @@ public class RobotContainer {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 			control = new DriverControl(drivetrain,
 
-				new ChassisDriveInputs(
-					joystick::getY, -1,
-					joystick::getX, -1,
-					joystick::getTwist, -1,
-					Constants.DriverConstants.DEAD_ZONE),
+					new ChassisDriveInputs(
+							joystick::getX, -1,
+							joystick::getY, -1,
+							joystick::getTwist, -1,
+							Constants.DriverConstants.DEAD_ZONE),
 
 					new OptionButton(joystick, 2, ActivationMode.TOGGLE),
 					new OptionButton(joystick, 1, ActivationMode.HOLD),
@@ -145,16 +145,15 @@ public class RobotContainer {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 			control = new DriverControl(drivetrain,
 
-				new ChassisDriveInputs(
-					xbox::getLeftY, +1,
-					xbox::getLeftX, +1,
-					xbox::getRightX, -1,
-					Constants.DriverConstants.DEAD_ZONE),
+					new ChassisDriveInputs(
+							xbox::getLeftY, +1,
+							xbox::getLeftX, +1,
+							xbox::getRightX, -1,
+							Constants.DriverConstants.DEAD_ZONE),
 
-				new OptionButton(xbox::b, ActivationMode.TOGGLE),
-				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
-				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
-			);
+					new OptionButton(xbox::b, ActivationMode.TOGGLE),
+					new OptionButton(xbox::leftStick, ActivationMode.HOLD),
+					new OptionButton(xbox::povUp, ActivationMode.TOGGLE));
 		}
 
 		drivetrain.setDefaultCommand(control);
@@ -182,7 +181,7 @@ public class RobotContainer {
 				AutoConstants.kMaxAutoRotationSpeedMetersPerSecond).setKinematics(drivetrain.getKinematics());
 		// Example Trajectory (1 meter forward then backward)
 		final Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-				List.of(new Translation2d(1, 0)), new Pose2d(0, 0, new Rotation2d(0)), exampleConfig);
+				List.of(new Translation2d(0.5, 0)), new Pose2d(1, 0, new Rotation2d(0)), exampleConfig);
 		// Profiled PID Controller for trajectory rotation
 		final ProfiledPIDController rotationPidController = new ProfiledPIDController(AutoConstants.kAngularControllerP,
 				0, 0, AutoConstants.kRotationControllerConstraints);

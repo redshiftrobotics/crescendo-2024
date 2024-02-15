@@ -234,6 +234,9 @@ public final class Constants {
 		public static final double kVelocityControllerP = 0.1;
 		public static final TrapezoidProfile.Constraints kRotationControllerConstraints = new TrapezoidProfile.Constraints(
 				kMaxAutoVelocitySpeedMetersPerSecond, 1);
+
+	}
+
 	public static class VisionConstants {
 
 		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d());
