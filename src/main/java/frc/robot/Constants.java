@@ -77,9 +77,9 @@ public final class Constants {
 
         public static final double DEGREES_PER_SECOND = 2.0;
 
-		public static final double ROTATION_PID_P = 0;
-		public static final double ROTATION_PID_I = 0;
-		public static final double ROTATION_PID_D = 0;
+		public static final double ELEVATION_PID_P = 0;
+		public static final double ELEVATION_PID_I = 0;
+		public static final double ELEVATION_PID_D = 0;
 
     }
 

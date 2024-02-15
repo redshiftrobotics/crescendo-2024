@@ -43,9 +43,9 @@ public class Arm extends SubsystemBase {
         rightArmEncoder = new CANcoder(rightEncoderId);
 
         armRaisePIDController = new PIDController(
-            0,
-            0,
-            0
+            ArmConstants.ELEVATION_PID_P,
+            ArmConstants.ELEVATION_PID_I,
+            ArmConstants.ELEVATION_PID_D
         );
 
         armPosition = rightArmEncoder.getAbsolutePosition();

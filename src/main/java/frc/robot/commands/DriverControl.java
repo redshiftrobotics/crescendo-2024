@@ -18,16 +18,11 @@ import frc.robot.utils.OptionButton;
 public class DriverControl extends Command {
 	private final SwerveDrivetrain drivetrain;
 
-	private final Arm arm;
-
 	private final OptionButton preciseModeButton;
 	private final OptionButton boostModeButton;
 	private final OptionButton fieldRelativeButton;
 
 	private final ChassisDriveInputs chassisDriveInputs;
-
-	private final OptionButton raiseArmButton;
-    private final OptionButton lowerArmButton;
 
 	/**
 	 * Creates a new SwerveDriveBaseControl Command.
@@ -35,9 +30,8 @@ public class DriverControl extends Command {
 	 * @param drivetrain       The drivetrain of the robot
 	 * @param driverController The device used to control drivetrain
 	 */
-	public DriverControl(SwerveDrivetrain drivetrain, Arm arm, ChassisDriveInputs chassisDriveInputs,
-			OptionButton preciseModeButton, OptionButton boostModeButton, OptionButton fieldRelativeButton,
-			OptionButton raiseArmButton, OptionButton lowerArmButton) {
+	public DriverControl(SwerveDrivetrain drivetrain,  ChassisDriveInputs chassisDriveInputs,
+			OptionButton preciseModeButton, OptionButton boostModeButton, OptionButton fieldRelativeButton) {
 
 		this.chassisDriveInputs = chassisDriveInputs;
 
@@ -47,10 +41,7 @@ public class DriverControl extends Command {
 
 		this.drivetrain = drivetrain;
 
-		this.arm = arm;
-
-		this.raiseArmButton = raiseArmButton;
-		this.lowerArmButton = lowerArmButton;
+		
 
 		
 
@@ -120,9 +111,7 @@ public class DriverControl extends Command {
 		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
 		SmartDashboard.putNumber("Heading Degrees", drivetrain.getHeading().getDegrees());
 
-		// Arm Motor
-		arm.changeArmAngleDegreesBy(Double.valueOf(raiseArmButton.getStateAsInt()) * TimedRobot.kDefaultPeriod * ArmConstants.DEGREES_PER_SECOND);
-        arm.changeArmAngleDegreesBy(Double.valueOf(-lowerArmButton.getStateAsInt()) * TimedRobot.kDefaultPeriod * ArmConstants.DEGREES_PER_SECOND);
+		
 	}
 
 	/**

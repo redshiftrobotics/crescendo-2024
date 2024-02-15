@@ -6,6 +6,7 @@ import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ArmControl;
 import frc.robot.commands.DriverControl;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
@@ -17,6 +18,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -98,10 +100,11 @@ public class RobotContainer {
 		drivetrain.removeDefaultCommand();
 
 		DriverControl control;
+		ArmControl armcontrol;
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
-			control = new DriverControl(drivetrain, arm,
+			control = new DriverControl(drivetrain,
 
 				new ChassisDriveInputs(
 					joystick::getX, joystick::getY, joystick::getTwist,
@@ -109,17 +112,25 @@ public class RobotContainer {
 
 				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
 				new OptionButton(joystick, 1, ActivationMode.HOLD),
-				new OptionButton(joystick, 3, ActivationMode.TOGGLE),
-				
+				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
+
+			);
+
+			armcontrol = new ArmControl(arm,
+
 				new OptionButton(joystick,11,ActivationMode.HOLD),
-				new OptionButton(joystick,12,ActivationMode.HOLD)
+				new OptionButton(joystick, 12, ActivationMode.HOLD),
+
+				new OptionButton(joystick::povLeft, ActivationMode.HOLD),
+				new OptionButton(joystick::povRight, ActivationMode.HOLD),
+				new OptionButton(joystick::povDown, ActivationMode.HOLD)
 			);
 			
 			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
-			control = new DriverControl(drivetrain, arm,
+			control = new DriverControl(drivetrain, 
 
 				new ChassisDriveInputs(
 					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
@@ -127,10 +138,18 @@ public class RobotContainer {
 
 				new OptionButton(xbox::b, ActivationMode.TOGGLE),
 				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
-				new OptionButton(xbox::povUp, ActivationMode.TOGGLE),
+				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
+
+			);
+
+			armcontrol = new ArmControl(arm,
 
 				new OptionButton(xbox::rightBumper,ActivationMode.HOLD),
-				new OptionButton(xbox::leftBumper,ActivationMode.HOLD)
+				new OptionButton(xbox::leftBumper, ActivationMode.HOLD),
+
+				new OptionButton(xbox::povLeft, ActivationMode.HOLD),
+				new OptionButton(xbox::povRight, ActivationMode.HOLD),
+				new OptionButton(xbox::povDown, ActivationMode.HOLD)
 			);
 
 
