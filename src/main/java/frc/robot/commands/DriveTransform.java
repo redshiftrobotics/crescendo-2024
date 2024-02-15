@@ -29,14 +29,12 @@ public class DriveTransform extends Command {
 	}
 
 	/**
-	 * Create a new DriveToPose command. Tries to drive a certain transform (a
-	 * translation and a rotation) using the DriveToPose command
+	 * Create a new DriveToTransform command. Uses setDesiredPosition on drivetrain.
 	 * 
 	 * <p>
 	 * This drives relative to the robot, so a transform of +2x and +1y will drive 2
 	 * meters forward and 1 meter left,
 	 * where forward is whatever direction the robot is currently facing
-	 * </p>
 	 * 
 	 * @param drivetrain  The drivetrain of the robot
 	 * @param translation Target transform to drive

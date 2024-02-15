@@ -10,7 +10,7 @@ public class DriveToPose extends Command {
 	private final Pose2d targetPosition;
 
     /**
-     * Create a new DriveToPose command. Tries to drive to a set Pose based on odometry 
+     * Create a new DriveToPose command. Uses setDesiredPosition on drivetrain.
      * 
      * <p>This drives relative to the robot starting position,
 	 * so a pose of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,

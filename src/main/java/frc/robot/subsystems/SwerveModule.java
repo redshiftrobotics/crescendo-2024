@@ -23,9 +23,7 @@ import frc.robot.Constants.SwerveModuleConstants;
  * Subsystem for individual swerve module on robot. Each swerve module has one
  * drive motor and one steering motor.
  * 
- * @see <a href=
- *      "https://www.swervedrivespecialties.com/products/mk4-swerve-module">Swerve
- *      Module Kit</a>
+ * @see <a href="https://www.swervedrivespecialties.com/products/mk4-swerve-module">Swerve Module Kit</a>
  */
 public class SwerveModule extends SubsystemBase {
 
