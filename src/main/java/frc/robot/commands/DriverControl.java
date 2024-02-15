@@ -2,16 +2,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.utils.ChassisDriveInputs;
 import frc.robot.utils.OptionButton;
-import java.util.function.Supplier;
 
 /**
  * This can be the default command for the drivetrain, allowing for remote
@@ -26,31 +22,15 @@ public class DriverControl extends Command {
 
 	private final ChassisDriveInputs chassisDriveInputs;
 
-	private final Supplier<Double> speedX;
-	private final Supplier<Double> speedY;
-	private final Supplier<Double> speedRotation;
-	private final Supplier<Boolean> isFieldRelative;
-	private final Supplier<Integer> speedLevel;
-	private final Supplier<ChassisSpeeds> speeds;
-
-	private ShuffleboardTab driverTab;
-	private GenericEntry widgetSpeedX;
-	private GenericEntry widgetSpeedY;
-	private GenericEntry widgetSpeed;
-	private GenericEntry widgetSpeedMode;
-	private GenericEntry widgetFieldRelative;
-	private GenericEntry widgetPoseX;
-	private GenericEntry widgetPoseY;
-	private GenericEntry widgetPoseDegrees;
-	private ShuffleboardTab developerTab;
-	private GenericEntry widgetTotalSpeed;
-	private GenericEntry widgetHeading;
-
 	/**
-	 * Creates a new DriverControl Command.
+	 * Creates a new SwerveDriveBaseControl Command.
+	 *
+	 * @param drivetrain       The drivetrain of the robot
+	 * @param driverController The device used to control drivetrain
 	 */
 	public DriverControl(SwerveDrivetrain drivetrain, ChassisDriveInputs chassisDriveInputs,
 			OptionButton preciseModeButton, OptionButton boostModeButton, OptionButton fieldRelativeButton) {
+
 		this.chassisDriveInputs = chassisDriveInputs;
 
 		this.preciseModeButton = preciseModeButton;
@@ -59,66 +39,62 @@ public class DriverControl extends Command {
 
 		this.drivetrain = drivetrain;
 
-		speedX = chassisDriveInputs::getX;
-		speedY = chassisDriveInputs::getY;
-
-		speedRotation = chassisDriveInputs::getRotation;
-		isFieldRelative = fieldRelativeButton::getState;
-
-		speedLevel = () -> 1
-				- preciseModeButton.getStateAsInt()
-				+ boostModeButton.getStateAsInt();
-
-		speeds = () -> new ChassisSpeeds(
-				speedX.get() * DriverConstants.maxSpeedOptionsTranslation[speedLevel.get()],
-				speedY.get() * DriverConstants.maxSpeedOptionsTranslation[speedLevel.get()],
-				speedRotation.get() * DriverConstants.maxSpeedOptionsRotation[speedLevel.get()]);
-
+		// Tell the command schedular we are using the drivetrain
 		addRequirements(drivetrain);
 	}
 
 	/**
+	 * The initial subroutine of a command. Called once when the command is
+	 * initially scheduled.
 	 * Puts all swerve modules to the default state, staying still and facing
-	 * forwards. Also turns control activity indicator green.
+	 * forwards.
 	 */
 	@Override
 	public void initialize() {
 		drivetrain.toDefaultStates();
 
-		driverTab = Shuffleboard.getTab("Driver Control");
-		driverTab.add("Control Active", true);
-		widgetTotalSpeed = driverTab.add("Robot Speed", 0).getEntry();
-		widgetHeading = driverTab.add("Heading", 0).getEntry();
-
-		developerTab = Shuffleboard.getTab("Debug");
-		widgetSpeedX = developerTab.add("SpeedX", speedX.get()).getEntry();
-		widgetSpeedY = developerTab.add("SpeedY", speedY.get()).getEntry();
-		widgetSpeed = developerTab.add("SpeedRot", speedRotation.get()).getEntry();
-		widgetSpeedMode = developerTab.add("Speed Mode", "-").getEntry();
-		widgetFieldRelative = developerTab.add("Field Relative", false).getEntry();
-		widgetPoseX = developerTab.add("PoseX", 0).getEntry();
-		widgetPoseY = developerTab.add("PoseY", 0).getEntry();
-		widgetPoseDegrees = developerTab.add("PoseDegrees", 0).getEntry();
+		SmartDashboard.putBoolean("ControlActive", true);
 	}
 
+	/**
+	 * The main body of a command. Called repeatedly while the command is scheduled
+	 * (Every 20 ms).
+	 */
 	@Override
 	public void execute() {
-		drivetrain.setDesiredState(speeds.get(), isFieldRelative.get(), true);
+		final double speedX = chassisDriveInputs.getX();
+		final double speedY = chassisDriveInputs.getY();
 
-		widgetSpeed.setDouble(speedRotation.get());
-		widgetSpeedX.setDouble(speedX.get());
-		widgetSpeedY.setDouble(speedY.get());
+		final double speedRotation = chassisDriveInputs.getRotation();
+
+		final boolean isFieldRelative = fieldRelativeButton.getState();
+
+		final int speedLevel = 1
+				- preciseModeButton.getStateAsInt()
+				+ boostModeButton.getStateAsInt();
+
+		final ChassisSpeeds speeds = new ChassisSpeeds(
+				speedX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
+				speedY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
+				speedRotation * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
+
+
+		SmartDashboard.putNumber("SpeedX", speedX);
+		SmartDashboard.putNumber("SpeedY", speedY);
+		SmartDashboard.putNumber("Speed", speedRotation);
+
+		drivetrain.setDesiredState(speeds, isFieldRelative, true);
 
 		// Display relevant data on shuffleboard.
-		widgetSpeedMode.setString(DriverConstants.maxSpeedOptionsNames[speedLevel.get()]);
-		widgetFieldRelative.setBoolean(isFieldRelative.get());
+		SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);
+		SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
 
 		// Position display
 		final Pose2d robotPosition = drivetrain.getPosition();
 
-		widgetPoseX.setDouble(robotPosition.getX());
-		widgetPoseY.setDouble(robotPosition.getY());
-		widgetPoseDegrees.setDouble(robotPosition.getRotation().getDegrees());
+		SmartDashboard.putNumber("PoseX", robotPosition.getX());
+		SmartDashboard.putNumber("PoseY", robotPosition.getY());
+		SmartDashboard.putNumber("PoseDegrees", robotPosition.getRotation().getDegrees());
 
 		// Speed and Heading
 		final ChassisSpeeds currentSpeeds = drivetrain.getState();
@@ -126,8 +102,8 @@ public class DriverControl extends Command {
 				.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
 
 		final double metersPerSecondToMilesPerHourConversion = 2.237;
-		widgetTotalSpeed.setDouble(speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
-		widgetHeading.setDouble(drivetrain.getHeading().getDegrees());
+		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
+		SmartDashboard.putNumber("Heading Degrees", drivetrain.getHeading().getDegrees());
 	}
 
 	/**
@@ -149,6 +125,6 @@ public class DriverControl extends Command {
 	public void end(boolean interrupted) {
 		drivetrain.stop();
 
-		// turn red
+		SmartDashboard.putBoolean("ControlActive", false);
 	}
 }
