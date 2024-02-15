@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.subsystems.Arm;
 
+/** This class just contains a bunch of auto-modes. Do not call this class itself. */
 public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command testingAuto(SwerveDrivetrain drivetrain) {
@@ -17,10 +18,12 @@ public final class Autos {
 		);
 	}
 
+	/** Auto-mode that attempts to follow an april tag. */
 	public static Command tagFollowAuto(SwerveDrivetrain drivetrain, Vision camera, Integer tagId) {
 		return new FollowTag(drivetrain, camera, new Translation2d(1, 0), tagId, null);
 	}
 
+	/**  Linden did this */
 	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, boolean invertY) {
 
 		// assumes start position in corner

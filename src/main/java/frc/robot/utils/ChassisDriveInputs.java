@@ -16,10 +16,10 @@ public class ChassisDriveInputs {
 	 * Create a new ChassisDriveInputs
 	 * 
 	 * @param getForward Get the value mapped to X, -1 full backward to +1 full forward
-	 * @param forwardCoefficient Coefficient that forward (X) multiped by
+	 * @param forwardCoefficient Coefficient that forward (X) multiplied by
 	 * 
 	 * @param getLeft Get the value mapped to Y, -1 full right to +1 full left
-	 * @param leftCoefficient Coefficient that forward left (Y) are multiped by
+	 * @param leftCoefficient Coefficient that forward left (Y) are multiplied by
 	 * 
 	 * @param getRotation Get the value mapped to rotation, -1 full clock
 	 * @param rotationCoefficient Coefficient that rotation is multiplied by
@@ -43,14 +43,17 @@ public class ChassisDriveInputs {
 		this.deadzone = deadzone;
 	}
 
+	/** @return Joystick X with the deadzone applied */
 	public double getX() {
 		return applyJoystickDeadzone(xSupplier.get(), deadzone) * xCoefficient;
 	}
 
+	/** @return Joystick Y with the deadzone applied */
 	public double getY() {
 		return applyJoystickDeadzone(ySupplier.get(), deadzone) * yCoefficient;
 	}
 
+	/** @return Joystick rotation with deadzone applied */
 	public double getRotation() {
 		return applyJoystickDeadzone(rotationSupplier.get(), deadzone) * rotationCoefficient;
 	}
