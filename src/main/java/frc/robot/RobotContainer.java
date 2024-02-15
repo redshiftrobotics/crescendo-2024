@@ -181,7 +181,7 @@ public class RobotContainer {
 				AutoConstants.kMaxAutoRotationSpeedMetersPerSecond).setKinematics(drivetrain.getKinematics());
 		// Example Trajectory (1 meter forward then backward)
 		final Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-				List.of(new Translation2d(0.5, 0)), new Pose2d(1, 0, new Rotation2d(0)), exampleConfig);
+				List.of(new Translation2d(0, 0.5)), new Pose2d(0, 1, new Rotation2d(0)), exampleConfig);
 		// Profiled PID Controller for trajectory rotation
 		final ProfiledPIDController rotationPidController = new ProfiledPIDController(AutoConstants.kAngularControllerP,
 				0, 0, AutoConstants.kRotationControllerConstraints);
