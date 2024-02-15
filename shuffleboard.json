@@ -97,8 +97,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/ControlActive",
               "_title": "ControlActive",
-              "_glyph": 148,
-              "_showGlyph": false,
+              "_glyph": 392,
+              "_showGlyph": true,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
@@ -232,6 +232,19 @@
       "title": "LiveWindow",
       "autoPopulate": true,
       "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    },
+    {
+      "title": "Tab 5",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
       "widgetPane": {
         "gridSize": 128.0,
         "showGrid": true,
