@@ -10,8 +10,7 @@ import frc.robot.utils.ChassisDriveInputs;
 import frc.robot.utils.OptionButton;
 
 /**
- * This can be the default command for the drivetrain, allowing for remote
- * operation with a controller
+ * This can be the default command for the drivetrain, allowing for remote operation with a controller.
  */
 public class DriverControl extends Command {
 	protected final SwerveDrivetrain drivetrain;
