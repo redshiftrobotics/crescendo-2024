@@ -3,7 +3,7 @@ package frc.robot.commands;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.utils.OptionButton;
+import frc.robot.inputs.OptionButtonInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -13,16 +13,16 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 public class ArmControl extends Command {
 	private final Arm arm;
 
-	private final OptionButton raiseArmButton;
-	private final OptionButton lowerArmButton;
+	private final OptionButtonInput raiseArmButton;
+	private final OptionButtonInput lowerArmButton;
 
-    private final OptionButton speakerPositionButton;
-    private final OptionButton ampPositionButton;
-    private final OptionButton intakePositionButton;
+    private final OptionButtonInput speakerPositionButton;
+    private final OptionButtonInput ampPositionButton;
+    private final OptionButtonInput intakePositionButton;
 
 
-	public ArmControl(Arm arm, OptionButton raiseArmButton, OptionButton lowerArmButton,
-            OptionButton speakerPositionButton, OptionButton ampPositionButton, OptionButton intakePositionButton) {
+	public ArmControl(Arm arm, OptionButtonInput raiseArmButton, OptionButtonInput lowerArmButton,
+            OptionButtonInput speakerPositionButton, OptionButtonInput ampPositionButton, OptionButtonInput intakePositionButton) {
         this.arm = arm;
 
         this.raiseArmButton = raiseArmButton;
