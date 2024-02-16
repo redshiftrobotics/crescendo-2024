@@ -36,7 +36,7 @@ public class AutoRotateTo extends Command {
 	}
 
 	public static AutoRotateTo autoRotateToRelative(SwerveDrivetrain drivetrain, Rotation2d direction) {
-		return new AutoRotateTo(drivetrain, Rotation2d.fromRadians(drivetrain.getHeading().getRadians() + direction.getRadians()));
+		return new AutoRotateTo(drivetrain, drivetrain.getHeading().plus(direction));
 	}
 
 	@Override
