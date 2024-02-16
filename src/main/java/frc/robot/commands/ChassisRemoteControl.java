@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -8,19 +7,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.Arm;
+import frc.robot.inputs.OptionButtonInput;
+import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
-import frc.robot.utils.ChassisDriveInputs;
-import frc.robot.utils.OptionButton;
 
 /**
- * This can be the default command for the drivetrain, allowing for remote operation with a controller.
+ * This can be the default command for the drivetrain.
+ * It should allow the driver to control the robot, as well displaying relevant driver data to SmartDashboard
  */
-public class DriverControl extends Command {
-	private final SwerveDrivetrain drivetrain;
+public class ChassisRemoteControl extends Command {
+	protected final SwerveDrivetrain drivetrain;
 
-	private final OptionButton preciseModeButton;
-	private final OptionButton boostModeButton;
-	private final OptionButton fieldRelativeButton;
+	private final OptionButtonInput preciseModeButton, boostModeButton, fieldRelativeButton;
 
 	private final ChassisDriveInputs chassisDriveInputs;
 
@@ -30,8 +28,8 @@ public class DriverControl extends Command {
 	 * @param drivetrain       The drivetrain of the robot
 	 * @param driverController The device used to control drivetrain
 	 */
-	public DriverControl(SwerveDrivetrain drivetrain,  ChassisDriveInputs chassisDriveInputs,
-			OptionButton preciseModeButton, OptionButton boostModeButton, OptionButton fieldRelativeButton) {
+	public ChassisRemoteControl(SwerveDrivetrain drivetrain, ChassisDriveInputs chassisDriveInputs,
+			OptionButtonInput preciseModeButton, OptionButtonInput boostModeButton, OptionButtonInput fieldRelativeButton) {
 
 		this.chassisDriveInputs = chassisDriveInputs;
 
@@ -85,9 +83,9 @@ public class DriverControl extends Command {
 				speedRotation * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
 
 
-		SmartDashboard.putNumber("SpeedX", speedX);
-		SmartDashboard.putNumber("SpeedY", speedY);
-		SmartDashboard.putNumber("Speed", speedRotation);
+		SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
+		SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
+		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
 
 		drivetrain.setDesiredState(speeds, isFieldRelative, true);
 
@@ -95,23 +93,7 @@ public class DriverControl extends Command {
 		SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);
 		SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
 
-		// Position display
-		final Pose2d robotPosition = drivetrain.getPosition();
-
-		SmartDashboard.putNumber("PoseX", robotPosition.getX());
-		SmartDashboard.putNumber("PoseY", robotPosition.getY());
-		SmartDashboard.putNumber("PoseDegrees", robotPosition.getRotation().getDegrees());
-
-		// Speed and Heading
-		final ChassisSpeeds currentSpeeds = drivetrain.getState();
-		final double speedMetersPerSecond = Math
-				.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
-
-		final double metersPerSecondToMilesPerHourConversion = 2.237;
-		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
-		SmartDashboard.putNumber("Heading Degrees", drivetrain.getHeading().getDegrees());
-
-		
+		drivetrain.updateSmartDashboard();
 	}
 
 	/**

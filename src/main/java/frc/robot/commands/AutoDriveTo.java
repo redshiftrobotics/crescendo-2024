@@ -21,6 +21,11 @@ public class AutoDriveTo extends Command {
 
 	private boolean xOnlyMode;
 
+	/***
+	 * Command to autonomously drive somewhere
+	 * @param subsystem The drivetrain
+	 * @param translation The translation to execute
+	 */
 	public AutoDriveTo(SwerveDrivetrain subsystem, Translation2d translation) {
 		this.drivetrain = subsystem;
 
@@ -78,6 +83,11 @@ public class AutoDriveTo extends Command {
 		else
 			xSpeed = 0;
 
+		// TEMP FIX: LEAVE HERE UNTIL BUMPERS!!!
+		if (Math.abs(xSpeed) > 0.5) {
+			xSpeed = 0.5 * Math.signum(xSpeed);
+		}
+
 		final ChassisSpeeds speeds = new ChassisSpeeds(
 				xSpeed,
 				ySpeed,
@@ -88,7 +98,7 @@ public class AutoDriveTo extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return atSetpointCounter > RobotMovementConstants.AT_SETPOINT_TOLERANCE_TIME_SECONDS;
+		return atSetpointCounter > 0;
 	}
 
 	@Override

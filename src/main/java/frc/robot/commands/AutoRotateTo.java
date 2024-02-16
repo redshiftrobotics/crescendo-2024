@@ -17,6 +17,11 @@ public class AutoRotateTo extends Command {
 
 	private double atSetpointCounter = 0;
 
+	/***
+	 * Command to autonomously rotate some direction
+	 * @param subsystem The robot drivetrain
+	 * @param direction Rotation2d class to execute
+	 */
 	public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
 
 		rotatePID = new PIDController(

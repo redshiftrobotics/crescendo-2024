@@ -11,12 +11,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 
-// How to make Subsystem (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/subsystems/subsystems.html
-// Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
-// Subsystem Documentation documentation: https://docs.wpilib.org/en/stable/docs/software/commandbased/subsystems.html
-
-
-
 public class Arm extends SubsystemBase {
 
     private final CANSparkMax leftArmMotor;

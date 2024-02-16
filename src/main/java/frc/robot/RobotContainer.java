@@ -8,11 +8,15 @@ import frc.robot.subsystems.Arm;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ArmControl;
 import frc.robot.commands.DriverControl;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
-import frc.robot.utils.ChassisDriveInputs;
-import frc.robot.utils.OptionButton;
-import frc.robot.utils.OptionButton.ActivationMode;
+import frc.robot.subsystems.Vision;
+import frc.robot.commands.Autos;
+import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.inputs.ChassisDriveInputs;
+import frc.robot.inputs.OptionButtonInput;
+import frc.robot.inputs.OptionButtonInput.ActivationMode;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -23,6 +27,7 @@ import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -30,8 +35,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared.
- * Since Command-based is a "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
- * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
+ * Since Command-based is a "declarative" paradigm, very little robot logic
+ * should actually be handled in the {@link Robot} periodic methods (other than
+ * the scheduler calls).
+ * Instead, the structure of the robot (including subsystems, commands, and
+ * trigger mappings) should be declared here.
  */
 public class RobotContainer {
 
@@ -77,16 +85,21 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
+	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, Constants.VisionConstants.CAMERA_POSE);
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
+		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
 
 		setUpDriveController();
+
+		PortForwarder.add(5800, "photonvision.local", 5800);
 	}
 
 	public void setUpDriveController() {
@@ -99,63 +112,40 @@ public class RobotContainer {
 
 		drivetrain.removeDefaultCommand();
 
-		DriverControl control;
-		ArmControl armcontrol;
+		ChassisDriveInputs inputs;
+		OptionButtonInput preciseModeButton, boostModeButton, fieldRelativeButton;
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
-			control = new DriverControl(drivetrain,
-
-				new ChassisDriveInputs(
-					joystick::getX, joystick::getY, joystick::getTwist,
-					-1, -1, Constants.DriverConstants.DEAD_ZONE),
-
-				new OptionButton(joystick, 2, ActivationMode.TOGGLE),
-				new OptionButton(joystick, 1, ActivationMode.HOLD),
-				new OptionButton(joystick, 3, ActivationMode.TOGGLE)
-
-			);
-
-			armcontrol = new ArmControl(arm,
-
-				new OptionButton(joystick,11,ActivationMode.HOLD),
-				new OptionButton(joystick, 12, ActivationMode.HOLD),
-
-				new OptionButton(joystick::povLeft, ActivationMode.HOLD),
-				new OptionButton(joystick::povRight, ActivationMode.HOLD),
-				new OptionButton(joystick::povDown, ActivationMode.HOLD)
-			);
 			
-			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			inputs = new ChassisDriveInputs(
+					joystick::getY, -1,
+					joystick::getX, -1,
+					joystick::getTwist, -1,
+					Constants.DriverConstants.DEAD_ZONE);
+
+			preciseModeButton = new OptionButtonInput(joystick, 2, ActivationMode.TOGGLE);
+			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
+			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
+
+			joystick.button(10).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			joystick.button(11).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
-			control = new DriverControl(drivetrain, 
 
-				new ChassisDriveInputs(
-					xbox::getLeftX, xbox::getLeftY, xbox::getRightX,
-					+1, -1, Constants.DriverConstants.DEAD_ZONE),
+			inputs = new ChassisDriveInputs(
+					xbox::getLeftY, +1,
+					xbox::getLeftX, +1,
+					xbox::getRightX, -1,
+					Constants.DriverConstants.DEAD_ZONE);
 
-				new OptionButton(xbox::b, ActivationMode.TOGGLE),
-				new OptionButton(xbox::leftStick, ActivationMode.HOLD),
-				new OptionButton(xbox::povUp, ActivationMode.TOGGLE)
-
-			);
-
-			armcontrol = new ArmControl(arm,
-
-				new OptionButton(xbox::rightBumper,ActivationMode.HOLD),
-				new OptionButton(xbox::leftBumper, ActivationMode.HOLD),
-
-				new OptionButton(xbox::povLeft, ActivationMode.HOLD),
-				new OptionButton(xbox::povRight, ActivationMode.HOLD),
-				new OptionButton(xbox::povDown, ActivationMode.HOLD)
-			);
-
-
+			preciseModeButton = new OptionButtonInput(xbox::b, ActivationMode.TOGGLE);
+			boostModeButton = new OptionButtonInput(xbox::leftStick, ActivationMode.HOLD);
+			fieldRelativeButton = new OptionButtonInput(xbox::povUp, ActivationMode.TOGGLE);
 		}
 
-		drivetrain.setDefaultCommand(control);
+		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
 	}
 
 	/** Use this method to define your trigger->command mappings. */
