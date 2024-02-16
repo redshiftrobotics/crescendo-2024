@@ -47,10 +47,10 @@ public class AutoRotateTo extends Command {
 
 		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
 
-		if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS)
-			atSetpointCounter += TimedRobot.kDefaultPeriod;
-		else
-			atSetpointCounter = 0;
+		if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS) atSetpointCounter += TimedRobot.kDefaultPeriod;
+		else atSetpointCounter = 0;
+		
+		drivetrain.updateSmartDashboard();
 	}
 
 	@Override

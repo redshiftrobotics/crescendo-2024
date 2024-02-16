@@ -141,6 +141,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 					xController.calculate(pose.getX(), desiredPose.getX()),
 					yController.calculate(pose.getY(), desiredPose.getY()),
 					rotationController.calculate(pose.getRotation().getRadians(), desiredPose.getRotation().getRadians()));
+			
+			SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
+			SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
+			SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
 
 			// Set those speeds
 			setDesiredState(speeds);
@@ -368,11 +372,12 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 		final boolean hasTargetPose = desiredPose != null;
 		final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
-
 		SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
-		SmartDashboard.putNumber("tPoseX", targetPose.getX());
-		SmartDashboard.putNumber("tPoseY", targetPose.getY());
-		SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
+		if (hasTargetPose) {
+			SmartDashboard.putNumber("tPoseX", targetPose.getX());
+			SmartDashboard.putNumber("tPoseY", targetPose.getY());
+			SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
+		}
 	}
 
 	/**

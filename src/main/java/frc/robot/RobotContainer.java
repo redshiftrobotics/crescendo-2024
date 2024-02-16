@@ -3,10 +3,8 @@ package frc.robot;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
-import frc.robot.subsystems.Vision;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.inputs.ChassisDriveInputs;
@@ -74,14 +72,14 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, Constants.VisionConstants.CAMERA_POSE);
+	// private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, Constants.VisionConstants.CAMERA_POSE);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
-		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
+		// autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
@@ -108,8 +106,8 @@ public class RobotContainer {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 			
 			inputs = new ChassisDriveInputs(
-					joystick::getY, -1,
 					joystick::getX, -1,
+					joystick::getY, -1,
 					joystick::getTwist, -1,
 					Constants.DriverConstants.DEAD_ZONE);
 
@@ -117,8 +115,10 @@ public class RobotContainer {
 			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
 			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
 
-			joystick.button(10).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			joystick.button(11).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
+			joystick.button(10).onTrue(Commands.sequence(
+				Commands.runOnce(drivetrain::toDefaultStates, drivetrain),
+				Commands.waitSeconds(0.5)
+			));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());

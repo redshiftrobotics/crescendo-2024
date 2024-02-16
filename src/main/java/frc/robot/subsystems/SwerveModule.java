@@ -183,13 +183,15 @@ public class SwerveModule extends SubsystemBase {
 	 * @param powerDriveMode Whether the SwerveModuleState is in meters per second (false) or motor power (true)
 	 */
 	public void setDesiredState(SwerveModuleState state, boolean powerDriveMode) {
-
+		
 		// If state is null, then stop robot and don't set any states
 		if (state == null) {
 			stop();
 			return;
 		}
-
+		
+		stopped = false;
+		
 		// Optimize the reference state to avoid spinning further than 90 degrees
 		state = optimize(state, Rotation2d.fromRotations(getSteeringAngleRotations()));
 

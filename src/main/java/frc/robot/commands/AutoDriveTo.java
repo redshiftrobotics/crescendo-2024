@@ -94,11 +94,12 @@ public class AutoDriveTo extends Command {
 				0);
 
 		drivetrain.setDesiredState(speeds);
+		drivetrain.updateSmartDashboard();
 	}
 
 	@Override
 	public boolean isFinished() {
-		return atSetpointCounter > 0;
+		return atSetpointCounter > RobotMovementConstants.AT_SETPOINT_TOLERANCE_TIME_SECONDS;
 	}
 
 	@Override
