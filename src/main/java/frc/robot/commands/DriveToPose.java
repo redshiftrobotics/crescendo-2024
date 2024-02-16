@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveDrivetrain;
 
@@ -17,26 +16,35 @@ public class DriveToPose extends Command {
 	 * 
 	 * <p>
 	 * This drives relative to the robot starting position,
-	 * so a pose of +2x and +1y will drive to the position 2 meters forward and 1
-	 * meter left of whether the robot started,
+	 * so a pose of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,
 	 * where forward is whatever direction the robot started in
-	 * </p>
 	 * 
 	 * <p>
-	 * The last place the drivetrain position was reset counts as the starting
-	 * position
-	 * </p>
+	 * The last place the drivetrain position was reset counts as the starting position
 	 * 
-	 * @param drivetrain     the drivetrain of the robot
-	 * @param targetPosition the pose the robot is trying to achieve
+	 * @param drivetrain	the drivetrain of the robot
+	 * @param position		Target pose the robot is trying to drive to
 	 */
-	public DriveToPose(SwerveDrivetrain drivetrain, Pose2d targetPosition) {
+	public DriveToPose(SwerveDrivetrain drivetrain, Pose2d position) {
 		this.drivetrain = drivetrain;
-		this.targetPosition = targetPosition;
+		this.targetPosition = position;
 		
 		addRequirements(drivetrain);
 	}
 
+	/**
+	 * <p>
+	 * This drives relative to the robot starting position,
+	 * so a pose of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,
+	 * where forward is whatever direction the robot started in
+	 * 
+	 * <p>
+	 * The last place the drivetrain position was reset counts as the starting position
+	 * 
+	 * @param drivetrain	The drivetrain of the robot
+	 * @param translation	Target transform to drive
+	 * @param rotation	 	Target rotation to drive
+	 */
 	public DriveToPose(SwerveDrivetrain drivetrain, Translation2d translation, Rotation2d rotation) {
 		this(drivetrain, new Pose2d(translation, rotation));
 	}
@@ -53,8 +61,7 @@ public class DriveToPose extends Command {
 
 	@Override
 	public boolean isFinished() {
-		// return drivetrain.isAtDesiredPosition();
-		return false;
+		return drivetrain.isAtDesiredPosition();
 	}
 
 	@Override

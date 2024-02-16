@@ -3,8 +3,10 @@ package frc.robot;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
+import frc.robot.subsystems.Vision;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.inputs.ChassisDriveInputs;
@@ -72,14 +74,14 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	// private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, Constants.VisionConstants.CAMERA_POSE);
+	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
-		// autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
+		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
