@@ -33,7 +33,8 @@ public class DriveToPose extends Command {
 	public DriveToPose(SwerveDrivetrain drivetrain, Pose2d targetPosition) {
 		this.drivetrain = drivetrain;
 		this.targetPosition = targetPosition;
-		SmartDashboard.putBoolean("Made shit", true);
+		
+		addRequirements(drivetrain);
 	}
 
 	public DriveToPose(SwerveDrivetrain drivetrain, Translation2d translation, Rotation2d rotation) {
@@ -42,7 +43,6 @@ public class DriveToPose extends Command {
 
 	@Override
 	public void initialize() {
-		SmartDashboard.putBoolean("Doing shit", true);
 		drivetrain.setDesiredPosition(targetPosition);
 	}
 
@@ -59,7 +59,6 @@ public class DriveToPose extends Command {
 
 	@Override
 	public void end(boolean interrupted) {
-		SmartDashboard.putBoolean("Doing shit", false);
 		drivetrain.clearDesiredPosition();
 		drivetrain.stop();
 	}

@@ -19,20 +19,24 @@ public class AutoRotateTo extends Command {
 
 	/***
 	 * Command to autonomously rotate some direction
-	 * @param subsystem The robot drivetrain
+	 * @param drivetrain The robot drivetrain
 	 * @param direction Rotation2d class to execute
 	 */
-	public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
+	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction) {
 
 		rotatePID = new PIDController(
 				RobotMovementConstants.ROTATION_PID_P,
 				RobotMovementConstants.ROTATION_PID_I,
 				RobotMovementConstants.ROTATION_PID_D);
 
-		this.drivetrain = subsystem;
+		this.drivetrain = drivetrain;
 		this.angleGoal = direction.getRadians();
 
 		addRequirements(this.drivetrain);
+	}
+
+	public static AutoRotateTo autoRotateToRelative(SwerveDrivetrain drivetrain, Rotation2d direction) {
+		return new AutoRotateTo(drivetrain, Rotation2d.fromRadians(drivetrain.getHeading().getRadians() + direction.getRadians()));
 	}
 
 	@Override
