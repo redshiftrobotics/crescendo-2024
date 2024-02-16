@@ -1,7 +1,10 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.commands.ShootBegin;
+import frc.robot.commands.ShootEnd;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 // How to make Command: https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html (ignore image instructions, code is out of date, just look at written general instructions)
@@ -9,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 // Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
 
 /** An example command that uses an example subsystem. */
-public class ShootEnd extends Command {
+public class ShootCompiled extends Command {
 	private final ShooterSubsystem shooterSubsystem;
 
 	/**
@@ -25,7 +28,7 @@ public class ShootEnd extends Command {
 	 * configuring objects for the class like PID controllers, and adding subsystem
 	 * requirements
 	 */
-	public ShootEnd(ShooterSubsystem shooterSubsystem) {
+	public ShootCompiled(ShooterSubsystem shooterSubsystem) {
 		// use "this" to access member variable subsystem rather than local subsystem
 		this.shooterSubsystem = shooterSubsystem;
 
@@ -45,6 +48,8 @@ public class ShootEnd extends Command {
 	 */
 	@Override
 	public void initialize() {
+		shooterSubsystem.stopIntake();
+		shooterSubsystem.stopOutput();
 
 	}
 
@@ -59,7 +64,9 @@ public class ShootEnd extends Command {
 	 */
 	@Override
 	public void execute() {
-		shooterSubsystem.engageIntake();
+		new ShootBegin(shooterSubsystem);
+		new WaitCommand(1.5);
+		new ShootEnd(shooterSubsystem);
 	}
 
 	/**
