@@ -10,6 +10,9 @@ import frc.robot.subsystems.SwerveModule;
 import frc.robot.utils.ChassisDriveInputs;
 import frc.robot.utils.OptionButton;
 import frc.robot.utils.OptionButton.ActivationMode;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.ShootCompiled;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -61,6 +64,9 @@ public class RobotContainer {
 			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
 					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
+		private final ShooterSubsystem shooter = new ShooterSubsystem(ShooterConstants.greyMotorOneId, ShooterConstants.greyMotorTwoId, 
+		ShooterConstants.greenMotorId, ShooterConstants.SHOOTER_PID_P, ShooterConstants.SHOOTER_PID_I, ShooterConstants.SHOOTER_PID_D);
+
 	private final AHRS gyro = new AHRS(I2C.Port.kOnboard);
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
@@ -106,6 +112,7 @@ public class RobotContainer {
 			);
 			
 			joystick.button(4).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			joystick.button(5).onTrue(new ShootCompiled(shooter));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());

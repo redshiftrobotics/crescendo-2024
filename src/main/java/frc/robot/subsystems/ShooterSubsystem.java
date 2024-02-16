@@ -25,8 +25,8 @@ public class ShooterSubsystem extends SubsystemBase {
 	private final PIDController ShooterPIDController;
 
 	/** Constructor. Creates a new ExampleSubsystem. */
-	public ShooterSubsystem(int greyMotorOneId, int greyMotorTwoId, int greenMotorId, int SHOOTER_PID_P,
-			int SHOOTER_PID_I, int SHOOTER_PID_D) {
+	public ShooterSubsystem(int greyMotorOneId, int greyMotorTwoId, int greenMotorId, double SHOOTER_PID_P,
+			double SHOOTER_PID_I, double SHOOTER_PID_D) {
 
 		greyMotorOne = new CANSparkMax(greyMotorOneId, MotorType.kBrushless);
 		// Grey motor one is the top of the pair

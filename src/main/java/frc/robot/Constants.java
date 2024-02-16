@@ -84,6 +84,9 @@ public final class Constants {
 		public static final double SHOOTER_PID_P = 0;
 		public static final double SHOOTER_PID_I = 0;
 		public static final double SHOOTER_PID_D = 0;
+		public static final int greenMotorId = 1;
+		public static final int greyMotorOneId = 2;
+		public static final int greyMotorTwoId = 3;
 
 		// Note to self: find final speeds later
 		public static final double outputSpeed = 1;
