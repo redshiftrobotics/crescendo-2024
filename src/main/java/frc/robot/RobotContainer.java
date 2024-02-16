@@ -6,7 +6,7 @@ import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ArmControl;
+import frc.robot.commands.ArmRemoteControl;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -112,6 +112,7 @@ public class RobotContainer {
 
 		drivetrain.removeDefaultCommand();
 
+		ArmRemoteControl armInputs;
 		ChassisDriveInputs inputs;
 		OptionButtonInput preciseModeButton, boostModeButton, fieldRelativeButton;
 
@@ -123,6 +124,15 @@ public class RobotContainer {
 					joystick::getX, -1,
 					joystick::getTwist, -1,
 					Constants.DriverConstants.DEAD_ZONE);
+
+			armInputs = new ArmRemoteControl(arm,
+					new OptionButtonInput(joystick,11, ActivationMode.HOLD), 
+					new OptionButtonInput(joystick,12, ActivationMode.HOLD), 
+
+					new OptionButtonInput(joystick::povLeft, ActivationMode.HOLD), 
+					new OptionButtonInput(joystick::povRight, ActivationMode.HOLD), 
+					new OptionButtonInput(joystick::povDown, ActivationMode.HOLD)
+					);
 
 			preciseModeButton = new OptionButtonInput(joystick, 2, ActivationMode.TOGGLE);
 			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
@@ -139,6 +149,15 @@ public class RobotContainer {
 					xbox::getLeftX, +1,
 					xbox::getRightX, -1,
 					Constants.DriverConstants.DEAD_ZONE);
+
+			armInputs = new ArmRemoteControl(arm,
+					new OptionButtonInput(xbox::rightBumper, ActivationMode.HOLD), 
+					new OptionButtonInput(xbox::leftBumper, ActivationMode.HOLD), 
+
+					new OptionButtonInput(xbox::povLeft, ActivationMode.HOLD), 
+					new OptionButtonInput(xbox::povRight, ActivationMode.HOLD), 
+					new OptionButtonInput(xbox::povDown, ActivationMode.HOLD)
+					);
 
 			preciseModeButton = new OptionButtonInput(xbox::b, ActivationMode.TOGGLE);
 			boostModeButton = new OptionButtonInput(xbox::leftStick, ActivationMode.HOLD);

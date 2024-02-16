@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 
-public class ArmControl extends Command {
+public class ArmRemoteControl extends Command {
 	private final Arm arm;
 
 	private final OptionButtonInput raiseArmButton;
@@ -21,7 +21,7 @@ public class ArmControl extends Command {
     private final OptionButtonInput intakePositionButton;
 
 
-	public ArmControl(Arm arm, OptionButtonInput raiseArmButton, OptionButtonInput lowerArmButton,
+	public ArmRemoteControl(Arm arm, OptionButtonInput raiseArmButton, OptionButtonInput lowerArmButton,
             OptionButtonInput speakerPositionButton, OptionButtonInput ampPositionButton, OptionButtonInput intakePositionButton) {
         this.arm = arm;
 
