@@ -21,79 +21,100 @@ public final class Autos {
 		);
 	}
 
-	public static Command autoStart(SwerveDrivetrain drivetrain) {
+	public static Command autoStart(SwerveDrivetrain drivetrain) { // Main AUTO. Goes for the three notes infront of the
+																	// speaker
 
 		return Commands.sequence(
-				new AutoDriveTo(drivetrain, new Translation2d(0.75946, 0)),
-				new WaitCommand(1), // pick up note
+				new AutoDriveTo(drivetrain, new Translation2d(0.75946, 0)), // middle note
+				new WaitCommand(1), // fire intake 100%
 				new AutoDriveTo(drivetrain, new Translation2d(-0.757682, 0)),
-				new WaitCommand(1), // shot note
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(38.048)),
+				new WaitCommand(1), // shoot note into speaker
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(38.048)), // bottom note
 				new AutoDriveTo(drivetrain, new Translation2d(66.362, 0)),
-				new WaitCommand(1), // pick up note
+				new WaitCommand(1), // fire intake 100%
 				new AutoDriveTo(drivetrain, new Translation2d(-66.362, 0)),
-				new WaitCommand(1), // shot note
+				new WaitCommand(1), // shoot note into speaker
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-76.096)),
 				new AutoDriveTo(drivetrain, new Translation2d(66.362, 0)),
-				new WaitCommand(1), // pick up note
+				new WaitCommand(1), // fire intake 100%
 				new AutoDriveTo(drivetrain, new Translation2d(-66.362, 0)),
-				new WaitCommand(1) // shot note
+				new WaitCommand(1) // shoot note into speaker
 		// new AutoRotateTo(drivetrain, Rotation2d.fromDegrees())
 		);
 	}
 
-	public static Command autoStartBackUpRed(SwerveDrivetrain drivetrain) {
+	public static Command autoStartBackUpRed(SwerveDrivetrain drivetrain) { // goes for the top 2 notes in the middle of
+																			// the field starting from red side
+
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-79.139)), // normal start is directly infront of
+																				// speaker
+				new AutoDriveTo(drivetrain, new Translation2d(4.035, 0)),
+
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-7.505)), // starts 4.035 meters to the left of the
+																				// speaker (facing towards center of
+																				// field)
+				new AutoDriveTo(drivetrain, new Translation2d(6.291, 0)),
+				new WaitCommand(1), // fire intake 50%
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90)),
+				new AutoDriveTo(drivetrain, new Translation2d(1.569, 0)),
+				new WaitCommand(1), // fire intake 100%
+				new AutoDriveTo(drivetrain, new Translation2d(-1.569, 0)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90)),
+				new AutoDriveTo(drivetrain, new Translation2d(-6.291, 0)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-7.505)),
+				new AutoDriveTo(drivetrain, new Translation2d(4.035, 0)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-79.139)),
+				new WaitCommand(1) // shoot note into speaker
+
+		);
+	}
+
+	public static Command autoStartBackUpBlue(SwerveDrivetrain drivetrain) { // goes for the top 2 notes in the middle
+																				// of the field starting from blue side
+
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(79.139)), // normal start is directly infront of
+																				// speaker
+				new AutoDriveTo(drivetrain, new Translation2d(-4.035, 0)),
+
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(7.505)), // starts 4.035 meters to the right of the
+																				// speaker (facing towards center of
+																				// field)
+				new AutoDriveTo(drivetrain, new Translation2d(-6.291, 0)),
+				new WaitCommand(1), // fire intake 50%
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90)),
+				new AutoDriveTo(drivetrain, new Translation2d(-1.569, 0)),
+				new WaitCommand(1), // fire intake 100%
+				new AutoDriveTo(drivetrain, new Translation2d(1.569, 0)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90)),
+				new AutoDriveTo(drivetrain, new Translation2d(6.291, 0)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(7.505)),
+				new AutoDriveTo(drivetrain, new Translation2d(-4.035, 0)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(79.139)),
+				new WaitCommand(1) // shoot note into speaker
+
+		);
+	}
+
+	public static Command autoStartBackUpBackUpRed(SwerveDrivetrain drivetrain) { // goes for the center and one lower
+																					// note in the center of the field
+																					// from the red side
 
 		return Commands.sequence(
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-79.139)), // normal start
 				new AutoDriveTo(drivetrain, new Translation2d(4.035, 0)),
+
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-7.505)), // starts 4.035 meters to the left of the
-				new AutoDriveTo(drivetrain, new Translation2d(6.291, 0)),
-				new WaitCommand(1), // pick up note 50%
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90)),
-				new AutoDriveTo(drivetrain, new Translation2d(1.569, 0)),
-				new WaitCommand(1), // pick up note 50%
-				new AutoDriveTo(drivetrain, new Translation2d(-1.569, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90)),
-				new AutoDriveTo(drivetrain, new Translation2d(-6.291, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-7.505)),
-				new AutoDriveTo(drivetrain, new Translation2d(4.035, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-79.139)));
-	}
-
-	public static Command autoStartBackUpBlue(SwerveDrivetrain drivetrain) {
-
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(79.139)), // normal start
-				new AutoDriveTo(drivetrain, new Translation2d(-4.035, 0)),
-
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(7.505)), // starts 4.035 meters to the right of the
-				new AutoDriveTo(drivetrain, new Translation2d(-6.291, 0)),
-				new WaitCommand(1), // pick up note 50%
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90)),
-				new AutoDriveTo(drivetrain, new Translation2d(-1.569, 0)),
-				new WaitCommand(1), // pick up note 50%
-				new AutoDriveTo(drivetrain, new Translation2d(1.569, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90)),
-				new AutoDriveTo(drivetrain, new Translation2d(6.291, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(7.505)),
-				new AutoDriveTo(drivetrain, new Translation2d(-4.035, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(79.139)));
-	}
-
-	public static Command autoStartBackUpBackUpRed(SwerveDrivetrain drivetrain) {
-
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-79.139)),
-				new AutoDriveTo(drivetrain, new Translation2d(4.035, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-7.505)),
+																				// speaker (facing towards center of
+																				// field)
 				new AutoDriveTo(drivetrain, new Translation2d(6.291, 0)),
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(92.250)),
 				new AutoDriveTo(drivetrain, new Translation2d(3.101, 0)),
-				new WaitCommand(1), // pick up note 50%
+				new WaitCommand(1), // fire intake 50%
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-2.250)),
 				new AutoDriveTo(drivetrain, new Translation2d(1.676, 0)),
-				new WaitCommand(1), // pick up note 50%
+				new WaitCommand(1), // fire intake 100%
 				new AutoDriveTo(drivetrain, new Translation2d(-1.676, 0)),
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(2.250)),
 				new AutoDriveTo(drivetrain, new Translation2d(-3.101, 0)),
@@ -102,23 +123,28 @@ public final class Autos {
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(7.505)),
 				new AutoDriveTo(drivetrain, new Translation2d(-4.035, 0)),
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(79.139)),
-				new WaitCommand(1) // shot note
+				new WaitCommand(1) // shoot note
 		);
 	}
 
-	public static Command autoStartBackUpBackUpBlue(SwerveDrivetrain drivetrain) {
+	public static Command autoStartBackUpBackUpBlue(SwerveDrivetrain drivetrain) { // goes for the center and one lower
+																					// note in the center of the field
+																					// from the blue side
 
 		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(79.139)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(79.139)), // normal startS
 				new AutoDriveTo(drivetrain, new Translation2d(-4.035, 0)),
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(7.505)),
+
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(7.505)), // starts 4.035 meters to the right of the
+																				// speaker (facing towards center of
+																				// field)
 				new AutoDriveTo(drivetrain, new Translation2d(-6.291, 0)),
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-92.250)),
 				new AutoDriveTo(drivetrain, new Translation2d(-3.101, 0)),
-				new WaitCommand(1), // pick up note 50%
+				new WaitCommand(1), // fire intake 50%
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(2.250)),
 				new AutoDriveTo(drivetrain, new Translation2d(-1.676, 0)),
-				new WaitCommand(1), // pick up note 50%
+				new WaitCommand(1), // fire intake 100%
 				new AutoDriveTo(drivetrain, new Translation2d(1.676, 0)),
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-2.250)),
 				new AutoDriveTo(drivetrain, new Translation2d(3.101, 0)),
@@ -127,7 +153,7 @@ public final class Autos {
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-7.505)),
 				new AutoDriveTo(drivetrain, new Translation2d(4.035, 0)),
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-79.139)),
-				new WaitCommand(1) // shot note
+				new WaitCommand(1) // shoot note
 		);
 	}
 
