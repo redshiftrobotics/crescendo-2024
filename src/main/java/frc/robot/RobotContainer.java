@@ -5,7 +5,6 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.DriverControl;
 import frc.robot.subsystems.LimitSwitchArmSubsystem;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -113,7 +112,7 @@ public class RobotContainer {
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
-			
+
 			inputs = new ChassisDriveInputs(
 					joystick::getY, -1,
 					joystick::getX, -1,
@@ -141,7 +140,8 @@ public class RobotContainer {
 			fieldRelativeButton = new OptionButtonInput(xbox::povUp, ActivationMode.TOGGLE);
 		}
 
-		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
+		drivetrain.setDefaultCommand(
+				new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
 	}
 
 	/** Use this method to define your trigger->command mappings. */
