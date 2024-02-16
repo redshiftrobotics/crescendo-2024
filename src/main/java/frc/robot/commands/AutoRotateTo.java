@@ -9,11 +9,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.Constants.RobotMovementConstants;
 
-// How to make Command (ignore image instructions, code is out of date, just look at written general instructions): https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html
-// Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
-// Code documentations https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html 
-
-/** An example command that uses an example subsystem. */
 public class AutoRotateTo extends Command {
 	private final SwerveDrivetrain drivetrain;
 
@@ -22,6 +17,11 @@ public class AutoRotateTo extends Command {
 
 	private double atSetpointCounter = 0;
 
+	/***
+	 * Command to autonomously rotate some direction
+	 * @param subsystem The robot drivetrain
+	 * @param direction Rotation2d class to execute
+	 */
 	public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
 
 		rotatePID = new PIDController(
