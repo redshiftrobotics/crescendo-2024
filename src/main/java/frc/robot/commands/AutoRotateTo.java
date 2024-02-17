@@ -14,7 +14,9 @@ public class AutoRotateTo extends Command {
 
 	private final PIDController rotatePID;
 	private final double angleGoal;
+	private final boolean relative;
 
+	private double currentAngleGoal;
 	private double atSetpointCounter = 0;
 
 	/***
@@ -22,7 +24,7 @@ public class AutoRotateTo extends Command {
 	 * @param drivetrain The robot drivetrain
 	 * @param direction Rotation2d class to execute
 	 */
-	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction) {
+	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction, boolean relative) {
 
 		rotatePID = new PIDController(
 				RobotMovementConstants.ROTATION_PID_P,
@@ -30,28 +32,32 @@ public class AutoRotateTo extends Command {
 				RobotMovementConstants.ROTATION_PID_D);
 
 		this.drivetrain = drivetrain;
+		this.relative = relative;
 		this.angleGoal = direction.getRadians();
 
 		addRequirements(this.drivetrain);
 	}
 
-	public static AutoRotateTo autoRotateToRelative(SwerveDrivetrain drivetrain, Rotation2d direction) {
-		return new AutoRotateTo(drivetrain, drivetrain.getHeading().plus(direction));
+	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction) {
+		this(drivetrain, direction, true);
 	}
 
 	@Override
 	public void initialize() {
+		currentAngleGoal = 
+			relative ? drivetrain.getHeading().getRadians() : 0
+			+ angleGoal;
 	}
 
 	@Override
 	public void execute() {
 		final double currentAngle = drivetrain.getHeading().getRadians();
 
-		double turnsSeed = rotatePID.calculate(currentAngle, this.angleGoal);
+		double turnsSeed = rotatePID.calculate(currentAngle, this.currentAngleGoal);
 
 		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
 
-		if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS) atSetpointCounter += TimedRobot.kDefaultPeriod;
+		if (Math.abs(currentAngle - this.currentAngleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS) atSetpointCounter += TimedRobot.kDefaultPeriod;
 		else atSetpointCounter = 0;
 		
 		drivetrain.updateSmartDashboard();

@@ -17,7 +17,7 @@ public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command testingAuto(SwerveDrivetrain drivetrain) {
 		return Commands.sequence(
-				AutoRotateTo.autoRotateToRelative(drivetrain, Rotation2d.fromDegrees(90))
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90))
 		);
 	}
 
