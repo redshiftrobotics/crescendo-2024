@@ -67,7 +67,7 @@ public class RobotContainer {
 			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
 					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
-	private final AHRS gyro = new AHRS(I2C.Port.kOnboard);
+	private final AHRS gyro = new AHRS();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
@@ -82,6 +82,11 @@ public class RobotContainer {
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
 		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
+		autoChooser.addOption("Rotate by 90", Autos.rotateBy90Auto(drivetrain));
+		autoChooser.addOption("Rotate to 90", Autos.rotateTo90Auto(drivetrain));
+		autoChooser.addOption("Rotate by -90", Autos.rotateByNegative90Auto(drivetrain));
+		autoChooser.addOption("Rotate to -90", Autos.rotateToNegative90Auto(drivetrain));
+		autoChooser.addOption("Rotate by 10", Autos.rotateBy10Auto(drivetrain));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
@@ -106,7 +111,7 @@ public class RobotContainer {
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
-			
+
 			inputs = new ChassisDriveInputs(
 					joystick::getX, -1,
 					joystick::getY, -1,
@@ -118,9 +123,8 @@ public class RobotContainer {
 			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
 
 			joystick.button(10).onTrue(Commands.sequence(
-				Commands.runOnce(drivetrain::toDefaultStates, drivetrain),
-				Commands.waitSeconds(0.5)
-			));
+					Commands.runOnce(drivetrain::toDefaultStates, drivetrain),
+					Commands.waitSeconds(0.5)));
 
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
@@ -136,7 +140,8 @@ public class RobotContainer {
 			fieldRelativeButton = new OptionButtonInput(xbox::povUp, ActivationMode.TOGGLE);
 		}
 
-		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
+		drivetrain.setDefaultCommand(
+				new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
 	}
 
 	/** Use this method to define your trigger->command mappings. */

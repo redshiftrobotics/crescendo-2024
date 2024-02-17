@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.subsystems.Arm;
 
@@ -17,8 +18,31 @@ public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command testingAuto(SwerveDrivetrain drivetrain) {
 		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90))
-		);
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), false));
+	}
+
+	public static Command rotateTo90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), true));
+	}
+
+	public static Command rotateBy90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), false));
+	}
+
+	public static Command rotateToNegative90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
+	}
+
+	public static Command rotateByNegative90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), false));
+	}
+
+	public static Command rotateBy10Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(10), true));
 	}
 
 	/** Auto-mode that attempts to follow an april tag. */

@@ -67,14 +67,14 @@ public final class Constants {
 
 	public static class RobotMovementConstants {
 		public static final double AT_SETPOINT_TOLERANCE_TIME_SECONDS = 0;
-		public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 1;
+		public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 0;
 
 		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 
-		public static final double ROTATION_PID_P = 4;
-		public static final double ROTATION_PID_I = 0.1;
-		public static final double ROTATION_PID_D = 4;
+		public static final double ROTATION_PID_P = 5;
+		public static final double ROTATION_PID_I = 0;
+		public static final double ROTATION_PID_D = 0;
 
 		public static final double TRANSLATION_PID_P = 30;
 		public static final double TRANSLATION_PID_I = 0.5;
