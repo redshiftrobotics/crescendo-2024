@@ -7,6 +7,7 @@ import java.util.function.IntFunction;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -17,7 +18,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotMovementConstants;
 
 /**
  * Subsystem for full drive train of robot. Contains 4 {@link SwerveModule}
@@ -62,6 +65,17 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private Pose2d pose;
 
 	/**
+	 * Desired pose of robot. The desired pose is the X, Y and Rotation the robot wants to be in, relative to the last reset.
+	 * It can be set to null to not have any desired pose.
+	 * 
+	 * @see https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/pose.html#pose
+	 */
+	private Pose2d desiredPose;
+
+	/** The PID controller to get robot to desired pose */
+	private final PIDController xController, yController, rotationController;
+
+	/**
 	 * Constructor the drivetrain subsystem.
 	 * 
 	 * @param gyro           Gyroscope on robot, should be physically located near center of robot
@@ -99,20 +113,42 @@ public class SwerveDrivetrain extends SubsystemBase {
 		for (SwerveModule module : modules) {
 			addChild(module.getName(), module);
 		}
+
+		// set up PID controllers for desired pose
+		xController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
+		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+
+		yController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
+		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+
+		rotationController = new PIDController(RobotMovementConstants.ROTATION_PID_P, RobotMovementConstants.ROTATION_PID_I, RobotMovementConstants.ROTATION_PID_D);
+		rotationController.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 	}
 
 	// --- Pose Related Methods ---
 
-	/**
-	 * This is the periodic function of the swerve drivetrain.
-	 * This method is called periodically by the CommandScheduler, about every 20ms.
-	 */
+	/** This is the periodic function of the swerve drivetrain, called periodically by the CommandScheduler, about every 20ms. */
 	@Override
 	public void periodic() {
 		// use odometry to update the estimated pose
 		pose = odometry.update(
 				getHeading(),
 				getWheelPositions());
+		
+		if (desiredPose != null) {
+			// Calculate our robot speeds with the PID controllers
+			final ChassisSpeeds speeds = new ChassisSpeeds(
+					xController.calculate(pose.getX(), desiredPose.getX()),
+					yController.calculate(pose.getY(), desiredPose.getY()),
+					rotationController.calculate(pose.getRotation().getRadians(), desiredPose.getRotation().getRadians()));
+			
+			SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
+			SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
+			SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
+
+			// Set those speeds
+			setDesiredState(speeds);
+		}
 	}
 
 	/**
@@ -135,20 +171,55 @@ public class SwerveDrivetrain extends SubsystemBase {
 				pose);
 	}
 
+	/**
+     * <p>This drives relative to the robot starting position,
+	 * so a pose of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,
+     * where forward is whatever direction the robot started in</p>
+     * 
+     * <p>The last place the drivetrain position was reset counts as the starting position</p>
+	 *
+	 * @param desiredPose the pose the robot will try to drive to
+	 */
+	public void setDesiredPosition(Pose2d desiredPose) {
+		this.desiredPose = desiredPose;
+	}
+
+	/** Gets the desired position, returns null if the pose has been cleared */
+	public Pose2d getDesiredPose() {
+		return desiredPose;
+	}
+
+	/** Sets desired position to null, stops robot from continue to try and get to the last set pose  */
+	public void clearDesiredPosition() {
+		setDesiredPosition(null);
+	}
+
+	/**
+	 * Checks whether drivetrain is at the desired pose
+	 * 
+	 * @return are all drive PID controllers within tolerance of their setpoints
+	 */
+	public boolean isAtDesiredPosition() {
+		return xController.atSetpoint() && yController.atSetpoint() && rotationController.atSetpoint();
+	}
+	
 	// --- Action Methods ---
 
-	/** Stop all swerve modules */
+	/** Stop all swerve modules, clears desired position */
 	public void stop() {
+		clearDesiredPosition();
 		modulesMap(SwerveModule::stop);
 	}
 
-	/** Put all swerve modules to default state, facing forward and staying still */
+	/** Put all swerve modules to default state, facing forward and staying still. Also clears desired position. */
 	public void toDefaultStates() {
+		clearDesiredPosition();
 		modulesMap(SwerveModule::toDefaultState);
 	}
 
-	/** Put all swerve modules to inward state, making the swerve modules face in a X pattern. This prevents robot from slipping around. */
+	/** Put all swerve modules to inward state, making the swerve modules face in a X pattern. This prevents robot from slipping around. Also clears desired position */
 	public void brakeMode() {
+		clearDesiredPosition();
 		modulesMap(SwerveModule::toInwardPosition);
 	}
 
@@ -280,6 +351,34 @@ public class SwerveDrivetrain extends SubsystemBase {
 	}
 
 	// --- Util ---
+
+	/** Update SmartDashboard with */
+	public void updateSmartDashboard() {
+		// Position display
+		final Pose2d robotPosition = getPosition();
+
+		SmartDashboard.putNumber("PoseX", robotPosition.getX());
+		SmartDashboard.putNumber("PoseY", robotPosition.getY());
+		SmartDashboard.putNumber("PoseDegrees", robotPosition.getRotation().getDegrees());
+
+		// Speed and Heading
+		final ChassisSpeeds currentSpeeds = getState();
+		final double speedMetersPerSecond = Math.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
+
+		final double metersPerSecondToMilesPerHourConversion = 2.237;
+		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+
+
+		final boolean hasTargetPose = desiredPose != null;
+		final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
+		SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
+		if (hasTargetPose) {
+			SmartDashboard.putNumber("tPoseX", targetPose.getX());
+			SmartDashboard.putNumber("tPoseY", targetPose.getY());
+			SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
+		}
+	}
 
 	/**
 	 * Utility method. Function to easily run a function on each swerve module

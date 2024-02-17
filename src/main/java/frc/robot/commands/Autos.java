@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveDrivetrain;
-
+import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,14 +9,24 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.subsystems.Arm;
 
+/**
+ * This class just contains a bunch of auto-modes. Do not call this class
+ * itself.
+ */
 public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command testingAuto(SwerveDrivetrain drivetrain) {
 		return Commands.sequence(
-				new DriveTransform(drivetrain, new Translation2d(1, 0), new Rotation2d())
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90))
 		);
 	}
 
+	/** Auto-mode that attempts to follow an april tag. */
+	public static Command tagFollowAuto(SwerveDrivetrain drivetrain, Vision camera, Integer tagId) {
+		return new FollowTag(drivetrain, camera, new Translation2d(1, 0), tagId, null);
+	}
+
+	/** Linden did this */
 	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, boolean invertY) {
 
 		// assumes start position in corner
