@@ -3,8 +3,6 @@ package frc.robot.commands;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -84,13 +82,15 @@ public class FollowTag extends Command {
 			secondsSinceTagLastSeen = 0;
 
 			// https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/coordinate-systems.html
+			// https://docs.photonvision.org/en/latest/docs/programming/photonlib/getting-target-data.html#getting-apriltag-data-from-a-target
 			// https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation3d.html#getZ()
 			final Transform2d tagPosition = new Transform2d(
 					tagPosition3d.getX(),
 					tagPosition3d.getY(),
 					new Rotation2d(tagPosition3d.getX(), tagPosition3d.getY()));
 
-			final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
+			final Transform2d driveTransform = tagPosition.plus(
+					targetDistance.inverse().plus(new Transform2d(new Translation2d(), tagPosition.getRotation())));
 
 			drivetrain.setDesiredPosition(drivetrain.getPosition().plus(driveTransform));
 		}

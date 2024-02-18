@@ -26,8 +26,7 @@ public class Vision extends SubsystemBase {
 	 * Create new PhotonCamera subsystem
 	 * 
 	 * @param cameraName    name of PhotonCamera
-	 * @param robotToCamera distance from the camera to the front center point
-	 *                      of the robot
+	 * @param robotToCamera distance from the camera to the center of the robot
 	 */
 	public Vision(String cameraName, Transform3d robotToCamera) {
 		camera = new PhotonCamera(cameraName);
@@ -41,10 +40,10 @@ public class Vision extends SubsystemBase {
 	// Rotation2d yawToTag = new Rotation2d(distToTag.getX(), distToTag.getY());
 
 	/**
-	 * Get distance to the best target found by the camera
+	 * Get distance to the distance to the best tag found by the camera
 	 * 
-	 * @return the position of the tag (translation and rotation) based on the
-	 *         center of the robot. Returns null if no target found.
+	 * @return The position of the tag (translation and rotation) based on the
+	 *         center of the robot. Returns null if no tag found.
 	 * 
 	 */
 	public Transform3d getDistToTag() {
@@ -52,7 +51,7 @@ public class Vision extends SubsystemBase {
 		if (target == null) {
 			return null;
 		}
-		return target.getBestCameraToTarget();
+		return target.getBestCameraToTarget().plus(cameraToRobot);
 	}
 
 	/**
@@ -60,7 +59,7 @@ public class Vision extends SubsystemBase {
 	 * 
 	 * @param tagID the fiducial ID of the desired tag
 	 * @return the position of the tag (translation and rotation) based on the
-	 *         center of the robot. Returns null if no target found
+	 *         center of the robot. Returns null if no tag found
 	 */
 
 	public Transform3d getDistToTag(int tagID) {
