@@ -6,6 +6,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -18,49 +19,56 @@ public class Vision extends SubsystemBase {
 	private final static boolean DEBUG_INFO = false;
 
 	final PhotonCamera camera;
-	final Transform3d cameraToFrontCenter;
+	final Transform3d robotToCamera;
+	final Transform3d cameraToRobot;
 
 	/**
 	 * Create new PhotonCamera subsystem
 	 * 
-	 * @param cameraName          name of PhotonCamera
-	 * @param cameraToFrontCenter distance from the camera to the front center point
-	 *                            of the robot
+	 * @param cameraName    name of PhotonCamera
+	 * @param robotToCamera distance from the camera to the front center point
+	 *                      of the robot
 	 */
-	public Vision(String cameraName, Transform3d cameraToFrontCenter) {
+	public Vision(String cameraName, Transform3d robotToCamera) {
 		camera = new PhotonCamera(cameraName);
-		this.cameraToFrontCenter = cameraToFrontCenter;
+		this.robotToCamera = robotToCamera;
+		cameraToRobot = robotToCamera.inverse();
+	}
+
+	// If you need the direction (yaw) from the robot to the tag, use something like
+	// this:
+	// Transform3d distToTag = vision.getDistToTag(tagID);
+	// Rotation2d yawToTag = new Rotation2d(distToTag.getX(), distToTag.getY());
+
+	/**
+	 * Get distance to the best target found by the camera
+	 * 
+	 * @return the position of the tag (translation and rotation) based on the
+	 *         center of the robot. Returns null if no target found.
+	 * 
+	 */
+	public Transform3d getDistToTag() {
+		PhotonTrackedTarget target = camera.getLatestResult().getBestTarget();
+		if (target == null) {
+			return null;
+		}
+		return target.getBestCameraToTarget();
 	}
 
 	/**
-	 * Get best april tag target
+	 * Get distance to the desired tag
 	 * 
-	 * @return Object of best target
+	 * @param tagID the fiducial ID of the desired tag
+	 * @return the position of the tag (translation and rotation) based on the
+	 *         center of the robot. Returns null if no target found
 	 */
-	public PhotonTrackedTarget getTag() {
-		return camera
-				.getLatestResult()
-				.getBestTarget();
-	}
 
-	/**
-	 * Gives Transform3d from robot center to the desired target
-	 * 
-	 * @param tagID The fiducial ID of the desired April Tag
-	 * @return returns first tag with matching ID, null if None are found
-	 */
-	public PhotonTrackedTarget getTag(int tagID) {
+	public Transform3d getDistToTag(int tagID) {
 		for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
 			if (target.getFiducialId() == tagID)
-				return target;
+				return target.getBestCameraToTarget().plus(cameraToRobot);
 		}
 		return null;
-	}
-
-	public Transform3d getDistanceToTarget(PhotonTrackedTarget tag) {
-		return tag
-				.getBestCameraToTarget()
-				.plus(cameraToFrontCenter);
 	}
 
 	@Override

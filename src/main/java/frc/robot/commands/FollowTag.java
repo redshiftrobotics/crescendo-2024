@@ -17,10 +17,10 @@ public class FollowTag extends Command {
 	private final SwerveDrivetrain drivetrain;
 
 	private final Vision vision;
-	private final Integer tagID;  // Integer as opposed to int so it can be null for best tag
+	private final Integer tagID; // Integer as opposed to int so it can be null for best tag
 	private final Transform2d targetDistance;
 
-	private final Double loseTagAfterSeconds;  // Double as opposed to double so it can be null for never lose mode.
+	private final Double loseTagAfterSeconds; // Double as opposed to double so it can be null for never lose mode.
 	private double secondsSinceTagLastSeen;
 
 	/**
@@ -29,9 +29,11 @@ public class FollowTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, null for best tag
+	 * @param tagID               the numerical ID of the the tag to follow, null
+	 *                            for best tag
 	 * @param targetDistanceToTag the target distance away from the tag to be
-	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover tag, set to null to never finish
+	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
+	 *                            tag, set to null to never finish
 	 */
 	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Transform2d targetDistanceToTag, Integer tagID,
 			Double loseTagAfterSeconds) {
@@ -71,23 +73,22 @@ public class FollowTag extends Command {
 
 	@Override
 	public void execute() {
-		
-		final PhotonTrackedTarget tag = (tagID == null) ? vision.getTag() : vision.getTag(tagID);
 
-		if (tag == null) {
+		final Transform3d tagPosition3d = (tagID == null) ? vision.getDistToTag() : vision.getDistToTag(tagID);
+
+		if (tagPosition3d == null) {
 			secondsSinceTagLastSeen += TimedRobot.kDefaultPeriod;
 			drivetrain.stop();
 		} else {
-			final Transform3d tagPosition3d = vision.getDistanceToTarget(tag);
 
 			secondsSinceTagLastSeen = 0;
 
 			// https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/coordinate-systems.html
 			// https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation3d.html#getZ()
 			final Transform2d tagPosition = new Transform2d(
-					tagPosition3d.getZ(),
 					tagPosition3d.getX(),
-					Rotation2d.fromRadians(tag.getYaw()));
+					tagPosition3d.getY(),
+					new Rotation2d(tagPosition3d.getX(), tagPosition3d.getY()));
 
 			final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
 
