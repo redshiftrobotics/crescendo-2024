@@ -66,9 +66,6 @@ public final class Constants {
 	}
 
 	public static class RobotMovementConstants {
-		public static final double AT_SETPOINT_TOLERANCE_TIME_SECONDS = 0;
-		public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 0;
-
 		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 

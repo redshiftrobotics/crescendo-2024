@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
@@ -18,7 +17,6 @@ public class AutoRotateTo extends Command {
 	private final boolean relative;
 
 	private double currentAngleGoal;
-	private double atSetpointCounter = 0;
 
 	/***
 	 * Command to autonomously rotate some direction
@@ -62,11 +60,6 @@ public class AutoRotateTo extends Command {
 		SmartDashboard.putNumber("Turn Speed Auto", turnsSeed);
 
 		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
-
-		if (Math.abs(currentAngle - this.currentAngleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS)
-			atSetpointCounter += TimedRobot.kDefaultPeriod;
-		else
-			atSetpointCounter = 0;
 
 		drivetrain.updateSmartDashboard();
 	}
