@@ -53,6 +53,8 @@ public final class Constants {
 	public static class DriverConstants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 
+		public static final int OPERATOR_JOYSTICK_PORT = 1;
+
 		public static final double DEAD_ZONE = 0.25;
 
 		// Names of options for displaying
@@ -64,6 +66,30 @@ public final class Constants {
 		// max angular velocity for drivetrain, in radians per second
 		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
 	}
+
+    public static class ArmConstants {
+
+        public static final double MAXIMUM_ARM_DEGREES = 1;
+        public static final double MINIMUM_ARM_DEGREES = 0;
+
+        public static final double ARM_AMP_SHOOTING_DEGREES = -20;
+        public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
+        public static final double ARM_INTAKE_DEGREES = -40;
+
+        public static final int LEFT_MOTOR_ID = 5;
+        //public static final int LEFT_ENCODER_ID = 0;
+        public static final int RIGHT_MOTOR_ID = 19;
+        public static final int RIGHT_ENCODER_ID = 6;
+
+		public static final boolean ARE_MOTORS_REVERSED = false;
+
+        public static final double DEGREES_PER_SECOND = 2.0;
+
+		public static final double ELEVATION_PID_P = 15;
+		public static final double ELEVATION_PID_I = 0;
+		public static final double ELEVATION_PID_D = 0;
+
+    }
 
 	public static class RobotMovementConstants {
 		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
