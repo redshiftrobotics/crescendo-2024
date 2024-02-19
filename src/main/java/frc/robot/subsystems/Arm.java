@@ -81,6 +81,14 @@ public class Arm extends SubsystemBase {
         armSetpoint = Rotation2d.fromDegrees(ArmConstants.ARM_INTAKE_DEGREES);
     }
 
+    public void setSetpoint(double degree){
+        armSetpoint = Rotation2d.fromDegrees(degree);
+    }
+
+    public boolean isAtDesiredPosition(){
+        return armRaisePIDController.atSetpoint();
+    }
+
     /**
      * This method is called periodically by the CommandScheduler, about every 20ms.
      */

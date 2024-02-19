@@ -7,6 +7,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ArmRemoteControl;
+import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -88,6 +89,11 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, Constants.VisionConstants.CAMERA_POSE);
 
+
+	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -108,7 +114,7 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		final CommandJoystick operatorJoystick = new CommandJoystick(1);
+		final CommandJoystick operatorJoystick = new CommandJoystick(DriverConstants.OPERATOR_JOYSTICK_PORT);
 
 		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -141,10 +147,10 @@ public class RobotContainer {
 			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
 			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
 
-
-			operatorJoystick.button(4).onTrue(Commands.run(() -> arm.setArmToAmpPosition(), arm));
-			operatorJoystick.button(5).onTrue(Commands.run(() -> arm.setArmToIntakePosition(), arm));
-			operatorJoystick.button(6).onTrue(Commands.run(() -> arm.setArmToSpeakerPosition(), arm));
+			//This bypasses arm remote control, arm remote control is incompatible with autonomous commands
+			operatorJoystick.button(4).onTrue(armToIntake);
+			operatorJoystick.button(5).onTrue(armToAmp);
+			operatorJoystick.button(6).onTrue(armToSpeaker);
 
 			joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 			joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
