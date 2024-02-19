@@ -83,7 +83,7 @@ public final class Constants {
 
         public static final double DEGREES_PER_SECOND = 2.0;
 
-		public static final double ELEVATION_PID_P = 1;
+		public static final double ELEVATION_PID_P = 15;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
 

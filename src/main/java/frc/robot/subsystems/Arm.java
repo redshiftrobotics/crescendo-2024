@@ -90,7 +90,8 @@ public class Arm extends SubsystemBase {
 
 
         double armSpeed = armRaisePIDController.calculate(armPosition.refresh().getValueAsDouble(),armSetpoint.getRotations());
-
+        
+        SmartDashboard.putNumber("Arm Speed", armSpeed);
 
         leftArmMotor.set(armSpeed);
         rightArmMotor.set(armSpeed);
