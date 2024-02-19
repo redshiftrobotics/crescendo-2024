@@ -76,7 +76,8 @@ public class RobotContainer {
     private final Arm arm = new Arm(
         ArmConstants.LEFT_MOTOR_ID,
         ArmConstants.RIGHT_MOTOR_ID,
-        ArmConstants.RIGHT_ENCODER_ID);
+        ArmConstants.RIGHT_ENCODER_ID,
+		ArmConstants.ARE_MOTORS_REVERSED);
 
 	private final AHRS gyro = new AHRS(I2C.Port.kOnboard);
 
@@ -107,6 +108,8 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
+		final CommandJoystick operatorJoystick = new CommandJoystick(1);
+
 		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
@@ -129,18 +132,22 @@ public class RobotContainer {
 					new OptionButtonInput(joystick,11, ActivationMode.HOLD), 
 					new OptionButtonInput(joystick,12, ActivationMode.HOLD), 
 
-					new OptionButtonInput(joystick::povLeft, ActivationMode.HOLD), 
-					new OptionButtonInput(joystick::povRight, ActivationMode.HOLD), 
-					new OptionButtonInput(joystick::povDown, ActivationMode.HOLD)
+					new OptionButtonInput(joystick, 4, ActivationMode.HOLD), 
+					new OptionButtonInput(joystick, 5, ActivationMode.HOLD), 
+					new OptionButtonInput(joystick, 6, ActivationMode.HOLD)
 					);
 
 			preciseModeButton = new OptionButtonInput(joystick, 2, ActivationMode.TOGGLE);
 			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
 			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
 
-			joystick.button(10).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			joystick.button(11).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 
+			operatorJoystick.button(4).onTrue(Commands.run(() -> arm.setArmToAmpPosition(), arm));
+			operatorJoystick.button(5).onTrue(Commands.run(() -> arm.setArmToIntakePosition(), arm));
+			operatorJoystick.button(6).onTrue(Commands.run(() -> arm.setArmToSpeakerPosition(), arm));
+
+			joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
@@ -158,6 +165,9 @@ public class RobotContainer {
 					new OptionButtonInput(xbox::povRight, ActivationMode.HOLD), 
 					new OptionButtonInput(xbox::povDown, ActivationMode.HOLD)
 					);
+
+
+			
 
 			preciseModeButton = new OptionButtonInput(xbox::b, ActivationMode.TOGGLE);
 			boostModeButton = new OptionButtonInput(xbox::leftStick, ActivationMode.HOLD);

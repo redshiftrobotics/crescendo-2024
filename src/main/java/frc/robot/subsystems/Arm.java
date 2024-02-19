@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
@@ -25,10 +27,10 @@ public class Arm extends SubsystemBase {
 
     private final PIDController armRaisePIDController;
 
-    private Rotation2d armRotation2d;
+    private Rotation2d armSetpoint;
 
     /** Constructor. Creates a new Arm Subsystem. */
-    public Arm(int leftMotorId, int rightMotorId, int rightEncoderId) {
+    public Arm(int leftMotorId, int rightMotorId, int rightEncoderId, boolean areMotorsReversed) {
 
         leftArmMotor = new CANSparkMax(leftMotorId,MotorType.kBrushless);
         //leftArmEncoder = new CANcoder(leftEncoderId);
@@ -43,9 +45,13 @@ public class Arm extends SubsystemBase {
         );
 
         armPosition = rightArmEncoder.getAbsolutePosition();
+        armSetpoint = Rotation2d.fromDegrees(ArmConstants.ARM_INTAKE_DEGREES);
 
-        leftArmMotor.setIdleMode(IdleMode.kBrake);
-        rightArmMotor.setIdleMode(IdleMode.kBrake);
+        leftArmMotor.setIdleMode(IdleMode.kCoast);
+        rightArmMotor.setIdleMode(IdleMode.kCoast);
+
+        leftArmMotor.setInverted(areMotorsReversed);
+        rightArmMotor.setInverted(!areMotorsReversed);
 
     }
 
@@ -57,22 +63,22 @@ public class Arm extends SubsystemBase {
     // }
 
      public void changeArmAngleDegreesBy(double desiredDegrees) {
-        if (armRotation2d.getDegrees() < ArmConstants.MAXIMUM_ARM_DEGREES || ArmConstants.MINIMUM_ARM_DEGREES > armRotation2d.getDegrees()) {
-            armRotation2d = Rotation2d.fromDegrees(armRotation2d.getDegrees() + desiredDegrees);
+        if (armSetpoint.getDegrees() < ArmConstants.MAXIMUM_ARM_DEGREES || ArmConstants.MINIMUM_ARM_DEGREES > armSetpoint.getDegrees()) {
+            armSetpoint = Rotation2d.fromDegrees(armSetpoint.getDegrees() + desiredDegrees);
         }
     }
 
 
     public void setArmToAmpPosition() {
-        armRotation2d = Rotation2d.fromRadians(ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+        armSetpoint = Rotation2d.fromDegrees(ArmConstants.ARM_AMP_SHOOTING_DEGREES);
     }
 
     public void setArmToSpeakerPosition() {
-        armRotation2d = Rotation2d.fromRadians(ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+        armSetpoint = Rotation2d.fromDegrees(ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
     }
 
     public void setArmToIntakePosition() {
-        armRotation2d = Rotation2d.fromRadians(ArmConstants.ARM_INTAKE_DEGREES);
+        armSetpoint = Rotation2d.fromDegrees(ArmConstants.ARM_INTAKE_DEGREES);
     }
 
     /**
@@ -82,11 +88,15 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
 
-        
 
-        final double armSpeed = armRaisePIDController.calculate(armPosition.refresh().getValueAsDouble(),armRotation2d.getRotations());
+        double armSpeed = armRaisePIDController.calculate(armPosition.refresh().getValueAsDouble(),armSetpoint.getRotations());
+
+
         leftArmMotor.set(armSpeed);
         rightArmMotor.set(armSpeed);
+
+        SmartDashboard.putNumber("Arm Degrees", Rotation2d.fromRotations(rightArmEncoder.getAbsolutePosition().getValueAsDouble()).getDegrees());
+        SmartDashboard.putNumber("Arm Setpoint Degrees", armSetpoint.getDegrees());
             
         
     }
