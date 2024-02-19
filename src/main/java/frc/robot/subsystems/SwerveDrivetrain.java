@@ -99,8 +99,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 		modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
 
 		// create kinematics object using swerve module distance from center
-		kinematics = new SwerveDriveKinematics(
-				modulesMap(SwerveModule::getDistanceFromCenter, Translation2d[]::new));
+		kinematics = new SwerveDriveKinematics(new Translation2d(.3, .3),new Translation2d(.3, -.3),new Translation2d(-.3, .3),new Translation2d(-.3, -.3));
 
 		// create starting state for odometry
 		odometry = new SwerveDriveOdometry(
