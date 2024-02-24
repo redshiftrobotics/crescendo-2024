@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.inputs;
 
 import java.util.function.Supplier;
 
@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 /**
  * Button with different types of control
  */
-public class OptionButton {
+public class OptionButtonInput {
 
 	private final Supplier<Trigger> button;
 
@@ -37,24 +37,22 @@ public class OptionButton {
 	/**
 	 * Create Option button.
 	 * 
-	 * @param commandDevice device that button is on
+	 * @param controller    device that button is on
 	 * @param button        button number
-	 * @param mode          whether or not we want button to act as toggle or hold
+	 * @param mode          whether we want button to act as toggle or hold
 	 *                      button
 	 */
-	public OptionButton(CommandGenericHID controller, int button, ActivationMode mode) {
+	public OptionButtonInput(CommandGenericHID controller, int button, ActivationMode mode) {
 		this(() -> controller.button(button), mode);
 	}
 
 	/**
 	 * Create Option button.
-	 * 
-	 * @param commandDevice device that button is on
+	 *
 	 * @param button        button number
-	 * @param mode          whether or not we want button to act as toggle or hold
-	 *                      button
+	 * @param mode          whether we want button to act as toggle or hold button
 	 */
-	public OptionButton(Supplier<Trigger> button, ActivationMode mode) {
+	public OptionButtonInput(Supplier<Trigger> button, ActivationMode mode) {
 		this.button = button;
 		this.mode = mode;
 
@@ -81,35 +79,21 @@ public class OptionButton {
 	}
 
 	/**
-	 * <p>
 	 * Get the state of the button
-	 * </p>
 	 * 
-	 * <p>
-	 * for TAP buttons this returns true if the button has been tapped
-	 * </p>
+	 * <li>for TAP buttons this returns true if the button has been tapped
 	 * 
-	 * <p>
-	 * for HOLD buttons this returns true if the button is currently being held down
-	 * </p>
+	 * <li>for HOLD buttons this returns true if the button is currently being held down
 	 * 
-	 * <p>
-	 * for TOGGLE buttons this returns true if the button has been tapped an odd
-	 * number of times
-	 * </p>
+	 * <li> for TOGGLE buttons this returns true if the button has been tapped an odd number of times
 	 * 
 	 * @return boolean with true being the button is active
 	 */
 	public boolean getState() {
 		switch (mode) {
-			case HOLD:
-				return button.get().getAsBoolean();
-			case TAP:
-				return isToggled;
-			case TOGGLE:
-				return isToggled;
-			default:
-				return false;
+			case HOLD: return button.get().getAsBoolean();
+			case TAP: case TOGGLE: return isToggled;
+			default: return false;
 		}
 	}
 

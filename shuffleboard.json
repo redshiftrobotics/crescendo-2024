@@ -11,7 +11,7 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "0,0": {
+          "4,2": {
             "size": [
               1,
               1
@@ -46,7 +46,7 @@
             ],
             "content": {
               "_type": "Gyro",
-              "_source0": "network_table:///SmartDashboard/Heading Degrees",
+              "_source0": "network_table:///SmartDashboard/ Degrees",
               "_title": "Heading Degrees",
               "_glyph": 139,
               "_showGlyph": true,
@@ -56,7 +56,7 @@
               "Visuals/Counter clockwise": false
             }
           },
-          "9,1": {
+          "9,5": {
             "size": [
               1,
               1
@@ -69,7 +69,7 @@
               "_showGlyph": false
             }
           },
-          "3,0": {
+          "4,0": {
             "size": [
               1,
               2
@@ -88,7 +88,7 @@
               "Visuals/Orientation": "VERTICAL"
             }
           },
-          "9,0": {
+          "0,0": {
             "size": [
               1,
               1
@@ -97,13 +97,13 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/ControlActive",
               "_title": "ControlActive",
-              "_glyph": 148,
-              "_showGlyph": false,
+              "_glyph": 392,
+              "_showGlyph": true,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "7,1": {
+          "1,2": {
             "size": [
               2,
               1
@@ -116,7 +116,7 @@
               "_showGlyph": true
             }
           },
-          "1,3": {
+          "7,1": {
             "size": [
               1,
               1
@@ -129,7 +129,7 @@
               "_showGlyph": true
             }
           },
-          "0,3": {
+          "6,1": {
             "size": [
               1,
               1
@@ -142,7 +142,7 @@
               "_showGlyph": true
             }
           },
-          "2,3": {
+          "8,1": {
             "size": [
               1,
               1
@@ -155,20 +155,20 @@
               "_showGlyph": true
             }
           },
-          "7,0": {
+          "6,2": {
             "size": [
               2,
               1
             ],
             "content": {
-              "_type": "ComboBox Chooser",
+              "_type": "Split Button Chooser",
               "_source0": "network_table:///SmartDashboard/Auto Chooser",
               "_title": "Auto Chooser",
               "_glyph": 167,
               "_showGlyph": true
             }
           },
-          "5,3": {
+          "7,0": {
             "size": [
               1,
               1
@@ -187,7 +187,7 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "4,3": {
+          "6,0": {
             "size": [
               1,
               1
@@ -206,15 +206,15 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "6,3": {
+          "8,0": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Number Bar",
-              "_source0": "network_table:///SmartDashboard/Speed",
-              "_title": "Speed",
+              "_source0": "network_table:///SmartDashboard/Spin",
+              "_title": "Spin",
               "_glyph": 419,
               "_showGlyph": true,
               "Range/Min": -1.0,
@@ -223,6 +223,60 @@
               "Visuals/Num tick marks": 5,
               "Visuals/Show text": true,
               "Visuals/Orientation": "HORIZONTAL"
+            }
+          },
+          "7,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseX",
+              "_title": "tPoseX",
+              "_glyph": 110,
+              "_showGlyph": true
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseY",
+              "_title": "tPoseY",
+              "_glyph": 111,
+              "_showGlyph": true
+            }
+          },
+          "8,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseDegrees",
+              "_title": "tPoseDegrees",
+              "_glyph": 419,
+              "_showGlyph": true
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/tPoseActive",
+              "_title": "tPoseActive",
+              "_glyph": 288,
+              "_showGlyph": true,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -245,7 +299,7 @@
   "windowGeometry": {
     "x": -7.199999809265137,
     "y": -7.199999809265137,
-    "width": 1550.4000244140625,
-    "height": 830.4000244140625
+    "width": 1551.199951171875,
+    "height": 831.2000122070312
   }
 }
