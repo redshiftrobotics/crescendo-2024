@@ -13,8 +13,6 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.inputs.OptionButtonInput;
 import frc.robot.inputs.OptionButtonInput.ActivationMode;
@@ -22,8 +20,6 @@ import frc.robot.inputs.OptionButtonInput.ActivationMode;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -177,8 +173,6 @@ public class RobotContainer {
 					new OptionButtonInput(xbox::povDown, ActivationMode.HOLD)
 					);
 
-
-			
 
 			preciseModeButton = new OptionButtonInput(xbox::b, ActivationMode.TOGGLE);
 			boostModeButton = new OptionButtonInput(xbox::leftStick, ActivationMode.HOLD);
