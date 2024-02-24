@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 public class LED {
 
+	private AddressableLED m_led;
+	private AddressableLEDBuffer m_ledBuffer;
+
 	public void robotInit() {
 		// 9 is the PWM port
 		m_led = new AddressableLED(9);
