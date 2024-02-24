@@ -14,7 +14,7 @@ public class AutoRotateTo extends Command {
 
 	private final PIDController rotatePID;
 	private final double angleGoal;
-	private final boolean relative;
+	private final boolean fieldRelative;
 
 	private double currentAngleGoal;
 
@@ -24,7 +24,7 @@ public class AutoRotateTo extends Command {
 	 * @param drivetrain The robot drivetrain
 	 * @param direction  Rotation2d class to execute
 	 */
-	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction, boolean relative) {
+	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction, boolean fieldRelative) {
 
 		rotatePID = new PIDController(
 				RobotMovementConstants.ROTATION_PID_P,
@@ -34,7 +34,7 @@ public class AutoRotateTo extends Command {
 		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 
 		this.drivetrain = drivetrain;
-		this.relative = relative;
+		this.fieldRelative = fieldRelative;
 		this.angleGoal = direction.getRadians();
 
 		addRequirements(this.drivetrain);
@@ -46,7 +46,7 @@ public class AutoRotateTo extends Command {
 
 	@Override
 	public void initialize() {
-		currentAngleGoal = relative ? drivetrain.getHeading().getRadians() : 0;
+		currentAngleGoal = !fieldRelative ? drivetrain.getHeading().getRadians() : 0;
 		currentAngleGoal += angleGoal;
 		SmartDashboard.putNumber("Target Angle Auto", currentAngleGoal);
 	}
