@@ -46,7 +46,7 @@ public class AutoRotateTo extends Command {
 
 	@Override
 	public void initialize() {
-		currentAngleGoal = !fieldRelative ? drivetrain.getHeading().getRadians() : 0;
+		currentAngleGoal = fieldRelative ? 0 : drivetrain.getHeading().getRadians();
 		currentAngleGoal += angleGoal;
 		SmartDashboard.putNumber("Target Angle Auto", currentAngleGoal);
 	}
