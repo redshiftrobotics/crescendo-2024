@@ -36,6 +36,10 @@ public class ChassisRemoteControl extends Command {
 
 		this.drivetrain = drivetrain;
 
+		
+
+		
+
 		// Tell the command schedular we are using the drivetrain
 		addRequirements(drivetrain);
 	}

@@ -52,8 +52,7 @@ public class FollowTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, null
-	 *                            for whatever best is
+	 * @param tagID               the numerical ID of the the tag to follow, null for whatever best is
 	 * @param targetDistanceToTag the target distance away from the tag to be
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to null to never finish

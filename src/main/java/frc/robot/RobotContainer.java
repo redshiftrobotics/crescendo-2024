@@ -3,12 +3,15 @@ package frc.robot;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.subsystems.Arm;
+import frc.robot.commands.Autos;
+import frc.robot.commands.ArmRotateTo;
+import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.inputs.OptionButtonInput;
 import frc.robot.inputs.OptionButtonInput.ActivationMode;
@@ -16,7 +19,6 @@ import frc.robot.inputs.OptionButtonInput.ActivationMode;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -67,14 +69,25 @@ public class RobotContainer {
 			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
 					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
-	private final AHRS gyro = new AHRS(I2C.Port.kOnboard);
+	private final AHRS gyro = new AHRS();
+    private final Arm arm = new Arm(
+        ArmConstants.LEFT_MOTOR_ID,
+        ArmConstants.RIGHT_MOTOR_ID,
+        ArmConstants.RIGHT_ENCODER_ID,
+		ArmConstants.ARE_MOTORS_REVERSED);
+
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, Constants.VisionConstants.CAMERA_POSE);
+	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
+
+
+	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,6 +95,11 @@ public class RobotContainer {
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
 		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
+		autoChooser.addOption("Rotate by 90", Autos.rotateBy90Auto(drivetrain));
+		autoChooser.addOption("Rotate to 90", Autos.rotateTo90Auto(drivetrain));
+		autoChooser.addOption("Rotate by -90", Autos.rotateByNegative90Auto(drivetrain));
+		autoChooser.addOption("Rotate to -90", Autos.rotateToNegative90Auto(drivetrain));
+		autoChooser.addOption("Rotate by 10", Autos.rotateBy10Auto(drivetrain));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
@@ -96,6 +114,8 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
+		final CommandJoystick operatorJoystick = new CommandJoystick(DriverConstants.OPERATOR_JOYSTICK_PORT);
+
 		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
@@ -106,10 +126,10 @@ public class RobotContainer {
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
-			
+
 			inputs = new ChassisDriveInputs(
-					joystick::getY, -1,
 					joystick::getX, -1,
+					joystick::getY, -1,
 					joystick::getTwist, -1,
 					Constants.DriverConstants.DEAD_ZONE);
 
@@ -117,9 +137,13 @@ public class RobotContainer {
 			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
 			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
 
-			joystick.button(10).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			joystick.button(11).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
+			//This bypasses arm remote control, arm remote control is incompatible with autonomous commands
+			operatorJoystick.button(4).onTrue(armToIntake);
+			operatorJoystick.button(5).onTrue(armToAmp);
+			operatorJoystick.button(6).onTrue(armToSpeaker);
 
+			joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
@@ -134,7 +158,8 @@ public class RobotContainer {
 			fieldRelativeButton = new OptionButtonInput(xbox::povUp, ActivationMode.TOGGLE);
 		}
 
-		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
+		drivetrain.setDefaultCommand(
+				new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
 	}
 
 	/** Use this method to define your trigger->command mappings. */

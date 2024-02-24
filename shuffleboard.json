@@ -46,7 +46,7 @@
             ],
             "content": {
               "_type": "Gyro",
-              "_source0": "network_table:///SmartDashboard/Heading Degrees",
+              "_source0": "network_table:///SmartDashboard/ Degrees",
               "_title": "Heading Degrees",
               "_glyph": 139,
               "_showGlyph": true,

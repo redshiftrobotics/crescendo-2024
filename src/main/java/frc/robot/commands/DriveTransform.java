@@ -12,8 +12,7 @@ public class DriveTransform extends Command {
 	private final Transform2d transform;
 
 	/**
-	 * Create a new DriveTransform command. Tries to drive a certain transform using
-	 * the DriveToPose command.
+	 * Create a new DriveTransform command. Tries to drive a certain transform using the DriveToPose command.
 	 * 
 	 * <p>This drives relative to the robot starting position,
 	 * so a transform of +2x and +1y will drive to the position 2 meters forward and 1 meter left of whether the robot started,
@@ -26,6 +25,8 @@ public class DriveTransform extends Command {
 	public DriveTransform(SwerveDrivetrain drivetrain, Transform2d transform) {
 		this.drivetrain = drivetrain;
 		this.transform = transform;
+
+		addRequirements(drivetrain);
 	}
 
 	/**
@@ -38,7 +39,7 @@ public class DriveTransform extends Command {
 	 * 
 	 * @param drivetrain  The drivetrain of the robot
 	 * @param translation Target transform to drive
-	 * @param translation Target rotation to drive
+	 * @param rotation Target rotation to drive
 	 */
 	public DriveTransform(SwerveDrivetrain drivetrain, Translation2d translation, Rotation2d rotation) {
 		this(drivetrain, new Transform2d(translation, rotation));
