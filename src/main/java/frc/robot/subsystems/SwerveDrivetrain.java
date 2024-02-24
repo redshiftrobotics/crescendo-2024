@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.RobotMovementConstants;
@@ -99,8 +100,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 		modules = new SwerveModule[] { moduleFL, moduleFR, moduleBL, moduleBR };
 
 		// create kinematics object using swerve module distance from center
-		kinematics = new SwerveDriveKinematics(
-				modulesMap(SwerveModule::getDistanceFromCenter, Translation2d[]::new));
+		kinematics = new SwerveDriveKinematics(new Translation2d(.3, .3),new Translation2d(.3, -.3),new Translation2d(-.3, .3),new Translation2d(-.3, -.3));
 
 		// create starting state for odometry
 		odometry = new SwerveDriveOdometry(
@@ -150,6 +150,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 					xController.calculate(pose.getX(), desiredPose.getX()),
 					yController.calculate(pose.getY(), desiredPose.getY()),
 					rotationController.calculate(pose.getRotation().getRadians(), desiredPose.getRotation().getRadians()));
+			
+			SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
+			SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
+			SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
 
 			// Set those speeds
 			setDesiredState(speeds);
@@ -187,6 +191,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 */
 	public void setDesiredPosition(Pose2d desiredPose) {
 		this.desiredPose = desiredPose;
+	}
+
+	/** Gets the desired position, returns null if the pose has been cleared */
+	public Pose2d getDesiredPose() {
+		return desiredPose;
 	}
 
 	/** Sets desired position to null, stops robot from continue to try and get to the last set pose  */
@@ -351,6 +360,34 @@ public class SwerveDrivetrain extends SubsystemBase {
 	}
 
 	// --- Util ---
+
+	/** Update SmartDashboard with */
+	public void updateSmartDashboard() {
+		// Position display
+		final Pose2d robotPosition = getPosition();
+
+		SmartDashboard.putNumber("PoseX", robotPosition.getX());
+		SmartDashboard.putNumber("PoseY", robotPosition.getY());
+		SmartDashboard.putNumber("PoseDegrees", robotPosition.getRotation().getDegrees());
+
+		// Speed and Heading
+		final ChassisSpeeds currentSpeeds = getState();
+		final double speedMetersPerSecond = Math.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
+
+		final double metersPerSecondToMilesPerHourConversion = 2.237;
+		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+
+
+		final boolean hasTargetPose = desiredPose != null;
+		final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
+		SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
+		if (hasTargetPose) {
+			SmartDashboard.putNumber("tPoseX", targetPose.getX());
+			SmartDashboard.putNumber("tPoseY", targetPose.getY());
+			SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
+		}
+	}
 
 	/**
 	 * Utility method. Function to easily run a function on each swerve module

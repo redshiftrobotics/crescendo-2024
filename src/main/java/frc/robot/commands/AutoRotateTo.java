@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
 public class AutoRotateTo extends Command {
@@ -14,48 +14,58 @@ public class AutoRotateTo extends Command {
 
 	private final PIDController rotatePID;
 	private final double angleGoal;
+	private final boolean fieldRelative;
 
-	private double atSetpointCounter = 0;
+	private double currentAngleGoal;
 
 	/***
 	 * Command to autonomously rotate some direction
-	 * @param subsystem The robot drivetrain
-	 * @param direction Rotation2d class to execute
+	 * 
+	 * @param drivetrain The robot drivetrain
+	 * @param direction  Rotation2d class to execute
 	 */
-	public AutoRotateTo(SwerveDrivetrain subsystem, Rotation2d direction) {
+	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction, boolean fieldRelative) {
 
 		rotatePID = new PIDController(
 				RobotMovementConstants.ROTATION_PID_P,
 				RobotMovementConstants.ROTATION_PID_I,
 				RobotMovementConstants.ROTATION_PID_D);
+		rotatePID.enableContinuousInput(-Math.PI, Math.PI);
+		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 
-		this.drivetrain = subsystem;
+		this.drivetrain = drivetrain;
+		this.fieldRelative = fieldRelative;
 		this.angleGoal = direction.getRadians();
 
 		addRequirements(this.drivetrain);
 	}
 
+	public AutoRotateTo(SwerveDrivetrain drivetrain, Rotation2d direction) {
+		this(drivetrain, direction, true);
+	}
+
 	@Override
 	public void initialize() {
+		currentAngleGoal = !fieldRelative ? drivetrain.getHeading().getRadians() : 0;
+		currentAngleGoal += angleGoal;
+		SmartDashboard.putNumber("Target Angle Auto", currentAngleGoal);
 	}
 
 	@Override
 	public void execute() {
 		final double currentAngle = drivetrain.getHeading().getRadians();
 
-		double turnsSeed = rotatePID.calculate(currentAngle, this.angleGoal);
+		double turnsSeed = rotatePID.calculate(currentAngle, this.currentAngleGoal);
+		SmartDashboard.putNumber("Turn Speed Auto", turnsSeed);
 
 		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
 
-		if (Math.abs(currentAngle - this.angleGoal) < RobotMovementConstants.ANGLE_TOLERANCE_RADIANS)
-			atSetpointCounter += TimedRobot.kDefaultPeriod;
-		else
-			atSetpointCounter = 0;
+		drivetrain.updateSmartDashboard();
 	}
 
 	@Override
 	public boolean isFinished() {
-		return atSetpointCounter > RobotMovementConstants.ROTATE_AT_SETPOINT_TIME_SECONDS;
+		return rotatePID.atSetpoint();
 	}
 
 	@Override

@@ -55,6 +55,8 @@ public final class Constants {
 	public static class DriverConstants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 
+		public static final int OPERATOR_JOYSTICK_PORT = 1;
+
 		public static final double DEAD_ZONE = 0.25;
 
 		// Names of options for displaying
@@ -67,14 +69,35 @@ public final class Constants {
 		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
 	}
 
+    public static class ArmConstants {
+
+        public static final double MAXIMUM_ARM_DEGREES = 1;
+        public static final double MINIMUM_ARM_DEGREES = 0;
+
+        public static final double ARM_AMP_SHOOTING_DEGREES = -20;
+        public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
+        public static final double ARM_INTAKE_DEGREES = -40;
+
+        public static final int LEFT_MOTOR_ID = 5;
+        //public static final int LEFT_ENCODER_ID = 0;
+        public static final int RIGHT_MOTOR_ID = 19;
+        public static final int RIGHT_ENCODER_ID = 6;
+
+		public static final boolean ARE_MOTORS_REVERSED = false;
+
+        public static final double DEGREES_PER_SECOND = 2.0;
+
+		public static final double ELEVATION_PID_P = 15;
+		public static final double ELEVATION_PID_I = 0;
+		public static final double ELEVATION_PID_D = 0;
+
+    }
+
 	public static class RobotMovementConstants {
-		public static final double AT_SETPOINT_TOLERANCE_TIME_SECONDS = 1;
-		public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 1;
-
 		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
-		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(5);
+		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 
-		public static final double ROTATION_PID_P = 0.5;
+		public static final double ROTATION_PID_P = 5;
 		public static final double ROTATION_PID_I = 0;
 		public static final double ROTATION_PID_D = 0;
 
@@ -123,25 +146,25 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FL = 2;
 					ANGULAR_MOTOR_ID_FL = 3;
 					ANGULAR_MOTOR_ENCODER_ID_FL = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.256015325670498;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.364013671875;
 
 					// Front right
 					VELOCITY_MOTOR_ID_FR = 16;
 					ANGULAR_MOTOR_ID_FR = 17;
-					ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.248045977011494;
+					ANGULAR_MOTOR_ENCODER_ID_FR = 4;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.42114257812;
 
 					// Back left
 					VELOCITY_MOTOR_ID_BL = 8;
 					ANGULAR_MOTOR_ID_BL = 9;
-					ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.894674329501916;
+					ANGULAR_MOTOR_ENCODER_ID_BL = 2;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.634033203125;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 10;
 					ANGULAR_MOTOR_ID_BR = 11;
 					ANGULAR_MOTOR_ENCODER_ID_BR = 1;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.530498084291188;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.54736328125;
 					break;
 
 				// case COMPETITION_BOT:
@@ -172,7 +195,7 @@ public final class Constants {
 		public static final double DRIVE_PID_MAX_I = 0.001;
 
 		// Steering PID values
-		public static final double STEERING_PID_P = 0.5;
+		public static final double STEERING_PID_P = 1;
 		public static final double STEERING_PID_I = 0;
 		public static final double STEERING_PID_D = 0;
 

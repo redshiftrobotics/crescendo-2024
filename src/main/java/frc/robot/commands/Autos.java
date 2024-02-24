@@ -9,13 +9,39 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.subsystems.Arm;
 
-/** This class just contains a bunch of auto-modes. Do not call this class itself. */
+/**
+ * This class just contains a bunch of auto-modes. Do not call this class
+ * itself.
+ */
 public final class Autos {
 	/** Example static factory for an autonomous command. */
 	public static Command testingAuto(SwerveDrivetrain drivetrain) {
 		return Commands.sequence(
-				new DriveTransform(drivetrain, new Translation2d(1, 0), new Rotation2d())
-		);
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), false));
+	}
+
+	public static Command rotateTo90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), true));
+	}
+
+	public static Command rotateBy90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), false));
+	}
+
+	public static Command rotateToNegative90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
+	}
+
+	public static Command rotateByNegative90Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), false));
+	}
+
+	public static Command rotateBy10Auto(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(10), true));
 	}
 
 	/** Auto-mode that attempts to follow an april tag. */
@@ -23,7 +49,7 @@ public final class Autos {
 		return new FollowTag(drivetrain, camera, new Translation2d(1, 0), tagId, null);
 	}
 
-	/**  Linden did this */
+	/** Linden did this */
 	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, boolean invertY) {
 
 		// assumes start position in corner

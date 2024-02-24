@@ -23,9 +23,7 @@ import frc.robot.Constants.SwerveModuleConstants;
  * Subsystem for individual swerve module on robot. Each swerve module has one
  * drive motor and one steering motor.
  * 
- * @see <a href=
- *      "https://www.swervedrivespecialties.com/products/mk4-swerve-module">Swerve
- *      Module Kit</a>
+ * @see <a href="https://www.swervedrivespecialties.com/products/mk4-swerve-module">Swerve Module Kit</a>
  */
 public class SwerveModule extends SubsystemBase {
 
@@ -50,7 +48,7 @@ public class SwerveModule extends SubsystemBase {
 	private final Translation2d distanceFromCenter;
 
 	/** Whether swerve module is stopped */
-	private boolean stopped = false;
+	private boolean steeringStopped = false;
 
 	/**
 	 * Constructor for an individual Swerve Module.
@@ -125,7 +123,7 @@ public class SwerveModule extends SubsystemBase {
 	 */
 	@Override
 	public void periodic() {
-		if (!stopped) {
+		if (!steeringStopped) {
 			// Calculate how fast to spin the motor to get to the desired angle using our PID controller,
 			// then set the motor to spin at that speed
 			steeringMotor.set(steeringPIDController.calculate(getSteeringAngleRotations()));
@@ -138,7 +136,7 @@ public class SwerveModule extends SubsystemBase {
 	 * Stop drive and steering motor of swerve module, module can be moved again by calling setDesiredState.
 	 */
 	public void stop() {
-		stopped = true;
+		steeringStopped = true;
 
 		// Manually stop both motors in swerve module
 		driveMotor.stopMotor();
@@ -185,18 +183,20 @@ public class SwerveModule extends SubsystemBase {
 	 * @param powerDriveMode Whether the SwerveModuleState is in meters per second (false) or motor power (true)
 	 */
 	public void setDesiredState(SwerveModuleState state, boolean powerDriveMode) {
-
+		
 		// If state is null, then stop robot and don't set any states
 		if (state == null) {
 			stop();
 			return;
 		}
-
+		
+		
 		// Optimize the reference state to avoid spinning further than 90 degrees
 		state = optimize(state, Rotation2d.fromRotations(getSteeringAngleRotations()));
-
+		
 		// --- Set steering motor ---
 		steeringPIDController.setSetpoint(state.angle.getRotations());
+		steeringStopped = false;
 
 		// --- Set drive motor ---
 
