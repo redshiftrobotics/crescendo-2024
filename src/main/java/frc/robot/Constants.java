@@ -232,8 +232,8 @@ public final class Constants {
 
 				case PRACTICE_BOT:
 				default: // Temporary default to practice bot
-					MODULE_LOCATION_X = 54 / 100;
-					MODULE_LOCATION_Y = 54 / 100;
+					MODULE_LOCATION_X = 54.0 / 100;
+					MODULE_LOCATION_Y = 54.0 / 100;
 					break;
 
 				// case COMPETITION_BOT:
