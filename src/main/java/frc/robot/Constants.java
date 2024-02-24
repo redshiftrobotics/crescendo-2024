@@ -158,7 +158,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_BL = 8;
 					ANGULAR_MOTOR_ID_BL = 9;
 					ANGULAR_MOTOR_ENCODER_ID_BL = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.634033203125;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.13134765625 +0.5;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 10;
@@ -234,8 +234,8 @@ public final class Constants {
 
 				case PRACTICE_BOT:
 				default: // Temporary default to practice bot
-					MODULE_LOCATION_X = 54 / 100;
-					MODULE_LOCATION_Y = 54 / 100;
+					MODULE_LOCATION_X = 54.0 / 100;
+					MODULE_LOCATION_Y = 54.0 / 100;
 					break;
 
 				// case COMPETITION_BOT:
