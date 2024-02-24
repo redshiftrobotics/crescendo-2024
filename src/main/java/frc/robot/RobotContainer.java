@@ -121,6 +121,7 @@ public class RobotContainer {
 		autoChooser.addOption("Rotate by -90", Autos.rotateByNegative90Auto(drivetrain));
 		autoChooser.addOption("Rotate to -90", Autos.rotateToNegative90Auto(drivetrain));
 		autoChooser.addOption("Rotate by 10", Autos.rotateBy10Auto(drivetrain));
+		autoChooser.addOption("Trajectory Test", Autos.trajectoryAuto(drivetrain));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
