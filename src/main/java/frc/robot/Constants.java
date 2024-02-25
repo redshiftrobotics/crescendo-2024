@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public final class Constants {
 	public static enum Bot {
-		WOOD_BOT, PRACTICE_BOT, COMPETITION_BOT
+		WOOD_BOT, COMP_BOT
 	}
 
 	public static final Bot currentBot;
@@ -40,12 +40,9 @@ public final class Constants {
 				currentBot = Bot.WOOD_BOT;
 				break;
 
-			case "03238024": // Practice Bot Serial Number
-				currentBot = Bot.PRACTICE_BOT;
-				break;
-
-			default: // Also use competition bot as default
-				currentBot = Bot.COMPETITION_BOT;
+			case "03238024": // Practice (Now comp) Bot Serial Number
+			default:
+				currentBot = Bot.COMP_BOT;
 				break;
 		}
 	}
@@ -68,6 +65,20 @@ public final class Constants {
 	}
 
     public static class ArmConstants {
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					HAR_ARM = false;
+					break;
+
+				case COMP_BOT:
+				default:
+					HAR_ARM = true;
+					break;
+			}
+		}
+
+		public static final boolean HAR_ARM;
 
         public static final double MAXIMUM_ARM_DEGREES = 1;
         public static final double MINIMUM_ARM_DEGREES = 0;
@@ -117,28 +128,28 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FL = 41;
 					ANGULAR_MOTOR_ID_FL = 40;
 					ANGULAR_MOTOR_ENCODER_ID_FL = 1;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.611328125;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.136474609375;
 
 					// Front right
 					VELOCITY_MOTOR_ID_FR = 4;
 					ANGULAR_MOTOR_ID_FR = 5;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.282958;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.8828125;
 
 					// Back left
-					VELOCITY_MOTOR_ID_BL = 3;
-					ANGULAR_MOTOR_ID_BL = 2;
+					VELOCITY_MOTOR_ID_BL = 2;
+					ANGULAR_MOTOR_ID_BL = 3;
 					ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.91748046875;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.517333984375 + 0.5;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 42;
 					ANGULAR_MOTOR_ID_BR = 6;
 					ANGULAR_MOTOR_ENCODER_ID_BR = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.8641367187;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.52001953125 + 0.5;
 					break;
 
-				case PRACTICE_BOT:
+				case COMP_BOT:
 				default: // Temporary default to practice bot
 					// Front Left
 					VELOCITY_MOTOR_ID_FL = 2;
@@ -164,11 +175,6 @@ public final class Constants {
 					ANGULAR_MOTOR_ENCODER_ID_BR = 1;
 					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.54736328125;
 					break;
-
-				// case COMPETITION_BOT:
-				// default:
-
-				// break;
 			}
 		}
 
@@ -230,16 +236,11 @@ public final class Constants {
 					MODULE_LOCATION_Y = 28.5 / 100;
 					break;
 
-				case PRACTICE_BOT:
-				default: // Temporary default to practice bot
+				case COMP_BOT:
+				default:
 					MODULE_LOCATION_X = 54.0 / 100;
 					MODULE_LOCATION_Y = 54.0 / 100;
 					break;
-
-				// case COMPETITION_BOT:
-				// default:
-
-				// break;
 			}
 		}
 
