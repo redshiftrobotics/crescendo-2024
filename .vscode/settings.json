@@ -28,10 +28,12 @@
 		},
 	],
 	"java.test.defaultConfig": "WPIlibUnitTests",
-	// Style guide - most of this came from clicking buttons and then copying from my user settings.json
-	// General editor stuff
+	// Auto Formatter
 	"editor.formatOnSave": true, // So you cant forget
 	"editor.tabSize": 4, // 4 char width indentation
 	"editor.detectIndentation": false, // Prevent above from being overridden
-	"editor.insertSpaces": false // use tab character instead of spaces
+	"editor.insertSpaces": false, // use tab character instead of spaces
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "always"
+	}
 }
