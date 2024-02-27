@@ -54,7 +54,7 @@ public final class Constants {
 
 		public static final double DEAD_ZONE = 0.25;
 
-		public static final int numberOfSpeedOptions = 2;
+		public static final int NUMBER_OF_SPEED_OPTIONS = 2;
 
 		// Names of options for displaying
 		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost" };

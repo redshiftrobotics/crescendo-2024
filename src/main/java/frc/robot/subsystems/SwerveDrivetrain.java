@@ -291,6 +291,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
 		SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
 		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
+		SmartDashboard.putBoolean("Field Relieve", fieldRelative);
 
 		if (fieldRelative)
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
@@ -370,14 +371,14 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 
 
-		final boolean hasTargetPose = desiredPose != null;
-		final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
-		SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
-		if (hasTargetPose) {
-			SmartDashboard.putNumber("tPoseX", targetPose.getX());
-			SmartDashboard.putNumber("tPoseY", targetPose.getY());
-			SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
-		}
+		// final boolean hasTargetPose = desiredPose != null;
+		// final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
+		// SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
+		// if (hasTargetPose) {
+		// 	SmartDashboard.putNumber("tPoseX", targetPose.getX());
+		// 	SmartDashboard.putNumber("tPoseY", targetPose.getY());
+		// 	SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
+		// }
 	}
 
 	/**

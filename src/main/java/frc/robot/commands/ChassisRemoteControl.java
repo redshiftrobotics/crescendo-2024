@@ -60,11 +60,7 @@ public class ChassisRemoteControl extends Command {
 				speedRotation);
 
 
-		drivetrain.setDesiredState(speeds, chassisDriveInputs.isFieldRelative(), false);
-
-		// Display relevant data on shuffleboard.
-		SmartDashboard.putString("Speed Mode", chassisDriveInputs.getSpeedLevelName());
-		SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
+		drivetrain.setDesiredState(speeds, isFieldRelative, true);
 
 		drivetrain.updateSmartDashboard();
 	}

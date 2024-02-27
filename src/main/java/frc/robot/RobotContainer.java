@@ -98,12 +98,7 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
-		autoChooser.addOption("Rotate by 90", Autos.rotateBy90Auto(drivetrain));
-		autoChooser.addOption("Rotate to 90", Autos.rotateTo90Auto(drivetrain));
-		autoChooser.addOption("Rotate by -90", Autos.rotateByNegative90Auto(drivetrain));
-		autoChooser.addOption("Rotate to -90", Autos.rotateToNegative90Auto(drivetrain));
-		autoChooser.addOption("Rotate by 10", Autos.rotateBy10Auto(drivetrain));
+		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
@@ -136,9 +131,13 @@ public class RobotContainer {
 					joystick::getTwist, -1,
 					Constants.DriverConstants.DEAD_ZONE);
 
-			joystick.button(2).onTrue(Commands.run(inputs::speedDown));
-			joystick.button(1).onTrue(Commands.run(inputs::speedUp));
-			joystick.button(3).onTrue(Commands.run(inputs::toggleFieldRelative));
+			joystick.button(1).onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
+			// joystick.button(1).onFalse(Commands.runOnce(inputs::decreaseSpeedLevel));
+			
+			joystick.button(2).onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			// joystick.button(2).onFalse(Commands.runOnce(inputs::increaseSpeedLevel));
+			
+			joystick.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
 			// This bypasses arm remote control, arm remote control is incompatible with
 			// autonomous commands
@@ -146,8 +145,8 @@ public class RobotContainer {
 			operatorJoystick.button(5).onTrue(armToAmp);
 			operatorJoystick.button(6).onTrue(armToSpeaker);
 
-			joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
+			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
@@ -158,17 +157,17 @@ public class RobotContainer {
 					Constants.DriverConstants.DEAD_ZONE);
 
 			// xbox.povDown().whileTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
+			// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates,
+			// drivetrain));
 
-			xbox.b().onTrue(Commands.run(inputs::speedDown));
-			xbox.povUp().onTrue(Commands.run(inputs::speedUp));
-			xbox.button(3).onTrue(Commands.run(inputs::toggleFieldRelative));
+			xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
+			xbox.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
 			xbox.a().whileTrue(new AimAtTag(drivetrain, vision, 1, inputs));
 		}
 
-		drivetrain.setDefaultCommand(
-				new ChassisRemoteControl(drivetrain, inputs));
+		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
 	}
 
 	/** Use this method to define your trigger->command mappings. */
