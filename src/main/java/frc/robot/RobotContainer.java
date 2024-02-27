@@ -155,8 +155,8 @@ public class RobotContainer {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
 			inputs = new ChassisDriveInputs(
-					xbox::getLeftY, +1,
-					xbox::getLeftX, +1,
+					xbox::getLeftX, -1,
+					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
 					Constants.DriverConstants.DEAD_ZONE);
 
