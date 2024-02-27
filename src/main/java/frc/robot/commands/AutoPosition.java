@@ -1,7 +1,12 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import java.util.Map;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.RobotMovementConstants;
+import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.subsystems.Vision;
 
 // How to make Command: https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html (ignore image instructions, code is out of date, just look at written general instructions)
 // Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
@@ -9,7 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class AutoPosition extends Command {
-	private final ExampleSubsystem subsystem;
+	private final SwerveDrivetrain drivetrain;
+	private final Vision vision;
 
 	/**
 	 * The constructor creates a new command and is automatically called one time
@@ -24,14 +30,15 @@ public class AutoPosition extends Command {
 	 * configuring objects for the class like PID controllers, and adding subsystem
 	 * requirements
 	 */
-	public AutoPosition(ExampleSubsystem subsystem) {
+	public AutoPosition(SwerveDrivetrain drivetrain, Vision vision) {
 		// use "this" to access member variable subsystem rather than local subsystem
-		this.subsystem = subsystem;
-
+		this.drivetrain = drivetrain;
+		this.vision= vision;
 		// Use addRequirements() here to declare subsystem dependencies.
 		// This makes sure no other commands try to do stuff with your subsystem while
 		// you are using it.
-		addRequirements(this.subsystem);
+		addRequirements(this.drivetrain);
+		addRequirements(this.vision); // not sure if we need this?
 	}
 
 	/**
@@ -44,6 +51,7 @@ public class AutoPosition extends Command {
 	 */
 	@Override
 	public void initialize() {
+		drivetrain.toDefaultStates();
 	}
 
 	/**
