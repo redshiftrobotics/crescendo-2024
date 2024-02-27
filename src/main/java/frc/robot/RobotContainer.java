@@ -4,7 +4,6 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.Arm;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.ChassisRemoteControl;
@@ -12,6 +11,9 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.arm.ArmInterface;
+import frc.robot.subsystems.arm.DummyArm;
+import frc.robot.subsystems.arm.RealArm;
 import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.inputs.OptionButtonInput;
 import frc.robot.inputs.OptionButtonInput.ActivationMode;
@@ -70,12 +72,17 @@ public class RobotContainer {
 					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
 	private final AHRS gyro = new AHRS();
-    private final Arm arm = new Arm(
-        ArmConstants.LEFT_MOTOR_ID,
-        ArmConstants.RIGHT_MOTOR_ID,
-        ArmConstants.RIGHT_ENCODER_ID,
-		ArmConstants.ARE_MOTORS_REVERSED);
 
+	/**
+	 * This is the robot arm. In some situations, the robot may not have an arm, so
+	 * if ArmConstants.HAS_ARM is false, a dummy class implementing the arm's API is
+	 * created instead to prevent errors.
+	 */
+	private final ArmInterface arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
+			ArmConstants.LEFT_MOTOR_ID,
+			ArmConstants.RIGHT_MOTOR_ID,
+			ArmConstants.RIGHT_ENCODER_ID,
+			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
@@ -83,7 +90,6 @@ public class RobotContainer {
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
-
 
 	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
 	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
@@ -137,7 +143,8 @@ public class RobotContainer {
 			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
 			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
 
-			//This bypasses arm remote control, arm remote control is incompatible with autonomous commands
+			// This bypasses arm remote control, arm remote control is incompatible with
+			// autonomous commands
 			operatorJoystick.button(4).onTrue(armToIntake);
 			operatorJoystick.button(5).onTrue(armToAmp);
 			operatorJoystick.button(6).onTrue(armToSpeaker);

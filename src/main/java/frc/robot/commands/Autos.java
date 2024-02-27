@@ -2,12 +2,12 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.arm.ArmInterface;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.SwerveDrivetrainConstants;
-import frc.robot.subsystems.Arm;
 
 /**
  * This class just contains a bunch of auto-modes. Do not call this class
@@ -50,7 +50,7 @@ public final class Autos {
 	}
 
 	/** Linden did this */
-	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, boolean invertY) {
+	public static Command startingAuto(ArmInterface arm, SwerveDrivetrain drivetrain, boolean invertY) {
 
 		// assumes start position in corner
 		double invert = 1;

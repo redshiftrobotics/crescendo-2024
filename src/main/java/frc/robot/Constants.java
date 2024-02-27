@@ -64,43 +64,43 @@ public final class Constants {
 		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
 	}
 
-    public static class ArmConstants {
+	public static class ArmConstants {
 		static {
 			switch (currentBot) {
 				case WOOD_BOT:
-					HAR_ARM = false;
+					HAS_ARM = false;
 					break;
 
 				case COMP_BOT:
 				default:
-					HAR_ARM = true;
+					HAS_ARM = true;
 					break;
 			}
 		}
 
-		public static final boolean HAR_ARM;
+		public static final boolean HAS_ARM;
 
-        public static final double MAXIMUM_ARM_DEGREES = 1;
-        public static final double MINIMUM_ARM_DEGREES = 0;
+		public static final double MAXIMUM_ARM_DEGREES = 1;
+		public static final double MINIMUM_ARM_DEGREES = 0;
 
-        public static final double ARM_AMP_SHOOTING_DEGREES = -20;
-        public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
-        public static final double ARM_INTAKE_DEGREES = -40;
+		public static final double ARM_AMP_SHOOTING_DEGREES = -20;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
+		public static final double ARM_INTAKE_DEGREES = -40;
 
-        public static final int LEFT_MOTOR_ID = 5;
-        //public static final int LEFT_ENCODER_ID = 0;
-        public static final int RIGHT_MOTOR_ID = 19;
-        public static final int RIGHT_ENCODER_ID = 6;
+		public static final int LEFT_MOTOR_ID = 5;
+		// public static final int LEFT_ENCODER_ID = 0;
+		public static final int RIGHT_MOTOR_ID = 19;
+		public static final int RIGHT_ENCODER_ID = 6;
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
 
-        public static final double DEGREES_PER_SECOND = 2.0;
+		public static final double DEGREES_PER_SECOND = 2.0;
 
 		public static final double ELEVATION_PID_P = 15;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
 
-    }
+	}
 
 	public static class RobotMovementConstants {
 		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
@@ -167,7 +167,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_BL = 8;
 					ANGULAR_MOTOR_ID_BL = 9;
 					ANGULAR_MOTOR_ENCODER_ID_BL = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.13134765625 +0.5;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.13134765625 + 0.5;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 10;
