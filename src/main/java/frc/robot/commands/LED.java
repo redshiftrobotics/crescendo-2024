@@ -47,6 +47,6 @@ public class LED extends Command{
 
 	}
 
-
+	public boolean isFinished() {return true;}
 
 }
