@@ -8,23 +8,25 @@ public class LED extends Command{
 
 	private AddressableLED m_led;
 	private AddressableLEDBuffer m_ledBuffer;
+	private int h = 0;
+	private int s = 0;
+	private int v = 0;
 
 	@Override
 	public void initialize() {
 		
 		// 9 is the PWM port
-		m_led = new AddressableLED(9);
+		// m_led = new AddressableLED(9);
 
 		// Default length of 60 starting with empty output
-		m_ledBuffer = new AddressableLEDBuffer(60);
+		// m_ledBuffer = new AddressableLEDBuffer(60);
 		m_led.setLength(m_ledBuffer.getLength());
 
 		// seting the data
 		m_led.setData(m_ledBuffer);
 		m_led.start();
 
-		setColor(0,100, 100);
-		
+		setColor(h, s, v);
 
 		m_led.setData(m_ledBuffer);
 	}
@@ -35,10 +37,14 @@ public class LED extends Command{
 		}
 	}
 
-	public LED(AddressableLED m_led, AddressableLEDBuffer m_ledBuffer) {
+	public LED(AddressableLED m_led, AddressableLEDBuffer m_ledBuffer, int h, int s, int v) {
 
 		this.m_led = m_led;
 		this.m_ledBuffer = m_ledBuffer;
+		this.h = h;
+		this.s = s;
+		this.v = v;
+
 	}
 
 
