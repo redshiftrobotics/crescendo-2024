@@ -17,7 +17,7 @@ public class LED extends Command {
 			m_ledBuffer.setHSV(i, h, s, v);
 		}
 	}
-	
+
 	public LED(AddressableLED m_led, AddressableLEDBuffer m_ledBuffer, int h, int s, int v) {
 		this.m_led = m_led;
 		this.m_ledBuffer = m_ledBuffer;
@@ -44,6 +44,7 @@ public class LED extends Command {
 		m_led.setData(m_ledBuffer);
 	}
 
-	public boolean isFinished() {return true;}
+	@Override
+	public boolean isFinished() { return true; }
 
 }
