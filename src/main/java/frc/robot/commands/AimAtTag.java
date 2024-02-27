@@ -39,7 +39,7 @@ public class AimAtTag extends Command {
 		this.chassisDriveInputs = chassisDriveInputs;
 
         rotatePID = new PIDController(
-            1,
+            2,
             0,
             0);
         rotatePID.enableContinuousInput(-1, 1);
@@ -80,7 +80,7 @@ public class AimAtTag extends Command {
 			xSpeed = chassisDriveInputs.getX() * DriverConstants.maxSpeedOptionsTranslation[0];
 			ySpeed = chassisDriveInputs.getY() * DriverConstants.maxSpeedOptionsTranslation[0];
 		}
-		double rotateSpeed = rotatePID.calculate(tagYawRadians) * DriverConstants.maxSpeedOptionsRotation[0]; 
+		double rotateSpeed = rotatePID.calculate(tagYawRadians) * DriverConstants.maxSpeedOptionsRotation[1]; 
 		
 		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotateSpeed);
 
