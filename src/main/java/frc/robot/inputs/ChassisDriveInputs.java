@@ -2,6 +2,8 @@ package frc.robot.inputs;
 
 import java.util.function.Supplier;
 
+import frc.robot.Constants.DriverConstants;
+
 /** Class that stores supplies for main controls of ChassisSpeeds */
 public class ChassisDriveInputs {
 
@@ -10,6 +12,9 @@ public class ChassisDriveInputs {
 	private final double xCoefficient, yCoefficient, rotationCoefficient;
 
 	private final double deadzone;
+
+	private int speedLevel = 0;
+	private boolean isFieldRelative = false;
 
 	/**
 	 * Create a new ChassisDriveInputs
@@ -29,7 +34,8 @@ public class ChassisDriveInputs {
 			Supplier<Double> getForward, double forwardCoefficient, 
 			Supplier<Double> getLeft, double leftCoefficient,
 			Supplier<Double> getRotation, double rotationCoefficient,
-			double deadzone) {
+			double deadzone) 
+		{
 
 		this.ySupplier = getForward;
 		this.xSupplier = getLeft;
@@ -55,6 +61,34 @@ public class ChassisDriveInputs {
 	/** @return Joystick rotation with deadzone applied */
 	public double getRotation() {
 		return applyJoystickDeadzone(rotationSupplier.get(), deadzone) * rotationCoefficient;
+	}
+
+	public void speedUp() {
+		speedLevel = Math.min(speedLevel + 1, DriverConstants.numberOfSpeedOptions);
+	}
+
+	public void speedDown() {
+		speedLevel = Math.max(speedLevel - 1, 0);
+	}
+
+	public void enableFieldRelative() {
+		isFieldRelative = true;
+	}
+
+	public void disableFieldRelative() {
+		isFieldRelative = false;
+	}
+
+	public void toggleFieldRelative() {
+		isFieldRelative = !isFieldRelative;
+	}
+
+	public boolean isFieldRelative() {
+		return isFieldRelative;
+	}
+
+	public String getSpeedLevelName() {
+		return DriverConstants.maxSpeedOptionsNames[speedLevel];
 	}
 
 	/**

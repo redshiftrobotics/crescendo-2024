@@ -15,11 +15,6 @@ import frc.robot.subsystems.Arm;
  */
 public final class Autos {
 	/** Example static factory for an autonomous command. */
-	public static Command testingAuto(SwerveDrivetrain drivetrain) {
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), false));
-	}
-
 	public static Command rotateTo90Auto(SwerveDrivetrain drivetrain) {
 		return Commands.sequence(
 				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), true));
@@ -41,7 +36,20 @@ public final class Autos {
 	}
 
 	public static Command rotateBy10Auto(SwerveDrivetrain drivetrain) {
-		return Commands.sequence(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(10), true));
+		return Commands.sequence(
+			new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(10), true));
+	}
+
+	public static Command driveForward(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+			new DriveTransform(drivetrain, new Translation2d(1, 0), new Rotation2d())
+		);
+	}
+
+	public static Command driveBackward(SwerveDrivetrain drivetrain) {
+		return Commands.sequence(
+			new DriveTransform(drivetrain, new Translation2d(-1, 0), new Rotation2d())
+		);
 	}
 
 	/** Auto-mode that attempts to follow an april tag. */

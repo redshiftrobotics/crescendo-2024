@@ -3,8 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.DriverConstants;
-import frc.robot.inputs.OptionButtonInput;
 import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 
@@ -15,30 +13,16 @@ import frc.robot.subsystems.SwerveDrivetrain;
 public class ChassisRemoteControl extends Command {
 	protected final SwerveDrivetrain drivetrain;
 
-	private final OptionButtonInput preciseModeButton, boostModeButton, fieldRelativeButton;
-
 	private final ChassisDriveInputs chassisDriveInputs;
 
 	/**
 	 * Creates a new SwerveDriveBaseControl Command.
-	 *
-	 * @param drivetrain       The drivetrain of the robot
-	 * @param driverController The device used to control drivetrain
 	 */
-	public ChassisRemoteControl(SwerveDrivetrain drivetrain, ChassisDriveInputs chassisDriveInputs,
-			OptionButtonInput preciseModeButton, OptionButtonInput boostModeButton, OptionButtonInput fieldRelativeButton) {
+	public ChassisRemoteControl(SwerveDrivetrain drivetrain, ChassisDriveInputs chassisDriveInputs) {
 
 		this.chassisDriveInputs = chassisDriveInputs;
 
-		this.preciseModeButton = preciseModeButton;
-		this.boostModeButton = boostModeButton;
-		this.fieldRelativeButton = fieldRelativeButton;
-
 		this.drivetrain = drivetrain;
-
-		
-
-		
 
 		// Tell the command schedular we are using the drivetrain
 		addRequirements(drivetrain);
@@ -68,26 +52,18 @@ public class ChassisRemoteControl extends Command {
 
 		final double speedRotation = chassisDriveInputs.getRotation();
 
-		final boolean isFieldRelative = fieldRelativeButton.getState();
-
-		final int speedLevel = 1
-				- preciseModeButton.getStateAsInt()
-				+ boostModeButton.getStateAsInt();
+		final boolean isFieldRelative = chassisDriveInputs.isFieldRelative();
 
 		final ChassisSpeeds speeds = new ChassisSpeeds(
-				speedX * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
-				speedY * DriverConstants.maxSpeedOptionsTranslation[speedLevel],
-				speedRotation * DriverConstants.maxSpeedOptionsRotation[speedLevel]);
+				speedX,
+				speedY,
+				speedRotation);
 
 
-		SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
-		SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
-		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
-
-		drivetrain.setDesiredState(speeds, isFieldRelative, true);
+		drivetrain.setDesiredState(speeds, chassisDriveInputs.isFieldRelative(), false);
 
 		// Display relevant data on shuffleboard.
-		SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[speedLevel]);
+		SmartDashboard.putString("Speed Mode", chassisDriveInputs.getSpeedLevelName());
 		SmartDashboard.putBoolean("Field Relieve", isFieldRelative);
 
 		drivetrain.updateSmartDashboard();
