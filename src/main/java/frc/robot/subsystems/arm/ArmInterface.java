@@ -1,10 +1,12 @@
 package frc.robot.subsystems.arm;
 
+import edu.wpi.first.wpilibj2.command.Subsystem;
+
 /**
  * This interface represnets the arm. This interface is implemented by the
  * RealArm (formerly known as Arm) class.
  */
-public interface ArmInterface {
+public interface ArmInterface extends Subsystem {
 	public void changeArmAngleDegreesBy(double desiredDegrees);
 
 	public void setArmToAmpPosition();
