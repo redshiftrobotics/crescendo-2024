@@ -1,14 +1,17 @@
-package frc.robot.subsystems;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj2.command.Command;
 
-public class LED {
+public class LED extends Command{
 
 	private AddressableLED m_led;
 	private AddressableLEDBuffer m_ledBuffer;
 
-	public void robotInit() {
+	@Override
+	public void initialize() {
+		
 		// 9 is the PWM port
 		m_led = new AddressableLED(9);
 
@@ -17,19 +20,27 @@ public class LED {
 		m_led.setLength(m_ledBuffer.getLength());
 
 		// seting the data
-		m_led.setData(m_ledBuffer.getLength());
+		m_led.setData(m_ledBuffer);
 		m_led.start();
 
-		for (int i = 0; i < m_ledBuffer.getLength(); i++) {
-			// looping between red and black
-			while (true) {
-				m_ledBuffer.setHSV(i, 1, 100, 64);
-				wait(5);
-				m_ledBuffer.setHSV(i, 0, 0, 0);
-				wait(5);
-			}
-		}
+		setColor(0,100, 100);
+		
 
 		m_led.setData(m_ledBuffer);
 	}
+
+	public void setColor(int h, int s, int v) {
+		for (int i = 0; i < m_ledBuffer.getLength(); i++) {
+			m_ledBuffer.setHSV(i, h, s, v);
+		}
+	}
+
+	public LED(AddressableLED m_led, AddressableLEDBuffer m_ledBuffer) {
+
+		this.m_led = m_led;
+		this.m_ledBuffer = m_ledBuffer;
+	}
+
+
+
 }
