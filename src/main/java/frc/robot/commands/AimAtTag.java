@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -77,10 +76,10 @@ public class AimAtTag extends Command {
 		double xSpeed = 0;
 		double ySpeed = 0;
 		if (chassisDriveInputs != null) {
-			xSpeed = chassisDriveInputs.getX() * DriverConstants.maxSpeedOptionsTranslation[0];
-			ySpeed = chassisDriveInputs.getY() * DriverConstants.maxSpeedOptionsTranslation[0];
+			xSpeed = chassisDriveInputs.getX();
+			ySpeed = chassisDriveInputs.getY();
 		}
-		double rotateSpeed = rotatePID.calculate(tagYawRadians) * DriverConstants.maxSpeedOptionsRotation[1]; 
+		double rotateSpeed = rotatePID.calculate(tagYawRadians); 
 		
 		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotateSpeed);
 

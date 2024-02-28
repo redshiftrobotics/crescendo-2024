@@ -55,17 +55,17 @@ public class ChassisDriveInputs {
 
 	/** @return Joystick X with the deadzone applied */
 	public double getX() {
-		return applyJoystickDeadzone(xSupplier.get(), deadzone) * xCoefficient;
+		return applyJoystickDeadzone(xSupplier.get(), deadzone) * xCoefficient * DriverConstants.maxSpeedOptionsTranslation[speedLevel];
 	}
 
 	/** @return Joystick Y with the deadzone applied */
 	public double getY() {
-		return applyJoystickDeadzone(ySupplier.get(), deadzone) * yCoefficient;
+		return applyJoystickDeadzone(ySupplier.get(), deadzone) * yCoefficient * DriverConstants.maxSpeedOptionsTranslation[speedLevel];
 	}
 
 	/** @return Joystick rotation with deadzone applied */
 	public double getRotation() {
-		return applyJoystickDeadzone(rotationSupplier.get(), deadzone) * rotationCoefficient;
+		return applyJoystickDeadzone(rotationSupplier.get(), deadzone) * rotationCoefficient * DriverConstants.maxSpeedOptionsRotation[speedLevel];
 	}
 
 	public void increaseSpeedLevel() {
