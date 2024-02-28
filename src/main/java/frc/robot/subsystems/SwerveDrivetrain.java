@@ -142,10 +142,6 @@ public class SwerveDrivetrain extends SubsystemBase {
 					yController.calculate(pose.getY(), desiredPose.getY()),
 					rotationController.calculate(pose.getRotation().getRadians(), desiredPose.getRotation().getRadians()));
 			
-			SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
-			SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
-			SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
-
 			// Set those speeds
 			setDesiredState(speeds);
 		}
@@ -272,9 +268,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * Set speeds of robot.
 	 * 
 	 * <p>
-	 * Vx: the velocity of the robot in the x (forward) direction in meter per second.
-	 * Vy: the velocity of the robot in the y (sideways) direction in meter per second. (Positive values mean the robot is moving to the left).
-	 * Omega: the angular velocity of the robot in radians per second.
+	 * Vx: the velocity of the robot in the x (forward) direction in meter per second. (Positive is forward)
+	 * Vy: the velocity of the robot in the y (sideways) direction in meter per second. (Positive is left).
+	 * Omega: the angular velocity of the robot in radians per second. (Positive is counterclockwise)
 	 * 
 	 * <p>
 	 * If field relative, forward will be directly away from driver, no matter the rotation of the robot.
@@ -291,6 +287,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * 					     false if in normal drive mode with default units
 	 */
 	public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative, boolean powerDriveMode) {
+
+		SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
+		SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
+		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
+		SmartDashboard.putBoolean("Field Relieve", fieldRelative);
 
 		if (fieldRelative)
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
@@ -352,7 +353,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 	// --- Util ---
 
-	/** Update SmartDashboard with */
+	/** Update SmartDashboard with robot values */
 	public void updateSmartDashboard() {
 		// Position display
 		final Pose2d robotPosition = getPosition();
@@ -370,14 +371,14 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 
 
-		final boolean hasTargetPose = desiredPose != null;
-		final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
-		SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
-		if (hasTargetPose) {
-			SmartDashboard.putNumber("tPoseX", targetPose.getX());
-			SmartDashboard.putNumber("tPoseY", targetPose.getY());
-			SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
-		}
+		// final boolean hasTargetPose = desiredPose != null;
+		// final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
+		// SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
+		// if (hasTargetPose) {
+		// 	SmartDashboard.putNumber("tPoseX", targetPose.getX());
+		// 	SmartDashboard.putNumber("tPoseY", targetPose.getY());
+		// 	SmartDashboard.putNumber("tPoseDegrees", targetPose.getRotation().getDegrees());
+		// }
 	}
 
 	/**

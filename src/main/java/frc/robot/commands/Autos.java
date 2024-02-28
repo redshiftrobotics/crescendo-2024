@@ -15,33 +15,9 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
  */
 public final class Autos {
 	/** Example static factory for an autonomous command. */
-	public static Command testingAuto(SwerveDrivetrain drivetrain) {
+	public static Command rotateTestAuto(SwerveDrivetrain drivetrain, double degrees, boolean fieldRelative) {
 		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), false));
-	}
-
-	public static Command rotateTo90Auto(SwerveDrivetrain drivetrain) {
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), true));
-	}
-
-	public static Command rotateBy90Auto(SwerveDrivetrain drivetrain) {
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), false));
-	}
-
-	public static Command rotateToNegative90Auto(SwerveDrivetrain drivetrain) {
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
-	}
-
-	public static Command rotateByNegative90Auto(SwerveDrivetrain drivetrain) {
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), false));
-	}
-
-	public static Command rotateBy10Auto(SwerveDrivetrain drivetrain) {
-		return Commands.sequence(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(10), true));
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), fieldRelative));
 	}
 
 	/** Auto-mode that attempts to follow an april tag. */
