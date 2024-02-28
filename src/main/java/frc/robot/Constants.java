@@ -82,8 +82,8 @@ public final class Constants {
 
 		public static final boolean HAS_ARM;
 
-		public static final double MAXIMUM_ARM_DEGREES = 1;
-		public static final double MINIMUM_ARM_DEGREES = 0;
+		public static final double MAXIMUM_ARM_DEGREES = 60;
+		public static final double MINIMUM_ARM_DEGREES = -60;
 
 		public static final double ARM_AMP_SHOOTING_DEGREES = -20;
 		public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
@@ -105,7 +105,7 @@ public final class Constants {
 	}
 
 	public static class RobotMovementConstants {
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.5);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 
 		public static final double ROTATION_PID_P = 5;
