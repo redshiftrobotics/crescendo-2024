@@ -42,7 +42,7 @@ public class AimAtTag extends Command {
             0,
             0);
         rotatePID.enableContinuousInput(-1, 1);
-        rotatePID.setTolerance(Units.radiansToDegrees(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS));
+        rotatePID.setTolerance(Units.radiansToRotations(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS));
 		rotatePID.setSetpoint(0);
 
 		addRequirements(drivetrain);
