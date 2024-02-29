@@ -99,6 +99,8 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
+		autoChooser.addOption("Forward", Autos.driveAuto(drivetrain, +1));
+		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();

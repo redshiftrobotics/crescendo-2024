@@ -293,10 +293,16 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
 		SmartDashboard.putBoolean("Field Relieve", fieldRelative);
 
-		if (fieldRelative)
+		if (fieldRelative) {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
-
+		}
+		
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
+		
+		if (powerDriveMode) {
+			SwerveDriveKinematics.desaturateWheelSpeeds(states, 1.0);
+		}
+
 		for (int i = 0; i < modules.length; i++) {
 			modules[i].setDesiredState(states[i], powerDriveMode);
 		}
