@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LightConstants;
 
 public class LightStrip extends SubsystemBase {
 	private AddressableLED ledStrip;
@@ -10,7 +11,7 @@ public class LightStrip extends SubsystemBase {
 
 	public LightStrip(AddressableLED ledstrip) {
 		ledStrip = ledstrip;
-		ledBuffer = new AddressableLEDBuffer(60);
+		ledBuffer = new AddressableLEDBuffer(LightConstants.LED_QUANTITY);
 
 		// Docs say this is an expensive operation so future maintainers should avoid
 		// modifying this excessibely
