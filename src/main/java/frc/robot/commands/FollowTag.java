@@ -74,22 +74,21 @@ public class FollowTag extends Command {
 	@Override
 	public void execute() {
 
-		final PhotonTrackedTarget tag = (tagID == null) ? vision.getTag() : vision.getTag(tagID);
+		final Transform3d distToTag = (tagID == null) ? vision.getDistToTag() : vision.getDistToTag(tagID);
 
-		if (tag == null) {
+		if (distToTag == null) {
 			secondsSinceTagLastSeen += TimedRobot.kDefaultPeriod;
 			drivetrain.stop();
 		} else {
-			final Transform3d tagPosition3d = vision.getDistanceToTarget(tag);
 
 			secondsSinceTagLastSeen = 0;
 
 			// https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/coordinate-systems.html
 			// https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation3d.html#getZ()
 			final Transform2d tagPosition = new Transform2d(
-					tagPosition3d.getZ(),
-					tagPosition3d.getX(),
-					Rotation2d.fromRadians(tag.getYaw()));
+					distToTag.getZ(),
+					distToTag.getX(),
+					Rotation2d.fromRadians(distToTag.getRotation().getZ());
 
 			final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
 
