@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.deprecated;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -45,6 +45,8 @@ public class LED extends Command {
 	}
 
 	@Override
-	public boolean isFinished() { return true; }
+	public boolean isFinished() {
+		return true;
+	}
 
 }
