@@ -7,6 +7,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
+import frc.robot.commands.AutoPosition;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -164,7 +165,7 @@ public class RobotContainer {
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 			xbox.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.a().whileTrue(new AimAtTag(drivetrain, vision, 1, inputs));
+			xbox.a().whileTrue(new AutoPosition(drivetrain, vision));
 		}
 
 		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
@@ -183,3 +184,4 @@ public class RobotContainer {
 		return autoChooser.getSelected();
 	}
 }
+;
