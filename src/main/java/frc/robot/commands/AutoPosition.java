@@ -2,11 +2,21 @@ package frc.robot.commands;
 
 import java.util.Map;
 
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.RobotMovementConstants;
+import frc.robot.Constants.SwerveDrivetrainConstants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 // How to make Command: https://compendium.readthedocs.io/en/latest/tasks/commands/commands.html (ignore image instructions, code is out of date, just look at written general instructions)
 // Command based programming: https://docs.wpilib.org/en/stable/docs/software/commandbased/what-is-command-based.html
@@ -52,6 +62,14 @@ public class AutoPosition extends Command {
 	@Override
 	public void initialize() {
 		drivetrain.toDefaultStates();
+		Transform3d dist3d = vision.getDistToTag();
+		double angle = dist3d.getRotation().getZ();
+		Translation2d trans = new Translation2d(dist3d.getX()-AutoConstants.PREFERRED_TAG_DISTANCE*Math.cos(angle),dist3d.getY()-AutoConstants.PREFERRED_TAG_DISTANCE*Math.sin(angle));
+		Rotation2d rot = new Rotation2d(angle);
+		Commands.sequence(
+			new AutoRotateTo(drivetrain, rot),
+			new AutoDriveTo(drivetrain, trans));
+
 	}
 
 	/**
