@@ -18,51 +18,50 @@ public class Vision extends SubsystemBase {
 	private final static boolean DEBUG_INFO = false;
 
 	final PhotonCamera camera;
-	final Transform3d cameraToFrontCenter;
+	final Transform3d robotToCamera;
+	final Transform3d cameraToRobot;
 
 	/**
 	 * Create new PhotonCamera subsystem
 	 * 
-	 * @param cameraName          name of PhotonCamera
-	 * @param cameraToFrontCenter distance from the camera to the front center point
-	 *                            of the robot
+	 * @param cameraName    name of PhotonCamera
+	 * @param robotToCamera distance from the camera to the center of the robot
 	 */
-	public Vision(String cameraName, Transform3d cameraToFrontCenter) {
+	public Vision(String cameraName, Transform3d robotToCamera) {
 		camera = new PhotonCamera(cameraName);
-		this.cameraToFrontCenter = cameraToFrontCenter;
+		this.robotToCamera = robotToCamera;
+		cameraToRobot = robotToCamera.inverse();
 	}
 
 	/**
-	 * Get best april tag target
+	 * Get distance to the distance to the best tag found by the camera
 	 * 
-	 * @return Object of best target
+	 * @return The position of the tag (translation and rotation) based on the
+	 *         center of the robot. Returns null if no tag found.
+	 * 
 	 */
-	public PhotonTrackedTarget getTag() {
-		return camera
-				.getLatestResult()
-				.getBestTarget();
+	public Transform3d getDistToTag() {
+		PhotonTrackedTarget target = camera.getLatestResult().getBestTarget();
+		if (target == null) {
+			return null;
+		}
+		return target.getBestCameraToTarget().plus(cameraToRobot);
 	}
 
 	/**
-	 * Gives Transform3d from robot center to the desired target
+	 * Get distance to the desired tag
 	 * 
-	 * @param tagID The fiducial ID of the desired April Tag
-	 * @return returns first tag with matching ID, null if None are found
+	 * @param tagID the fiducial ID of the desired tag
+	 * @return the position of the tag (translation and rotation) based on the
+	 *         center of the robot. Returns null if no tag found
 	 */
-	public PhotonTrackedTarget getTag(int tagID) {
+	public Transform3d getDistToTag(int tagID) {
 		for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
 			if (target.getFiducialId() == tagID)
-				return target;
+				return target.getBestCameraToTarget().plus(cameraToRobot);
 		}
 		return null;
 	}
-
-	public Transform3d getDistanceToTarget(PhotonTrackedTarget tag) {
-		return tag
-				.getBestCameraToTarget()
-				.plus(cameraToFrontCenter);
-	}
-
 
 	@Override
 	public void periodic() {
