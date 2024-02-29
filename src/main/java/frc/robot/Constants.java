@@ -257,4 +257,9 @@ public final class Constants {
 		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d());
 		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 	}
+
+	public static class LightConstants {
+		public static final int LED_CONTROLLER_PWM_SLOT = 0;
+		public static final int LED_QUANTITY = 60;
+	}
 }

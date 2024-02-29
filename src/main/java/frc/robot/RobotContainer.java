@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.LightConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
@@ -8,7 +9,9 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
@@ -19,6 +22,7 @@ import frc.robot.inputs.ChassisDriveInputs;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -94,6 +98,8 @@ public class RobotContainer {
 	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
+	private final LightStrip lightStrip = new LightStrip(new AddressableLED(LightConstants.LED_CONTROLLER_PWM_SLOT));
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -101,6 +107,7 @@ public class RobotContainer {
 		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
 		autoChooser.addOption("Forward", Autos.driveAuto(drivetrain, +1));
 		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
+		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 0, 0, 200));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
@@ -135,10 +142,10 @@ public class RobotContainer {
 
 			joystick.button(1).onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 			// joystick.button(1).onFalse(Commands.runOnce(inputs::decreaseSpeedLevel));
-			
+
 			joystick.button(2).onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			// joystick.button(2).onFalse(Commands.runOnce(inputs::increaseSpeedLevel));
-			
+
 			joystick.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
 			// This bypasses arm remote control, arm remote control is incompatible with
@@ -148,7 +155,8 @@ public class RobotContainer {
 			operatorJoystick.button(6).onTrue(armToSpeaker);
 
 			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
+			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
+			// drivetrain));
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
