@@ -88,7 +88,7 @@ public class FollowTag extends Command {
 			final Transform2d tagPosition = new Transform2d(
 					distToTag.getZ(),
 					distToTag.getX(),
-					Rotation2d.fromRadians(distToTag.getRotation().getZ());
+					Rotation2d.fromRadians(distToTag.getRotation().getZ()));
 
 			final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
 
