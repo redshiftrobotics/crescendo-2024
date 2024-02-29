@@ -14,6 +14,7 @@ import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -43,7 +44,7 @@ public class AutoPosition extends Command {
 	public AutoPosition(SwerveDrivetrain drivetrain, Vision vision) {
 		// use "this" to access member variable subsystem rather than local subsystem
 		this.drivetrain = drivetrain;
-		this.vision= vision;
+		this.vision = vision;
 		// Use addRequirements() here to declare subsystem dependencies.
 		// This makes sure no other commands try to do stuff with your subsystem while
 		// you are using it.
@@ -62,13 +63,22 @@ public class AutoPosition extends Command {
 	@Override
 	public void initialize() {
 		drivetrain.toDefaultStates();
-		Transform3d dist3d = vision.getDistToTag();
+		Transform3d dist3d = vision.getDistToTag(1);
+		if (dist3d == null) {
+			return;
+		}
 		double angle = dist3d.getRotation().getZ();
-		Translation2d trans = new Translation2d(dist3d.getX()-AutoConstants.PREFERRED_TAG_DISTANCE*Math.cos(angle),dist3d.getY()-AutoConstants.PREFERRED_TAG_DISTANCE*Math.sin(angle));
-		Rotation2d rot = new Rotation2d(angle);
+		Translation2d trans = new Translation2d(dist3d.getY() - AutoConstants.PREFERRED_TAG_DISTANCE * Math.cos(angle),
+				dist3d.getX() - AutoConstants.PREFERRED_TAG_DISTANCE * Math.sin(angle));
+		SmartDashboard.putNumber("ANGLE", angle);
+		SmartDashboard.putNumber("Y", trans.getY());
+		SmartDashboard.putNumber("X", trans.getX());
+		Rotation2d rot = new Rotation2d(-(Math.PI-angle));
 		Commands.sequence(
-			new AutoRotateTo(drivetrain, rot),
-			new AutoDriveTo(drivetrain, trans));
+				new AutoRotateTo(drivetrain, rot, false)
+				//,new AutoDriveTo(drivetrain, trans)
+				).schedule();
+		;
 
 	}
 
