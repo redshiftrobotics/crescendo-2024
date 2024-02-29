@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public final class Constants {
 	public static enum Bot {
-		WOOD_BOT, PRACTICE_BOT, COMPETITION_BOT
+		WOOD_BOT, COMP_BOT
 	}
 
 	public static final Bot currentBot;
@@ -40,12 +40,9 @@ public final class Constants {
 				currentBot = Bot.WOOD_BOT;
 				break;
 
-			case "03238024": // Practice Bot Serial Number
-				currentBot = Bot.PRACTICE_BOT;
-				break;
-
-			default: // Also use competition bot as default
-				currentBot = Bot.COMPETITION_BOT;
+			case "03238024": // Practice (Now comp) Bot Serial Number
+			default:
+				currentBot = Bot.COMP_BOT;
 				break;
 		}
 	}
@@ -53,7 +50,11 @@ public final class Constants {
 	public static class DriverConstants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 
+		public static final int OPERATOR_JOYSTICK_PORT = 1;
+
 		public static final double DEAD_ZONE = 0.25;
+
+		public static final int NUMBER_OF_SPEED_OPTIONS = 2;
 
 		// Names of options for displaying
 		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost" };
@@ -65,16 +66,51 @@ public final class Constants {
 		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
 	}
 
-	public static class RobotMovementConstants {
-		public static final double AT_SETPOINT_TOLERANCE_TIME_SECONDS = 0;
-		public static final double ROTATE_AT_SETPOINT_TIME_SECONDS = 1;
+	public static class ArmConstants {
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					HAS_ARM = false;
+					break;
 
+				case COMP_BOT:
+				default:
+					HAS_ARM = true;
+					break;
+			}
+		}
+
+		public static final boolean HAS_ARM;
+
+		public static final double MAXIMUM_ARM_DEGREES = 1;
+		public static final double MINIMUM_ARM_DEGREES = 0;
+
+		public static final double ARM_AMP_SHOOTING_DEGREES = -20;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
+		public static final double ARM_INTAKE_DEGREES = -40;
+
+		public static final int LEFT_MOTOR_ID = 5;
+		// public static final int LEFT_ENCODER_ID = 0;
+		public static final int RIGHT_MOTOR_ID = 19;
+		public static final int RIGHT_ENCODER_ID = 6;
+
+		public static final boolean ARE_MOTORS_REVERSED = false;
+
+		public static final double DEGREES_PER_SECOND = 2.0;
+
+		public static final double ELEVATION_PID_P = 15;
+		public static final double ELEVATION_PID_I = 0;
+		public static final double ELEVATION_PID_D = 0;
+
+	}
+
+	public static class RobotMovementConstants {
 		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 
-		public static final double ROTATION_PID_P = 4;
-		public static final double ROTATION_PID_I = 0.1;
-		public static final double ROTATION_PID_D = 4;
+		public static final double ROTATION_PID_P = 5;
+		public static final double ROTATION_PID_I = 0;
+		public static final double ROTATION_PID_D = 0;
 
 		public static final double TRANSLATION_PID_P = 30;
 		public static final double TRANSLATION_PID_I = 0.5;
@@ -94,58 +130,53 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FL = 41;
 					ANGULAR_MOTOR_ID_FL = 40;
 					ANGULAR_MOTOR_ENCODER_ID_FL = 1;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.611328125;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.136474609375;
 
 					// Front right
 					VELOCITY_MOTOR_ID_FR = 4;
 					ANGULAR_MOTOR_ID_FR = 5;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.282958;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.8828125;
 
 					// Back left
-					VELOCITY_MOTOR_ID_BL = 3;
-					ANGULAR_MOTOR_ID_BL = 2;
+					VELOCITY_MOTOR_ID_BL = 2;
+					ANGULAR_MOTOR_ID_BL = 3;
 					ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.91748046875;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.517333984375 + 0.5;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 42;
 					ANGULAR_MOTOR_ID_BR = 6;
 					ANGULAR_MOTOR_ENCODER_ID_BR = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.8641367187;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.52001953125 + 0.5;
 					break;
 
-				case PRACTICE_BOT:
+				case COMP_BOT:
 				default: // Temporary default to practice bot
 					// Front Left
 					VELOCITY_MOTOR_ID_FL = 2;
 					ANGULAR_MOTOR_ID_FL = 3;
 					ANGULAR_MOTOR_ENCODER_ID_FL = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.256015325670498;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.364013671875;
 
 					// Front right
 					VELOCITY_MOTOR_ID_FR = 16;
 					ANGULAR_MOTOR_ID_FR = 17;
-					ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.248045977011494;
+					ANGULAR_MOTOR_ENCODER_ID_FR = 4;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.42114257812;
 
 					// Back left
 					VELOCITY_MOTOR_ID_BL = 8;
 					ANGULAR_MOTOR_ID_BL = 9;
-					ANGULAR_MOTOR_ENCODER_ID_BL = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.894674329501916;
+					ANGULAR_MOTOR_ENCODER_ID_BL = 2;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.13134765625 + 0.5;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 10;
 					ANGULAR_MOTOR_ID_BR = 11;
 					ANGULAR_MOTOR_ENCODER_ID_BR = 1;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.530498084291188;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.54736328125;
 					break;
-
-				// case COMPETITION_BOT:
-				// default:
-
-				// break;
 			}
 		}
 
@@ -207,16 +238,11 @@ public final class Constants {
 					MODULE_LOCATION_Y = 28.5 / 100;
 					break;
 
-				case PRACTICE_BOT:
-				default: // Temporary default to practice bot
-					MODULE_LOCATION_X = 54 / 100;
-					MODULE_LOCATION_Y = 54 / 100;
+				case COMP_BOT:
+				default:
+					MODULE_LOCATION_X = 54.0 / 100;
+					MODULE_LOCATION_Y = 54.0 / 100;
 					break;
-
-				// case COMPETITION_BOT:
-				// default:
-
-				// break;
 			}
 		}
 
@@ -227,7 +253,7 @@ public final class Constants {
 
 	public static class VisionConstants {
 
-		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d(0, 0., 0));
+		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d(0, 0, 0));
 		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 	}
 }

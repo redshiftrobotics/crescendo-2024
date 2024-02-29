@@ -4,20 +4,25 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.Autos;
+import frc.robot.commands.AimAtTag;
+import frc.robot.commands.ArmRotateTo;
+import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.inputs.OptionButtonInput;
 import frc.robot.inputs.OptionButtonInput.ActivationMode;
+import frc.robot.subsystems.arm.ArmInterface;
+import frc.robot.subsystems.arm.DummyArm;
+import frc.robot.subsystems.arm.RealArm;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -68,7 +73,18 @@ public class RobotContainer {
 			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
 					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
-	private final AHRS gyro = new AHRS(I2C.Port.kOnboard);
+	private final AHRS gyro = new AHRS();
+
+	/**
+	 * This is the robot arm. In some situations, the robot may not have an arm, so
+	 * if ArmConstants.HAS_ARM is false, a dummy class implementing the arm's API is
+	 * created instead to prevent errors.
+	 */
+	private final ArmInterface arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
+			ArmConstants.LEFT_MOTOR_ID,
+			ArmConstants.RIGHT_MOTOR_ID,
+			ArmConstants.RIGHT_ENCODER_ID,
+			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
@@ -77,12 +93,15 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
+	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		autoChooser.setDefaultOption("Testing Auto", Autos.testingAuto(drivetrain));
-		autoChooser.addOption("Follow Tag", Autos.tagFollowAuto(drivetrain, vision, 1));
+		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();
@@ -97,13 +116,14 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
+		final CommandJoystick operatorJoystick = new CommandJoystick(DriverConstants.OPERATOR_JOYSTICK_PORT);
+
 		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		drivetrain.removeDefaultCommand();
 
 		ChassisDriveInputs inputs;
-		OptionButtonInput preciseModeButton, boostModeButton, fieldRelativeButton;
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
@@ -114,14 +134,23 @@ public class RobotContainer {
 					joystick::getTwist, -1,
 					Constants.DriverConstants.DEAD_ZONE);
 
-			preciseModeButton = new OptionButtonInput(joystick, 2, ActivationMode.TOGGLE);
-			boostModeButton = new OptionButtonInput(joystick, 1, ActivationMode.HOLD);
-			fieldRelativeButton = new OptionButtonInput(joystick, 3, ActivationMode.TOGGLE);
+			joystick.button(1).onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
+			// joystick.button(1).onFalse(Commands.runOnce(inputs::decreaseSpeedLevel));
 
-			joystick.button(10).onTrue(Commands.sequence(
-					Commands.runOnce(drivetrain::toDefaultStates, drivetrain),
-					Commands.waitSeconds(0.5)));
+			joystick.button(2).onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			// joystick.button(2).onFalse(Commands.runOnce(inputs::increaseSpeedLevel));
 
+			joystick.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
+
+			// This bypasses arm remote control, arm remote control is incompatible with
+			// autonomous commands
+			operatorJoystick.button(4).onTrue(armToIntake);
+			operatorJoystick.button(5).onTrue(armToAmp);
+			operatorJoystick.button(6).onTrue(armToSpeaker);
+
+			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
+			// drivetrain));
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
@@ -138,6 +167,26 @@ public class RobotContainer {
 
 		drivetrain.setDefaultCommand(
 				new ChassisRemoteControl(drivetrain, inputs, preciseModeButton, boostModeButton, fieldRelativeButton));
+
+		inputs = new ChassisDriveInputs(
+				xbox::getLeftX, -1,
+				xbox::getLeftY, -1,
+				xbox::getRightX, -1,
+				Constants.DriverConstants.DEAD_ZONE);
+
+		// xbox.povDown().whileTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+		// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates,
+		// drivetrain));
+
+		xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+		xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
+		xbox.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
+
+		xbox.a().whileTrue(new AimAtTag(drivetrain, vision, 1, inputs));
+	}
+
+	drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain,inputs));>>>>>>>main
+
 	}
 
 	/** Use this method to define your trigger->command mappings. */
