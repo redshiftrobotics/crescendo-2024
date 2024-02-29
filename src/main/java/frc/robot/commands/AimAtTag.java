@@ -85,7 +85,7 @@ public class AimAtTag extends Command {
 		}
 		double rotateSpeed = rotatePID.calculate(tagYawRadians);
 
-		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotateSpeed);
+		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -rotateSpeed);
 
 		drivetrain.setDesiredState(desiredSpeeds, false, true);
 
