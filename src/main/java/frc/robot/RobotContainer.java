@@ -22,7 +22,6 @@ import frc.robot.inputs.ChassisDriveInputs;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -94,7 +93,11 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
-	private final LightStrip lightStrip = new LightStrip(new AddressableLED(LightConstants.LED_CONTROLLER_PWM_SLOT));
+	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
+	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -103,7 +106,6 @@ public class RobotContainer {
 		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
 		autoChooser.addOption("Forward", Autos.driveAuto(drivetrain, +1));
 		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
-		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 0, 0, 200));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -193,6 +195,9 @@ public class RobotContainer {
 			joystick.button(4).onTrue(armToIntake);
 			joystick.button(5).onTrue(armToAmp);
 			joystick.button(6).onTrue(armToSpeaker);
+
+			joystick.button(7).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_BLUE));
+			joystick.button(8).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_RED));
 		} else {
 			SmartDashboard.putString("Operator Ctrl", "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
