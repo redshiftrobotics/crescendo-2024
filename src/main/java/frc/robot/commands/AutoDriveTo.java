@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
 public class AutoDriveTo extends Command {
@@ -56,19 +57,24 @@ public class AutoDriveTo extends Command {
 	public void execute() {
 		Pose2d position = this.drivetrain.getPosition();
 
-		double x = position.getX() - initX;
-		double y = position.getY() - initY;
+		double targetX = position.getX() - initX;
+		double targetY = position.getY() - initY;
 
-		double xSpeed = xMovePID.calculate(x, goalX);
-		double ySpeed = yMovePID.calculate(y, goalY);
+		double xSpeed = xMovePID.calculate(targetX, goalX);
+		double ySpeed = yMovePID.calculate(targetY, goalY);
 
+		SmartDashboard.putNumber("Speed X", xSpeed);
+		SmartDashboard.putNumber("Speed Y", ySpeed);
 		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
-		double maxSpeed = Math.max(Math.abs(x), Math.abs(y));
+		double maxSpeed = Math.max(Math.abs(xSpeed), Math.abs(ySpeed));
 
 		if (maxSpeed > speedLimit) {
-			xSpeed /= speedLimit * maxSpeed;
-			ySpeed /= speedLimit * maxSpeed;
+			xSpeed = (xSpeed / maxSpeed) * speedLimit;
+			ySpeed = (ySpeed / maxSpeed) * speedLimit;
 		}
+
+		SmartDashboard.putNumber("Scaled X", xSpeed);
+		SmartDashboard.putNumber("Scaled Y", ySpeed);
 
 		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, 0));
 		drivetrain.updateSmartDashboard();

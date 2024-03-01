@@ -67,7 +67,7 @@ public class AutoPosition extends Command {
 		Rotation2d rot = new Rotation2d(-(Math.PI-angle));
 		Commands.sequence(
 				new AutoRotateTo(drivetrain, rot, false)
-				//,new AutoDriveTo(drivetrain, trans)
+				,new AutoDriveTo(drivetrain, trans)
 				).schedule();
 		;
 

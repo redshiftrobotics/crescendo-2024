@@ -6,6 +6,7 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.AutoPosition;
 import frc.robot.commands.SetLightstripColor;
@@ -144,6 +145,9 @@ public class RobotContainer {
 			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
 			// drivetrain));
+
+			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+
 		} else {
 			SmartDashboard.putString("Drive Ctrl", "GamePad");
 
@@ -165,6 +169,8 @@ public class RobotContainer {
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 
 			xbox.a().whileTrue(new AutoPosition(drivetrain, vision));
+
+			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
 		}
 	}
 
