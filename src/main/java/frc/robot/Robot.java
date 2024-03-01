@@ -87,6 +87,7 @@ public class Robot extends TimedRobot {
 		}
 
 		robotContainer.setUpDriveController();
+		robotContainer.setUpOperatorController();
 	}
 
 	/** This function is called periodically during operator control. */

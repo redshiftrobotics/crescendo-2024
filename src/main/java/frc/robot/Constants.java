@@ -90,8 +90,7 @@ public final class Constants {
 		public static final double ARM_INTAKE_DEGREES = -40;
 
 		public static final int LEFT_MOTOR_ID = 5;
-		// public static final int LEFT_ENCODER_ID = 0;
-		public static final int RIGHT_MOTOR_ID = 19;
+ 		public static final int RIGHT_MOTOR_ID = 19;
 		public static final int RIGHT_ENCODER_ID = 6;
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
@@ -101,7 +100,11 @@ public final class Constants {
 		public static final double ELEVATION_PID_P = 15;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
+	}
 
+	public static class IntakeShooterConstants {
+		public static final boolean INTAKE_REVERSE = false;	
+		public static final boolean FLYWHEEL_REVERSE = false;	
 	}
 
 	public static class RobotMovementConstants {

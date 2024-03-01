@@ -15,7 +15,7 @@ import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.arm.ArmInterface;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
 import frc.robot.inputs.ChassisDriveInputs;
@@ -81,7 +81,7 @@ public class RobotContainer {
 	 * if ArmConstants.HAS_ARM is false, a dummy class implementing the arm's API is
 	 * created instead to prevent errors.
 	 */
-	private final ArmInterface arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
+	private final Arm arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
 			ArmConstants.LEFT_MOTOR_ID,
 			ArmConstants.RIGHT_MOTOR_ID,
 			ArmConstants.RIGHT_ENCODER_ID,
@@ -94,11 +94,15 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
+<<<<<<< HEAD
 	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
 	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
+=======
+	private final LightStrip lightStrip = new LightStrip(new AddressableLED(LightConstants.LED_CONTROLLER_PWM_SLOT));
+>>>>>>> e1694f74bed809833cdfab066afd87d0316debc3
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -110,6 +114,8 @@ public class RobotContainer {
 		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 0.87));
 		autoChooser.addOption("Make LEDs red", new SetLightstripColor(lightStrip, 0.61));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
+
+		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		configureBindings();
 
@@ -123,10 +129,7 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		final CommandJoystick operatorJoystick = new CommandJoystick(DriverConstants.OPERATOR_JOYSTICK_PORT);
-
 		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		drivetrain.removeDefaultCommand();
 
@@ -148,12 +151,6 @@ public class RobotContainer {
 			// joystick.button(2).onFalse(Commands.runOnce(inputs::increaseSpeedLevel));
 
 			joystick.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
-
-			// This bypasses arm remote control, arm remote control is incompatible with
-			// autonomous commands
-			operatorJoystick.button(4).onTrue(armToIntake);
-			operatorJoystick.button(5).onTrue(armToAmp);
-			operatorJoystick.button(6).onTrue(armToSpeaker);
 
 			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
@@ -179,6 +176,33 @@ public class RobotContainer {
 		}
 
 		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+	}
+
+	public void setUpOperatorController() {
+		// Create joysticks
+		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
+		final HIDType genericHIDType = genericHID.getType();
+
+		final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+		final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+		final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
+		SmartDashboard.putString("Operator Controller", genericHIDType.toString());
+
+		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
+
+			joystick.button(4).onTrue(armToIntake);
+			joystick.button(5).onTrue(armToAmp);
+			joystick.button(6).onTrue(armToSpeaker);
+		} else {
+			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+
+			xbox.rightTrigger().onTrue(armToIntake);
+			xbox.leftTrigger(5).onTrue(armToSpeaker);
+			xbox.povDown().onTrue(armToAmp);
+
+		}
 	}
 
 	/** Use this method to define your trigger->command mappings. */
