@@ -259,7 +259,7 @@ public final class Constants {
 	}
 
 	public static class LightConstants {
-		public static final int LED_CONTROLLER_PWM_SLOT = 0;
+		public static final int LED_CONTROLLER_PWM_SLOT = 1;
 		public static final int LED_QUANTITY = 60;
 	}
 }

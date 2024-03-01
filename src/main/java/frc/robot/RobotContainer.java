@@ -98,7 +98,7 @@ public class RobotContainer {
 	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
-	private final LightStrip lightStrip = new LightStrip(new AddressableLED(LightConstants.LED_CONTROLLER_PWM_SLOT));
+	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -107,7 +107,7 @@ public class RobotContainer {
 		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
 		autoChooser.addOption("Forward", Autos.driveAuto(drivetrain, +1));
 		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
-		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 0, 0, 200));
+		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 94));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();

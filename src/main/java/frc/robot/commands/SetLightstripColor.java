@@ -3,31 +3,26 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LightStrip;
 
-
 public class SetLightstripColor extends Command {
 	private LightStrip lightStrip;
 
-	private int r;
-	private int g;
-	private int b;
+	private int pattern;
 
 	/**
 	 * Set the color of the robot's lightstrip
+	 * 
 	 * @param lightStrip The lightstrip you want to use (there should only be ONE)
-	 * @param r Red level
-	 * @param g Green level
-	 * @param b Blue level
+	 * @param pattern    Pattern
 	 */
-	public SetLightstripColor(LightStrip lightStrip, int r, int g, int b) {
+	public SetLightstripColor(LightStrip lightStrip, int pattern) {
 		this.lightStrip = lightStrip;
-		this.r = r;
-		this.g = g;
-		this.b = b;
+		this.pattern = pattern;
 	}
 
 	@Override
 	public void initialize() {
-		lightStrip.setColor(r, g, b);
+		System.out.println("*** Command: Selecting pattern " + pattern);
+		lightStrip.setPattern(pattern);
 	}
 
 	@Override
