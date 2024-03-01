@@ -6,10 +6,8 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.AutoPosition;
-import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.LightStrip;
@@ -167,9 +165,6 @@ public class RobotContainer {
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 
 			xbox.a().whileTrue(new AutoPosition(drivetrain, vision));
-		}
-
-			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
 		}
 	}
 
