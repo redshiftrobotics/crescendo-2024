@@ -22,7 +22,6 @@ import frc.robot.inputs.ChassisDriveInputs;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -94,15 +93,11 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
-<<<<<<< HEAD
 	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
 	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
-=======
-	private final LightStrip lightStrip = new LightStrip(new AddressableLED(LightConstants.LED_CONTROLLER_PWM_SLOT));
->>>>>>> e1694f74bed809833cdfab066afd87d0316debc3
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
