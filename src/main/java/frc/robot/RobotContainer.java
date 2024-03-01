@@ -111,6 +111,7 @@ public class RobotContainer {
 		configureBindings();
 
 		setUpDriveController();
+		setUpOperatorController();
 
 		PortForwarder.add(5800, "photonvision.local", 5800);
 	}
@@ -120,16 +121,16 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-
 		drivetrain.removeDefaultCommand();
 
-		ChassisDriveInputs inputs;
+		if (genericHIDType == null) {
+			SmartDashboard.putString("Drive Ctrl", "No Connection");
+		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+			SmartDashboard.putString("Drive Ctrl", "Joystick");
 
-		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
-			inputs = new ChassisDriveInputs(
+			ChassisDriveInputs inputs = new ChassisDriveInputs(
 					joystick::getX, -1,
 					joystick::getY, -1,
 					joystick::getTwist, -1,
@@ -147,9 +148,11 @@ public class RobotContainer {
 			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
 			// drivetrain));
 		} else {
+			SmartDashboard.putString("Drive Ctrl", "GamePad");
+
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
-			inputs = new ChassisDriveInputs(
+			ChassisDriveInputs inputs = new ChassisDriveInputs(
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
@@ -160,33 +163,38 @@ public class RobotContainer {
 			// drivetrain));
 
 			xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
-			xbox.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
+			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 			xbox.a().whileTrue(new AimAtTag(drivetrain, vision, 1, inputs));
-		}
 
-		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+		}
 	}
 
 	public void setUpOperatorController() {
 		// Create joysticks
-		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
+		final GenericHID genericHID = new GenericHID(DriverConstants.OPERATOR_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
 		final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
 		final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 		final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
-		SmartDashboard.putString("Operator Controller", genericHIDType.toString());
+		if (genericHIDType == null) {
+			SmartDashboard.putString("Operator Ctrl", "No Connection");
 
-		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+			SmartDashboard.putString("Operator Ctrl", "Joystick");
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
 			joystick.button(4).onTrue(armToIntake);
 			joystick.button(5).onTrue(armToAmp);
 			joystick.button(6).onTrue(armToSpeaker);
 		} else {
+			SmartDashboard.putString("Operator Ctrl", "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
 			xbox.rightTrigger().onTrue(armToIntake);

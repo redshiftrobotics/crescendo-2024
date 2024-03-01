@@ -48,9 +48,8 @@ public final class Constants {
 	}
 
 	public static class DriverConstants {
-		public static final int DRIVER_JOYSTICK_PORT = 0;
-
-		public static final int OPERATOR_JOYSTICK_PORT = 1;
+		public static final int DRIVER_JOYSTICK_PORT = 1;
+		public static final int OPERATOR_JOYSTICK_PORT = 0;
 
 		public static final double DEAD_ZONE = 0.25;
 

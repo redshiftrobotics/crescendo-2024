@@ -20,7 +20,6 @@ public abstract class Arm extends SubsystemBase {
 
 	public abstract Rotation2d getArmPosition();
 
-
 	public void setArmToAmpPosition() {
 		setSetpoint(ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 	}

@@ -13,8 +13,8 @@ public class DummyArm extends Arm {
 
 	@Override
 	public void setSetpoint(double degrees) {
-		SmartDashboard.putNumber("Arm Setpoint Degrees", degrees);
-		SmartDashboard.putNumber("Arm Degrees", degrees);
+		SmartDashboard.putNumber("Arm SP Deg", degrees);
+		SmartDashboard.putNumber("Arm Deg", degrees);
 
 		armPosition = Rotation2d.fromDegrees(degrees);
 	}

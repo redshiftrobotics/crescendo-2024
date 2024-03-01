@@ -53,7 +53,7 @@ public class RealArm extends Arm {
 		degrees = Math.max(degrees, ArmConstants.MINIMUM_ARM_DEGREES);
 		degrees = Math.min(degrees, ArmConstants.MAXIMUM_ARM_DEGREES);
 
-		SmartDashboard.putNumber("Arm Setpoint Degrees", degrees);
+		SmartDashboard.putNumber("Arm SP Deg", degrees);
 
 		armRaisePIDController.setSetpoint(Units.degreesToRotations(degrees));
 	}
@@ -80,7 +80,6 @@ public class RealArm extends Arm {
 		leftArmMotor.set(armSpeed);
 		rightArmMotor.set(armSpeed);
 
-		SmartDashboard.putNumber("Arm Speed", armSpeed);
-		SmartDashboard.putNumber("Arm Degrees", currentOnPosition.getDegrees());
+		SmartDashboard.putNumber("Arm Deg", currentOnPosition.getDegrees());
 	}
 }
