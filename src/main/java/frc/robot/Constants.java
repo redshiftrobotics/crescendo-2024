@@ -47,6 +47,18 @@ public final class Constants {
 		}
 	}
 
+	public static class HangConstants {
+		public static int leftMotorID = 0;
+		public static int rightMotorID = 1;
+		public static int limitSwitchID = 2;
+
+		public static boolean leftMotorIsInverted = false;
+		public static boolean rightMotorIsInverted = false;
+
+		public static double speed = 0.2;
+
+	}
+
 	public static class DriverConstants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 
@@ -90,7 +102,7 @@ public final class Constants {
 		public static final double ARM_INTAKE_DEGREES = -40;
 
 		public static final int LEFT_MOTOR_ID = 5;
- 		public static final int RIGHT_MOTOR_ID = 19;
+		public static final int RIGHT_MOTOR_ID = 19;
 		public static final int RIGHT_ENCODER_ID = 6;
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
@@ -103,8 +115,8 @@ public final class Constants {
 	}
 
 	public static class IntakeShooterConstants {
-		public static final boolean INTAKE_REVERSE = false;	
-		public static final boolean FLYWHEEL_REVERSE = false;	
+		public static final boolean INTAKE_REVERSE = false;
+		public static final boolean FLYWHEEL_REVERSE = false;
 	}
 
 	public static class RobotMovementConstants {

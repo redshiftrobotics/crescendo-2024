@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.LightConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
@@ -9,6 +10,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.SetHangSpeed;
 import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.LightStrip;
@@ -19,6 +21,7 @@ import frc.robot.subsystems.arm.ArmInterface;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
 import frc.robot.inputs.ChassisDriveInputs;
+import frc.robot.subsystems.Hang;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -86,6 +89,9 @@ public class RobotContainer {
 			ArmConstants.RIGHT_MOTOR_ID,
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
+
+	private final Hang hang = new Hang(HangConstants.leftMotorID, HangConstants.rightMotorID,
+			HangConstants.leftMotorIsInverted, HangConstants.rightMotorIsInverted, HangConstants.limitSwitchID);
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
@@ -178,6 +184,10 @@ public class RobotContainer {
 		final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 		final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
+		final SetHangSpeed hangStop = new SetHangSpeed(hang, 0);
+		final SetHangSpeed hangForwarSpeed = new SetHangSpeed(hang, HangConstants.speed);
+		final SetHangSpeed hangBackwardSpeed = new SetHangSpeed(hang, -HangConstants.speed);
+
 		SmartDashboard.putString("Operator Controller", genericHIDType.toString());
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
@@ -186,12 +196,20 @@ public class RobotContainer {
 			joystick.button(4).onTrue(armToIntake);
 			joystick.button(5).onTrue(armToAmp);
 			joystick.button(6).onTrue(armToSpeaker);
+
+			joystick.button(7).or(joystick.button(8)).whileFalse(hangStop);
+			joystick.button(7).onTrue(hangForwarSpeed);
+			joystick.button(8).onTrue(hangBackwardSpeed);
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
-			xbox.rightTrigger().onTrue(armToIntake);
-			xbox.leftTrigger(5).onTrue(armToSpeaker);
-			xbox.povDown().onTrue(armToAmp);
+			xbox.povDown().onTrue(armToIntake);
+			xbox.povUp().onTrue(armToSpeaker);
+			xbox.povLeft().onTrue(armToAmp);
+
+			xbox.rightBumper().or(xbox.leftBumper()).whileFalse(hangStop);
+			xbox.rightBumper().onTrue(hangForwarSpeed);
+			xbox.leftBumper().onTrue(hangBackwardSpeed);
 
 		}
 	}
