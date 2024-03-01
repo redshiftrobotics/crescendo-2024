@@ -1,23 +1,27 @@
 package frc.robot.subsystems.arm;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This is a dummy stand in class that represents the arm, in the event that the
  * robot does not have an arm in order to prevent errors.
  */
-public class DummyArm extends SubsystemBase implements ArmInterface {
-	public void setArmToAmpPosition() {
+public class DummyArm extends Arm {
+
+	private Rotation2d armPosition = new Rotation2d();
+
+	@Override
+	public void setSetpoint(double degrees) {
+		SmartDashboard.putNumber("Arm Setpoint Degrees", degrees);
+		SmartDashboard.putNumber("Arm Degrees", degrees);
+
+		armPosition = Rotation2d.fromDegrees(degrees);
 	}
 
-	public void setArmToSpeakerPosition() {
-	}
-
-	public void setArmToIntakePosition() {
-	}
-
-	public void setSetpoint(double degree) {
-		System.out.println(degree);
+	@Override
+	public Rotation2d getArmPosition() {
+		return armPosition;
 	}
 
 	public boolean isAtDesiredPosition() {
