@@ -6,9 +6,10 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
-import frc.robot.commands.AutoPosition;
 import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.LightStrip;
@@ -30,7 +31,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -164,9 +164,8 @@ public class RobotContainer {
 			// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates,
 			// drivetrain));
 
-			// xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
-
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
@@ -181,9 +180,11 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.OPERATOR_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
-		final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
-		final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+		final Command armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+		final Command armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+		final Command armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
+		final Command cancelCommand = new CancelCommands(drivetrain, arm);
 
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Operator Ctrl", "No Connection");
@@ -206,6 +207,7 @@ public class RobotContainer {
 			xbox.leftTrigger(5).onTrue(armToSpeaker);
 			xbox.povDown().onTrue(armToAmp);
 
+			xbox.b().onTrue(cancelCommand);
 		}
 	}
 
