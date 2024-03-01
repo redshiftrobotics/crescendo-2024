@@ -40,9 +40,9 @@ public class AimAtTag extends Command {
 		this.chassisDriveInputs = chassisDriveInputs;
 
 		rotatePID = new PIDController(
-				2,
-				0,
-				0);
+				RobotMovementConstants.ROTATION_PID_P,
+				RobotMovementConstants.ROTATION_PID_I,
+				RobotMovementConstants.ROTATION_PID_D);
 		rotatePID.enableContinuousInput(-1, 1);
 		rotatePID.setTolerance(Units.radiansToDegrees(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS));
 		rotatePID.setSetpoint(0);
@@ -85,7 +85,7 @@ public class AimAtTag extends Command {
 		}
 		double rotateSpeed = rotatePID.calculate(tagYawRadians);
 
-		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotateSpeed);
+		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -rotateSpeed);
 
 		drivetrain.setDesiredState(desiredSpeeds, false, true);
 

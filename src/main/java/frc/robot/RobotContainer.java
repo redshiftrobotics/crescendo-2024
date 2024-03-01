@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.LightConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
@@ -9,11 +10,13 @@ import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.AutoPosition;
 import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.arm.ArmInterface;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
 import frc.robot.inputs.ChassisDriveInputs;
@@ -78,7 +81,7 @@ public class RobotContainer {
 	 * if ArmConstants.HAS_ARM is false, a dummy class implementing the arm's API is
 	 * created instead to prevent errors.
 	 */
-	private final ArmInterface arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
+	private final Arm arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
 			ArmConstants.LEFT_MOTOR_ID,
 			ArmConstants.RIGHT_MOTOR_ID,
 			ArmConstants.RIGHT_ENCODER_ID,
@@ -91,20 +94,23 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
-	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
-	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
-	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
+		autoChooser.addOption("Forward", Autos.driveAuto(drivetrain, +1));
+		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
+
+		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		configureBindings();
 
 		setUpDriveController();
+		setUpOperatorController();
 
 		PortForwarder.add(5800, "photonvision.local", 5800);
 	}
@@ -114,19 +120,16 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		final CommandJoystick operatorJoystick = new CommandJoystick(DriverConstants.OPERATOR_JOYSTICK_PORT);
-
-		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
-
 		drivetrain.removeDefaultCommand();
 
-		ChassisDriveInputs inputs;
+		if (genericHIDType == null) {
+			SmartDashboard.putString("Drive Ctrl", "No Connection");
+		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+			SmartDashboard.putString("Drive Ctrl", "Joystick");
 
-		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
-			inputs = new ChassisDriveInputs(
+			ChassisDriveInputs inputs = new ChassisDriveInputs(
 					joystick::getX, -1,
 					joystick::getY, -1,
 					joystick::getTwist, -1,
@@ -134,24 +137,21 @@ public class RobotContainer {
 
 			joystick.button(1).onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 			// joystick.button(1).onFalse(Commands.runOnce(inputs::decreaseSpeedLevel));
-			
+
 			joystick.button(2).onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			// joystick.button(2).onFalse(Commands.runOnce(inputs::increaseSpeedLevel));
-			
+
 			joystick.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			// This bypasses arm remote control, arm remote control is incompatible with
-			// autonomous commands
-			operatorJoystick.button(4).onTrue(armToIntake);
-			operatorJoystick.button(5).onTrue(armToAmp);
-			operatorJoystick.button(6).onTrue(armToSpeaker);
-
 			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
+			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
+			// drivetrain));
 		} else {
+			SmartDashboard.putString("Drive Ctrl", "GamePad");
+
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
-			inputs = new ChassisDriveInputs(
+			ChassisDriveInputs inputs = new ChassisDriveInputs(
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
@@ -162,13 +162,48 @@ public class RobotContainer {
 			// drivetrain));
 
 			xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
-			xbox.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
 			xbox.a().whileTrue(new AutoPosition(drivetrain, vision));
 		}
 
-		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+		}
+	}
+
+	public void setUpOperatorController() {
+		// Create joysticks
+		final GenericHID genericHID = new GenericHID(DriverConstants.OPERATOR_JOYSTICK_PORT);
+		final HIDType genericHIDType = genericHID.getType();
+
+		final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+		final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+		final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
+		if (genericHIDType == null) {
+			SmartDashboard.putString("Operator Ctrl", "No Connection");
+
+		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+			SmartDashboard.putString("Operator Ctrl", "Joystick");
+			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
+
+			joystick.button(4).onTrue(armToIntake);
+			joystick.button(5).onTrue(armToAmp);
+			joystick.button(6).onTrue(armToSpeaker);
+
+			joystick.button(7).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_BLUE));
+			joystick.button(8).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_RED));
+		} else {
+			SmartDashboard.putString("Operator Ctrl", "GamePad");
+			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+
+			xbox.rightTrigger().onTrue(armToIntake);
+			xbox.leftTrigger(5).onTrue(armToSpeaker);
+			xbox.povDown().onTrue(armToAmp);
+
+		}
 	}
 
 	/** Use this method to define your trigger->command mappings. */

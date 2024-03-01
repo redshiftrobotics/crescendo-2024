@@ -48,9 +48,8 @@ public final class Constants {
 	}
 
 	public static class DriverConstants {
-		public static final int DRIVER_JOYSTICK_PORT = 0;
-
-		public static final int OPERATOR_JOYSTICK_PORT = 1;
+		public static final int DRIVER_JOYSTICK_PORT = 1;
+		public static final int OPERATOR_JOYSTICK_PORT = 0;
 
 		public static final double DEAD_ZONE = 0.25;
 
@@ -90,8 +89,7 @@ public final class Constants {
 		public static final double ARM_INTAKE_DEGREES = -40;
 
 		public static final int LEFT_MOTOR_ID = 5;
-		// public static final int LEFT_ENCODER_ID = 0;
-		public static final int RIGHT_MOTOR_ID = 19;
+ 		public static final int RIGHT_MOTOR_ID = 19;
 		public static final int RIGHT_ENCODER_ID = 6;
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
@@ -101,11 +99,15 @@ public final class Constants {
 		public static final double ELEVATION_PID_P = 15;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
+	}
 
+	public static class IntakeShooterConstants {
+		public static final boolean INTAKE_REVERSE = false;	
+		public static final boolean FLYWHEEL_REVERSE = false;	
 	}
 
 	public static class RobotMovementConstants {
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(0.0001);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(6);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 
 		public static final double ROTATION_PID_P = 5;
@@ -115,6 +117,7 @@ public final class Constants {
 		public static final double TRANSLATION_PID_P = 30;
 		public static final double TRANSLATION_PID_I = 0.5;
 		public static final double TRANSLATION_PID_D = 15;
+		public static final double MAX_TRANSLATION_SPEED = 0.2;
 	}
 
 	public static class OperatorConstants {
@@ -260,5 +263,19 @@ public final class Constants {
 
 		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d());
 		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+	}
+
+	public static class LightConstants {
+		public static final int LED_CONTROLLER_PWM_SLOT = 1;
+		public static final int LED_QUANTITY = 60;
+
+		public static final double LED_COLOR_RED = 0.61;
+		public static final double LED_COLOR_ORANGE = 0.65;
+		public static final double LED_COLOR_YELLOW = 0.69;
+		public static final double LED_COLOR_GREEN = 0.77;
+		public static final double LED_COLOR_BLUE = 0.87;
+		public static final double LED_COLOR_PURPLE = 0.91;
+		public static final double LED_COLOR_WHITE = 0.93;
+		public static final double LED_COLOR_RAINBOW = -0.99;
 	}
 }
