@@ -15,7 +15,7 @@ import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.arm.ArmInterface;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
 import frc.robot.inputs.ChassisDriveInputs;
@@ -81,7 +81,7 @@ public class RobotContainer {
 	 * if ArmConstants.HAS_ARM is false, a dummy class implementing the arm's API is
 	 * created instead to prevent errors.
 	 */
-	private final ArmInterface arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
+	private final Arm arm = Constants.ArmConstants.HAS_ARM ? new RealArm(
 			ArmConstants.LEFT_MOTOR_ID,
 			ArmConstants.RIGHT_MOTOR_ID,
 			ArmConstants.RIGHT_ENCODER_ID,

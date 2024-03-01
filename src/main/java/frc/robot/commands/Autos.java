@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveDrivetrain;
-import frc.robot.subsystems.arm.ArmInterface;
+import frc.robot.subsystems.arm.Arm;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +25,7 @@ public final class Autos {
 	}
 
 	/** Linden did this */
-	public static Command startingAuto(ArmInterface arm, SwerveDrivetrain drivetrain, boolean invertY) {
+	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, boolean invertY) {
 
 		// assumes start position in corner
 		double invert = 1;
