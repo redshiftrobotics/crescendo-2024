@@ -63,10 +63,13 @@ public final class Constants {
         public static final double[] maxSpeedOptionsRotation = {0.1, 0.75, 1};
     }
 
-    public static class HangerContstants {
+    public static class HangerConstants {
         public static final double HANGER_PID_P = 0;
         public static final double HANGER_PID_I = 0;
         public static final double HANGER_PID_D = 0;
+
+        public static final double HANGER_MOTOR_P = 0.3;
+        public static final double HANGER_MOTOR_N = -0.3;
     }
     
     public static class RobotMovementConstants {

@@ -6,24 +6,49 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.HangerConstants;
 
 
 public class Hanger extends SubsystemBase {
     
-    private final CANSparkMax hangerMotor;
-    private final CANcoder hangerEncoder;
+    private final CANSparkMax hangerMotorL;
+    private final CANSparkMax hangerMotorR;
+    private final CANcoder hangerEncoderL;
+    private final CANcoder hangerEncoderR;
     private final PIDController hangerPIDController;
-    private final StatusSignal<Double> hangerPosition;
+    private final StatusSignal<Double> hangerPositionL;
+    private final StatusSignal<Double> hangerPositionR;
+    private final DigitalInput magnet;
     
-    public Hanger(int hangerMotorID, int hangerEncoderID, int HANGER_PID_P, int HANGER_PID_I, int HANGER_PID_D) {
+    public Hanger(int hangerMotorLID, int hangerMotorRID, int hangerEncoderLID, int hangerEncoderRID, int HANGER_PID_P, int HANGER_PID_I, int HANGER_PID_D) {
 
-        hangerMotor = new CANSparkMax(hangerMotorID, MotorType.kBrushless);
-        hangerEncoder = new CANcoder(hangerEncoderID);
+        hangerMotorL = new CANSparkMax(hangerMotorLID, MotorType.kBrushless);
+        hangerMotorR = new CANSparkMax(hangerMotorRID, MotorType.kBrushless);
+        hangerEncoderL = new CANcoder(hangerEncoderLID);
+        hangerEncoderR = new CANcoder(hangerEncoderRID);
+        DigitalInput magnet = new DigitalInput(0);
 
         hangerPIDController = new PIDController(HANGER_PID_P, HANGER_PID_I, HANGER_PID_D);
 
-        hangerPosition = hangerEncoder.getAbsolutePosition();
+        hangerPositionL = hangerEncoderL.getAbsolutePosition();
+        hangerPositionR = hangerEncoderR.getAbsolutePosition();
+    }
+
+    public void extendRope() {
+        hangerMotorL.set(HangerConstants.HANGER_MOTOR_N);
+    }
+
+    public void intakeRope() {
+        if (magnet.get()) {
+            hangerMotorL.set(0);
+            hangerMotorR.set(0);
+        }
+        else {
+            hangerMotorL.set(HangerConstants.HANGER_MOTOR_P);
+            hangerMotorR.set(HangerConstants.HANGER_MOTOR_P);
+        }
     }
 
     @Override

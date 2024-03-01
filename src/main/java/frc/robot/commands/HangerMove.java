@@ -67,6 +67,6 @@ public class HangerMove extends Command {
      */
     @Override
     public void end(boolean interrupted) {
-        hangerMotor.stop();
+        hangerMotorL.stop();
     }
 }
