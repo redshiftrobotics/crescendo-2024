@@ -106,8 +106,6 @@ public class RobotContainer {
 		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
 		autoChooser.addOption("Forward", Autos.driveAuto(drivetrain, +1));
 		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
-		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 0.87));
-		autoChooser.addOption("Make LEDs red", new SetLightstripColor(lightStrip, 0.61));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -190,6 +188,9 @@ public class RobotContainer {
 			joystick.button(4).onTrue(armToIntake);
 			joystick.button(5).onTrue(armToAmp);
 			joystick.button(6).onTrue(armToSpeaker);
+
+			joystick.button(7).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_BLUE));
+			joystick.button(8).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_RED));
 		} else {
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
