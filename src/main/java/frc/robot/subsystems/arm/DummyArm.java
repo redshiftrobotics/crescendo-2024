@@ -7,10 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * robot does not have an arm in order to prevent errors.
  */
 public class DummyArm extends SubsystemBase implements ArmInterface {
-	public void changeArmAngleDegreesBy(double desiredDegrees) {
-		System.out.println(desiredDegrees);
-	}
-
 	public void setArmToAmpPosition() {
 	}
 

@@ -55,21 +55,6 @@ public class RealArm extends SubsystemBase implements ArmInterface {
 
 	}
 
-	// public void setArmAngleDegrees(double desiredDegree) {
-	// //maximum should ALWAYS be a greater value then minimum
-	// if (desiredDegree < ArmConstants.MAXIMUM_ARM_DEGREES ||
-	// ArmConstants.MINIMUM_ARM_DEGREES > desiredDegree) {
-	// armRotation2d = Rotation2d.fromDegrees(desiredDegree);
-	// }
-	// }
-
-	public void changeArmAngleDegreesBy(double desiredDegrees) {
-		if (armSetpoint.getDegrees() < ArmConstants.MAXIMUM_ARM_DEGREES
-				|| ArmConstants.MINIMUM_ARM_DEGREES > armSetpoint.getDegrees()) {
-			armSetpoint = Rotation2d.fromDegrees(armSetpoint.getDegrees() + desiredDegrees);
-		}
-	}
-
 	public void setArmToAmpPosition() {
 		armSetpoint = Rotation2d.fromDegrees(ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 	}

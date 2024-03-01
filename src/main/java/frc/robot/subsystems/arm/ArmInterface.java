@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  * RealArm (formerly known as Arm) class.
  */
 public interface ArmInterface extends Subsystem {
-	public void changeArmAngleDegreesBy(double desiredDegrees);
-
 	public void setArmToAmpPosition();
 
 	public void setArmToSpeakerPosition();
