@@ -58,17 +58,16 @@ public class AutoPosition extends Command {
 		if (dist3d == null) {
 			return;
 		}
+
 		double angle = dist3d.getRotation().getZ();
-		Translation2d trans = new Translation2d(dist3d.getY() - AutoConstants.PREFERRED_TAG_DISTANCE * Math.cos(angle),
-				dist3d.getX() - AutoConstants.PREFERRED_TAG_DISTANCE * Math.sin(angle));
+		Translation2d trans = new Translation2d(
+				dist3d.getX() - 0.5, dist3d.getY());
 		SmartDashboard.putNumber("ANGLE", angle);
-		SmartDashboard.putNumber("Y", trans.getY());
-		SmartDashboard.putNumber("X", trans.getX());
-		Rotation2d rot = new Rotation2d(-(Math.PI-angle));
+		SmartDashboard.putNumber("tr X", trans.getX());
+		SmartDashboard.putNumber("tr Y", trans.getY());
+		Rotation2d rot = new Rotation2d(-(Math.PI - angle));
 		Commands.sequence(
-				new AutoRotateTo(drivetrain, rot, false)
-				,new AutoDriveTo(drivetrain, trans)
-				).schedule();
+				new AutoRotateTo(drivetrain, rot, false), new AutoDriveTo(drivetrain, trans)).schedule();
 		;
 
 	}

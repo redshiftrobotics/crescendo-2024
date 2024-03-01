@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -163,12 +164,15 @@ public class RobotContainer {
 			// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates,
 			// drivetrain));
 
-			xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			// xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 
-			xbox.a().whileTrue(new AutoPosition(drivetrain, vision));
+			var autoPosition = new AutoPosition(drivetrain, vision);
+			xbox.a().onTrue(autoPosition);
+			// xbox.a().onTrue(autoPosition);
+			xbox.b().onTrue(new InstantCommand(() -> drivetrain.getCurrentCommand().cancel(), drivetrain));
 
 			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
 		}
