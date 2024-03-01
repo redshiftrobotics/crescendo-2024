@@ -48,8 +48,8 @@ public final class Constants {
 	}
 
 	public static class DriverConstants {
-		public static final int DRIVER_JOYSTICK_PORT = 1;
-		public static final int OPERATOR_JOYSTICK_PORT = 0;
+		public static final int DRIVER_JOYSTICK_PORT = 0;
+		public static final int OPERATOR_JOYSTICK_PORT = 1;
 
 		public static final double DEAD_ZONE = 0.25;
 
@@ -254,9 +254,14 @@ public final class Constants {
 		public static final double MODULE_LOCATION_X;
 	}
 
+	public static class AutoConstants {
+		// preffered distance to tag, specifically for autopositioning the robot to in front of the tag
+		public static final double PREFERRED_TAG_DISTANCE=2;
+	}
+
 	public static class VisionConstants {
 
-		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d());
+		public static final Transform3d CAMERA_POSE = new Transform3d(0, 0, 0, new Rotation3d());
 		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 	}
 

@@ -6,9 +6,9 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.AimAtTag;
-import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.ArmRotateTo;
+import frc.robot.commands.AutoPosition;
 import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.LightStrip;
@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -145,6 +146,9 @@ public class RobotContainer {
 			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
 			// drivetrain));
+
+			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+
 		} else {
 			SmartDashboard.putString("Drive Ctrl", "GamePad");
 
@@ -160,7 +164,7 @@ public class RobotContainer {
 			// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates,
 			// drivetrain));
 
-			xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
+			// xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
@@ -218,3 +222,4 @@ public class RobotContainer {
 		return autoChooser.getSelected();
 	}
 }
+;
