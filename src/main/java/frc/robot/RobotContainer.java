@@ -107,7 +107,8 @@ public class RobotContainer {
 		autoChooser.addOption("Rotate by 90", Autos.rotateTestAuto(drivetrain, 90, false));
 		autoChooser.addOption("Forward", Autos.driveAuto(drivetrain, +1));
 		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
-		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 94));
+		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 0.87));
+		autoChooser.addOption("Make LEDs red", new SetLightstripColor(lightStrip, 0.61));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		configureBindings();

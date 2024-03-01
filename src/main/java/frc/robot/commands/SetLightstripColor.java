@@ -6,7 +6,7 @@ import frc.robot.subsystems.LightStrip;
 public class SetLightstripColor extends Command {
 	private LightStrip lightStrip;
 
-	private int pattern;
+	private double pattern;
 
 	/**
 	 * Set the color of the robot's lightstrip
@@ -14,7 +14,7 @@ public class SetLightstripColor extends Command {
 	 * @param lightStrip The lightstrip you want to use (there should only be ONE)
 	 * @param pattern    Pattern
 	 */
-	public SetLightstripColor(LightStrip lightStrip, int pattern) {
+	public SetLightstripColor(LightStrip lightStrip, double pattern) {
 		this.lightStrip = lightStrip;
 		this.pattern = pattern;
 	}
