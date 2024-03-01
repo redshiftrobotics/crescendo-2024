@@ -261,5 +261,14 @@ public final class Constants {
 	public static class LightConstants {
 		public static final int LED_CONTROLLER_PWM_SLOT = 1;
 		public static final int LED_QUANTITY = 60;
+
+		public static final double LED_COLOR_RED = 0.61;
+		public static final double LED_COLOR_ORANGE = 0.65;
+		public static final double LED_COLOR_YELLOW = 0.69;
+		public static final double LED_COLOR_GREEN = 0.77;
+		public static final double LED_COLOR_BLUE = 0.87;
+		public static final double LED_COLOR_PURPLE = 0.91;
+		public static final double LED_COLOR_WHITE = 0.93;
+		public static final double LED_COLOR_RAINBOW = -0.99;
 	}
 }
