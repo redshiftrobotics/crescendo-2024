@@ -94,10 +94,6 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
-	private final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
-	private final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
-	private final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
-
 	private final LightStrip lightStrip = new LightStrip(new AddressableLED(LightConstants.LED_CONTROLLER_PWM_SLOT));
 
 	/**
@@ -109,6 +105,8 @@ public class RobotContainer {
 		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, -1));
 		autoChooser.addOption("Make LEDs blue", new SetLightstripColor(lightStrip, 0, 0, 200));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
+
+		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		configureBindings();
 
@@ -122,10 +120,7 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		final CommandJoystick operatorJoystick = new CommandJoystick(DriverConstants.OPERATOR_JOYSTICK_PORT);
-
 		SmartDashboard.putString("Drive Controller", genericHIDType.toString());
-		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		drivetrain.removeDefaultCommand();
 
@@ -147,12 +142,6 @@ public class RobotContainer {
 			// joystick.button(2).onFalse(Commands.runOnce(inputs::increaseSpeedLevel));
 
 			joystick.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
-
-			// This bypasses arm remote control, arm remote control is incompatible with
-			// autonomous commands
-			operatorJoystick.button(4).onTrue(armToIntake);
-			operatorJoystick.button(5).onTrue(armToAmp);
-			operatorJoystick.button(6).onTrue(armToSpeaker);
 
 			// joystick.button(9).onTrue(Commands.run(drivetrain::brakeMode, drivetrain));
 			// joystick.button(10).onTrue(Commands.run(drivetrain::toDefaultStates,
@@ -178,6 +167,33 @@ public class RobotContainer {
 		}
 
 		drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+	}
+
+	public void setUpOperatorController() {
+		// Create joysticks
+		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
+		final HIDType genericHIDType = genericHID.getType();
+
+		final ArmRotateTo armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+		final ArmRotateTo armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+		final ArmRotateTo armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
+		SmartDashboard.putString("Operator Controller", genericHIDType.toString());
+
+		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
+
+			joystick.button(4).onTrue(armToIntake);
+			joystick.button(5).onTrue(armToAmp);
+			joystick.button(6).onTrue(armToSpeaker);
+		} else {
+			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+
+			xbox.rightTrigger().onTrue(armToIntake);
+			xbox.leftTrigger(5).onTrue(armToSpeaker);
+			xbox.povDown().onTrue(armToAmp);
+
+		}
 	}
 
 	/** Use this method to define your trigger->command mappings. */
