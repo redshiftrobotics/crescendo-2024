@@ -144,9 +144,13 @@ public final class Constants {
 
 		public static final boolean HAS_INTAKE;
 
+		public static final double WHEEL_SPEED_AMP = .2;
+		public static final double WHEEL_SPEED_SPEAKER = .5;
 		public static final boolean INTAKE_REVERSE = false;
 		public static final boolean FLYWHEEL_REVERSE = false;
 
+		public static final double FLYWHEEL_SPEED_AMP = .2;
+		public static final double FLYWHEEL_SPEED_SPEAKER = .5;
 		public static final int FLYWHEEL_MOTOR_LEFT_ID = 1;
 		public static final int FLYWHEEL_MOTOR_RIGHT_ID = 2;
 		public static final int INTAKE_MOTOR_LEFT_ID = 3;
