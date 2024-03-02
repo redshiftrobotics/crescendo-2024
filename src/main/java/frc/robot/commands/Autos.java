@@ -47,12 +47,26 @@ public final class Autos {
 				new AutoRotateTo(drivetrain, new Rotation2d(Math.PI / -2 * invert)));
 	}
 
-	public static Command DropInAmp(Arm arm, IntakeShooter shooter) {
+	public static Command dropInAmp(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
-				new SpinIntakeFlywheels(shooter, Constants.IntakeShooterConstants.FLYWHEEL_SPEED_AMP),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_AMP_SHOOTING_DEGREES),
+				new SpinIntakeFlywheels(shooter, Constants.IntakeShooterConstants.FLYWHEEL_SPEED_AMP),
 				new WaitCommand(1),
-				new SpinIntakeWheels(shooter, Constants.IntakeShooterConstants.WHEEL_SPEED_AMP));
+				new SpinIntakeWheels(shooter, Constants.IntakeShooterConstants.WHEEL_SPEED_AMP),
+				new WaitCommand(1),
+				new SpinIntakeFlywheels(shooter, 0),
+				new SpinIntakeWheels(shooter, 0));
+	}
+
+	public static Command dropInSpeaker(Arm arm, IntakeShooter shooter) {
+		return Commands.sequence(
+				new ArmRotateTo(arm, Constants.ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
+				new SpinIntakeFlywheels(shooter, Constants.IntakeShooterConstants.FLYWHEEL_SPEED_SPEAKER),
+				new WaitCommand(1),
+				new SpinIntakeWheels(shooter, Constants.IntakeShooterConstants.WHEEL_SPEED_SPEAKER),
+				new WaitCommand(1),
+				new SpinIntakeFlywheels(shooter, 0),
+				new SpinIntakeWheels(shooter, 0));
 	}
 
 	/*

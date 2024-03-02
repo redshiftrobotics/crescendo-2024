@@ -56,7 +56,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_HANG = true;
+					HAS_HANG = false;
 					break;
 			}
 		}
