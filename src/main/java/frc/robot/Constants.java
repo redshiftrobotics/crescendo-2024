@@ -89,7 +89,7 @@ public final class Constants {
 		public static final double ARM_INTAKE_DEGREES = -40;
 
 		public static final int LEFT_MOTOR_ID = 5;
- 		public static final int RIGHT_MOTOR_ID = 19;
+		public static final int RIGHT_MOTOR_ID = 19;
 		public static final int RIGHT_ENCODER_ID = 6;
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
@@ -102,8 +102,13 @@ public final class Constants {
 	}
 
 	public static class IntakeShooterConstants {
-		public static final boolean INTAKE_REVERSE = false;	
-		public static final boolean FLYWHEEL_REVERSE = false;	
+		public static final boolean INTAKE_REVERSE = false;
+		public static final boolean FLYWHEEL_REVERSE = false;
+
+		public static final int FLYWHEEL_MOTOR_LEFT_ID = 1;
+		public static final int FLYWHEEL_MOTOR_RIGHT_ID = 2;
+		public static final int INTAKE_MOTOR_LEFT_ID = 3;
+		public static final int INTAKE_MOTOR_RIGHT_ID = 4;
 	}
 
 	public static class RobotMovementConstants {
@@ -255,8 +260,9 @@ public final class Constants {
 	}
 
 	public static class AutoConstants {
-		// preffered distance to tag, specifically for autopositioning the robot to in front of the tag
-		public static final double PREFERRED_TAG_DISTANCE=2;
+		// preffered distance to tag, specifically for autopositioning the robot to in
+		// front of the tag
+		public static final double PREFERRED_TAG_DISTANCE = 2;
 	}
 
 	public static class VisionConstants {

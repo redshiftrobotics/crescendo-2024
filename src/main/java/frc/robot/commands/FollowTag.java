@@ -32,7 +32,7 @@ public class FollowTag extends Command {
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to null to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Transform2d targetDistanceToTag, int tagID) {
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Transform2d targetDistanceToTag) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
@@ -53,12 +53,12 @@ public class FollowTag extends Command {
 		addRequirements(drivetrain);
 	}
 
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Translation2d targetDistanceToTag, int tagID) {
-		this(drivetrain, vision, new Transform2d(targetDistanceToTag, new Rotation2d()), tagID);
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Translation2d targetDistanceToTag) {
+		this(drivetrain, vision, tagID, new Transform2d(targetDistanceToTag, new Rotation2d()));
 	}
 	
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, double targetDistanceToTag, int tagID) {
-		this(drivetrain, vision, new Transform2d(new Translation2d(targetDistanceToTag, 0), new Rotation2d()), tagID);
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, double targetDistanceToTag) {
+		this(drivetrain, vision, tagID, new Transform2d(new Translation2d(targetDistanceToTag, 0), new Rotation2d()));
 	}
 
 	@Override
@@ -82,6 +82,13 @@ public class FollowTag extends Command {
 			forwardSpeed = -xController.calculate(forward);
 			leftSpeed = yController.calculate(left);
 			rotationSpeed = -rotationController.calculate(rotation.getRadians());
+		}
+
+		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
+		double maxSpeed = Math.max(Math.abs(forwardSpeed), Math.abs(leftSpeed));
+		if (maxSpeed > speedLimit) {
+			forwardSpeed = (forwardSpeed / maxSpeed) * speedLimit;
+			leftSpeed = (leftSpeed / maxSpeed) * speedLimit;
 		}
 
     	drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed));

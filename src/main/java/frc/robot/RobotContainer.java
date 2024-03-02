@@ -1,17 +1,21 @@
 package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.LightConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.FollowTag;
 import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.subsystems.IntakeShooter;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
@@ -87,10 +91,16 @@ public class RobotContainer {
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
+	private final IntakeShooter intakeShooter = new IntakeShooter(
+			IntakeShooterConstants.FLYWHEEL_MOTOR_LEFT_ID,
+			IntakeShooterConstants.FLYWHEEL_MOTOR_RIGHT_ID,
+			IntakeShooterConstants.INTAKE_MOTOR_LEFT_ID,
+			IntakeShooterConstants.INTAKE_MOTOR_RIGHT_ID);
+
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
-		gyro,
-		swerveModuleFL, swerveModuleFR,
-		swerveModuleBL, swerveModuleBR);
+			gyro,
+			swerveModuleFL, swerveModuleFR,
+			swerveModuleBL, swerveModuleBR);
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
@@ -121,6 +131,8 @@ public class RobotContainer {
 		// Create joysticks
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
+
+		final Command cancelCommand = new CancelCommands(drivetrain, arm);
 
 		drivetrain.removeDefaultCommand();
 
@@ -166,12 +178,14 @@ public class RobotContainer {
 			// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates,
 			// drivetrain));
 
-			xbox.b().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
-
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
+
+			xbox.b().onTrue(cancelCommand);
+
 			xbox.a().whileTrue(new AimAtTag(drivetrain, vision, 1, inputs));
+			xbox.x().whileTrue(new FollowTag(drivetrain, vision, 1, AutoConstants.PREFERRED_TAG_DISTANCE));
 
 			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
 		}
@@ -186,7 +200,13 @@ public class RobotContainer {
 		final Command armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 		final Command armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
-		final Command cancelCommand = new CancelCommands(drivetrain, arm);
+		final Command intake = Commands.runOnce(intakeShooter::intake, intakeShooter);
+		final Command startFlyWheel = Commands.runOnce(intakeShooter::startFlyWheels, intakeShooter);
+
+		final Command amplifyLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_BLUE);
+		final Command coopLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_RED);
+
+		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
 
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Operator Ctrl", "No Connection");
@@ -199,15 +219,22 @@ public class RobotContainer {
 			joystick.button(5).onTrue(armToAmp);
 			joystick.button(6).onTrue(armToSpeaker);
 
-			joystick.button(7).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_BLUE));
-			joystick.button(8).onTrue(new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_RED));
+			joystick.button(7).onTrue(amplifyLightSignal);
+			joystick.button(8).onTrue(coopLightSignal);
 		} else {
 			SmartDashboard.putString("Operator Ctrl", "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
+			xbox.leftTrigger().onTrue(armToSpeaker);
+			xbox.leftBumper().onTrue(startFlyWheel);
+
 			xbox.rightTrigger().onTrue(armToIntake);
-			xbox.leftTrigger(5).onTrue(armToSpeaker);
-			xbox.povDown().onTrue(armToAmp);
+			xbox.rightBumper().onTrue(intake);
+
+			xbox.a().onTrue(armToAmp);
+
+			xbox.povLeft().onTrue(amplifyLightSignal);
+			xbox.povRight().onTrue(coopLightSignal);
 
 			xbox.b().onTrue(cancelCommand);
 		}
@@ -225,5 +252,4 @@ public class RobotContainer {
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();
 	}
-}
-;
+};

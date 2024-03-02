@@ -43,29 +43,34 @@ public class IntakeShooter extends SubsystemBase {
 		intake2.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
 	}
 
+	public void setFlyWheelSpeed(double speed) {
+		flywheel1.set(speed);
+		flywheel2.set(speed);
+	}
+
 	public void startFlyWheels() {
-		flywheel1.set(1);
-		flywheel2.set(1);
+		setFlyWheelSpeed(1);
 	}
 	
 	public void stopFlywheels() {
-		flywheel1.stopMotor();
-		flywheel2.stopMotor();
+		setFlyWheelSpeed(0);
+	}
+
+	public void setIntakeSpeed(double speed) {
+		intake1.set(speed);
+		intake2.set(speed);
 	}
 	
 	public void intake() {
-		intake1.set(1);
-		intake1.set(1);
+		setIntakeSpeed(1);
 	}
 
 	public void intakeReverse() {
-		intake1.set(-1);
-		intake1.set(-1);
+		setIntakeSpeed(-1);
 	}
 
 	public void stopIntake() {
-		intake1.stopMotor();
-		intake1.stopMotor();
+		setIntakeSpeed(0);
 	}
 
 }
