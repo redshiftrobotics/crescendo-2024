@@ -74,6 +74,8 @@ public class RobotContainer {
 			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
 					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
+	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
+	
 	private final AHRS gyro = new AHRS();
 
 	/**
@@ -87,12 +89,13 @@ public class RobotContainer {
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
-	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
-			swerveModuleBL, swerveModuleBR);
+	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
+		gyro, vision,
+		swerveModuleFL, swerveModuleFR,
+		swerveModuleBL, swerveModuleBR);
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 

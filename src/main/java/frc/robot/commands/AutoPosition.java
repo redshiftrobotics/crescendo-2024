@@ -24,7 +24,7 @@ public class AutoPosition extends Command {
 	@Override
 	public void initialize() {
 		drivetrain.toDefaultStates();
-		Transform3d dist3d = vision.getDistToTag(1);
+		Transform3d dist3d = vision.getTransformToTag(1);
 		if (dist3d == null) {
 			return;
 		}

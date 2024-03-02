@@ -18,7 +18,7 @@ public class AimAtTag extends Command {
 	private final ChassisDriveInputs chassisDriveInputs;
 
 	private final Vision vision;
-	private final Integer tagID; // Integer as opposed to int so it can be null for best tag
+	private final int tagID;
 
 	private final PIDController rotatePID;
 
@@ -28,11 +28,11 @@ public class AimAtTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to turn to, null
-	 *                            for best tag
+	 * @param tagID               the numerical ID of the the tag to turn to, -1 for
+	 *                            best tag
 	 * @param chassisDriveControl collection of inputs for driving
 	 */
-	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, Integer tagID, ChassisDriveInputs chassisDriveInputs) {
+	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, ChassisDriveInputs chassisDriveInputs) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
@@ -69,11 +69,11 @@ public class AimAtTag extends Command {
 
 	@Override
 	public void execute() {
-		Transform3d distToTag = (tagID == null) ? vision.getDistToTag() : vision.getDistToTag(tagID);
+		Transform3d transform = vision.getTransformToTag(tagID);
 
 		double tagYawRadians = 0;
-		if (distToTag != null) {
-			Rotation2d angleToTag = new Rotation2d(distToTag.getX(), distToTag.getY());
+		if (transform != null) {
+			Rotation2d angleToTag = new Rotation2d(transform.getX(), transform.getY());
 			tagYawRadians = angleToTag.getRadians();
 		}
 
