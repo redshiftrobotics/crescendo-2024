@@ -102,6 +102,21 @@ public final class Constants {
 	}
 
 	public static class IntakeShooterConstants {
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					HAS_INTAKE = false;
+					break;
+
+				case COMP_BOT:
+				default:
+					HAS_INTAKE = true;
+					break;
+			}
+		}
+
+		public static final boolean HAS_INTAKE;
+		
 		public static final boolean INTAKE_REVERSE = false;
 		public static final boolean FLYWHEEL_REVERSE = false;
 
