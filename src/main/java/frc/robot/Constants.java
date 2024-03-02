@@ -143,7 +143,7 @@ public final class Constants {
 		}
 
 		public static final boolean HAS_INTAKE;
-		
+
 		public static final boolean INTAKE_REVERSE = false;
 		public static final boolean FLYWHEEL_REVERSE = false;
 
@@ -309,8 +309,12 @@ public final class Constants {
 
 	public static class VisionConstants {
 
-		public static final Transform3d CAMERA_POSE = new Transform3d(0, 0, 0, new Rotation3d());
-		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+		public static final Transform3d CAMERA_POSE = new Transform3d(Units.inchesToMeters(13), 0,
+				Units.inchesToMeters(11), new Rotation3d(0, Units.degreesToRadians(-20), 0));
+		public static final Transform3d ROBOT_TO_FRONT = new Transform3d(Units.inchesToMeters(-13), 0, 0,
+				new Rotation3d());
+		public static final String CAMERA_NAME = "Arducam_OV2311_USB_Camera";
+		// public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 	}
 
 	public static class LightConstants {
