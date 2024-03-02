@@ -3,6 +3,7 @@ package frc.robot.subsystems.hang;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RealHang extends Hang {
 
@@ -28,6 +29,7 @@ public class RealHang extends Hang {
 	public void periodic() {
 		leftMotor.set(speed);
 		rightMotor.set(speed);
+		SmartDashboard.putBoolean("Is Arm at Bottom?", isAtBottom());
 	}
 
 	public void setSpeed(double speed) {
