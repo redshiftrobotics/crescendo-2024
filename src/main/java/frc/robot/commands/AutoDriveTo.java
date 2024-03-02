@@ -56,18 +56,18 @@ public class AutoDriveTo extends Command {
 	public void execute() {
 		Pose2d position = this.drivetrain.getPosition();
 
-		double x = position.getX() - initX;
-		double y = position.getY() - initY;
+		double targetX = position.getX() - initX;
+		double targetY = position.getY() - initY;
 
-		double xSpeed = xMovePID.calculate(x, goalX);
-		double ySpeed = yMovePID.calculate(y, goalY);
+		double xSpeed = xMovePID.calculate(targetX, goalX);
+		double ySpeed = yMovePID.calculate(targetY, goalY);
 
 		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
-		double maxSpeed = Math.max(Math.abs(x), Math.abs(y));
+		double maxSpeed = Math.max(Math.abs(xSpeed), Math.abs(ySpeed));
 
 		if (maxSpeed > speedLimit) {
-			xSpeed /= speedLimit * maxSpeed;
-			ySpeed /= speedLimit * maxSpeed;
+			xSpeed = (xSpeed / maxSpeed) * speedLimit;
+			ySpeed = (ySpeed / maxSpeed) * speedLimit;
 		}
 
 		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, 0));

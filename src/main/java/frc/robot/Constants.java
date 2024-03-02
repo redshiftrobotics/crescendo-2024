@@ -76,7 +76,6 @@ public final class Constants {
 
 	public static class DriverConstants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
-
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
 
 		public static final double DEAD_ZONE = 0.25;
@@ -130,8 +129,28 @@ public final class Constants {
 	}
 
 	public static class IntakeShooterConstants {
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					HAS_INTAKE = false;
+					break;
+
+				case COMP_BOT:
+				default:
+					HAS_INTAKE = true;
+					break;
+			}
+		}
+
+		public static final boolean HAS_INTAKE;
+		
 		public static final boolean INTAKE_REVERSE = false;
 		public static final boolean FLYWHEEL_REVERSE = false;
+
+		public static final int FLYWHEEL_MOTOR_LEFT_ID = 1;
+		public static final int FLYWHEEL_MOTOR_RIGHT_ID = 2;
+		public static final int INTAKE_MOTOR_LEFT_ID = 3;
+		public static final int INTAKE_MOTOR_RIGHT_ID = 4;
 	}
 
 	public static class RobotMovementConstants {
@@ -282,14 +301,29 @@ public final class Constants {
 		public static final double MODULE_LOCATION_X;
 	}
 
+	public static class AutoConstants {
+		// preffered distance to tag, specifically for autopositioning the robot to in
+		// front of the tag
+		public static final double PREFERRED_TAG_DISTANCE = 2;
+	}
+
 	public static class VisionConstants {
 
-		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d());
+		public static final Transform3d CAMERA_POSE = new Transform3d(0, 0, 0, new Rotation3d());
 		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 	}
 
 	public static class LightConstants {
-		public static final int LED_CONTROLLER_PWM_SLOT = 0;
+		public static final int LED_CONTROLLER_PWM_SLOT = 1;
 		public static final int LED_QUANTITY = 60;
+
+		public static final double LED_COLOR_RED = 0.61;
+		public static final double LED_COLOR_ORANGE = 0.65;
+		public static final double LED_COLOR_YELLOW = 0.69;
+		public static final double LED_COLOR_GREEN = 0.77;
+		public static final double LED_COLOR_BLUE = 0.87;
+		public static final double LED_COLOR_PURPLE = 0.91;
+		public static final double LED_COLOR_WHITE = 0.93;
+		public static final double LED_COLOR_RAINBOW = -0.99;
 	}
 }

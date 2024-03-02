@@ -140,7 +140,7 @@
           },
           "6,2": {
             "size": [
-              3,
+              2,
               1
             ],
             "content": {
@@ -206,6 +206,60 @@
               "Visuals/Num tick marks": 5,
               "Visuals/Show text": true,
               "Visuals/Orientation": "HORIZONTAL"
+            }
+          },
+          "7,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseX",
+              "_title": "tPoseX",
+              "_glyph": 110,
+              "_showGlyph": true
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseY",
+              "_title": "tPoseY",
+              "_glyph": 111,
+              "_showGlyph": true
+            }
+          },
+          "8,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/tPoseDegrees",
+              "_title": "tPoseDegrees",
+              "_glyph": 419,
+              "_showGlyph": true
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/tPoseActive",
+              "_title": "tPoseActive",
+              "_glyph": 288,
+              "_showGlyph": true,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           },
           "1,0": {
