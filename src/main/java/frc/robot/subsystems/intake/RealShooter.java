@@ -1,9 +1,8 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.intake;
 
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeShooterConstants;
 
 /**
@@ -17,7 +16,7 @@ import frc.robot.Constants.IntakeShooterConstants;
  * 
  * @author Aceius E.
  */
-public class IntakeShooter extends SubsystemBase {
+public class RealShooter extends IntakeShooter {
 	/*
 	 * 2 motors for flywheel
 	 * 2 for intake
@@ -29,13 +28,13 @@ public class IntakeShooter extends SubsystemBase {
 	private final CANSparkMax intake1;
 	private final CANSparkMax intake2; // might not exist
 
-	public IntakeShooter(int flywheel1id, int flywheel2id, int intake1id, int intake2id) {
+	public RealShooter(int flywheel1id, int flywheel2id, int intake1id, int intake2id) {
 		this.flywheel1 = new Talon(flywheel1id);
 		this.flywheel2 = new Talon(flywheel2id);
-		
+
 		flywheel1.setInverted(IntakeShooterConstants.FLYWHEEL_REVERSE);
 		flywheel1.setInverted(IntakeShooterConstants.FLYWHEEL_REVERSE);
-		
+
 		this.intake1 = new CANSparkMax(intake1id, CANSparkLowLevel.MotorType.kBrushless);
 		this.intake2 = new CANSparkMax(intake2id, CANSparkLowLevel.MotorType.kBrushless);
 
@@ -43,29 +42,34 @@ public class IntakeShooter extends SubsystemBase {
 		intake2.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
 	}
 
+	public void setFlyWheelSpeed(double speed) {
+		flywheel1.set(speed);
+		flywheel2.set(speed);
+	}
+
 	public void startFlyWheels() {
-		flywheel1.set(1);
-		flywheel2.set(1);
+		setFlyWheelSpeed(1);
 	}
-	
+
 	public void stopFlywheels() {
-		flywheel1.stopMotor();
-		flywheel2.stopMotor();
+		setFlyWheelSpeed(0);
 	}
-	
+
+	public void setIntakeSpeed(double speed) {
+		intake1.set(speed);
+		intake2.set(speed);
+	}
+
 	public void intake() {
-		intake1.set(1);
-		intake1.set(1);
+		setIntakeSpeed(1);
 	}
 
 	public void intakeReverse() {
-		intake1.set(-1);
-		intake1.set(-1);
+		setIntakeSpeed(-1);
 	}
 
 	public void stopIntake() {
-		intake1.stopMotor();
-		intake1.stopMotor();
+		setIntakeSpeed(0);
 	}
 
 }

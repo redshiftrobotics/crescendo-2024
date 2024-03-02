@@ -1,13 +1,15 @@
 package frc.robot.commands;
 
+import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** Command to automatically drive a follow a tag a certain translation away */
@@ -15,11 +17,9 @@ public class FollowTag extends Command {
 	private final SwerveDrivetrain drivetrain;
 
 	private final Vision vision;
-	private final Integer tagID; // Integer as opposed to int so it can be null for best tag
-	private final Transform2d targetDistance;
+	private final int tagID;
 
-	private final Double loseTagAfterSeconds; // Double as opposed to double so it can be null for never lose mode.
-	private double secondsSinceTagLastSeen;
+	private final PIDController xController, yController, rotationController;
 
 	/**
 	 * Create a new FollowTag command. Tries to follow a tag while staying a certain
@@ -27,83 +27,81 @@ public class FollowTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, null
-	 *                            for best tag
-	 * @param targetDistanceToTag the target distance away from the tag to be
+	 * @param tagID               the numerical ID of the the tag to follow, -1 for best tag
+	 * @param targetDistanceToTag the target distance away from the tag to be in meters
 	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
 	 *                            tag, set to null to never finish
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Transform2d targetDistanceToTag, Integer tagID,
-			Double loseTagAfterSeconds) {
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Transform2d targetDistanceToTag) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
 		this.tagID = tagID;
 
-		this.targetDistance = targetDistanceToTag;
-		this.loseTagAfterSeconds = loseTagAfterSeconds;
+		xController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D); xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		xController.setSetpoint(targetDistanceToTag.getX());
+		
+		yController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
+		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		xController.setSetpoint(targetDistanceToTag.getY());
+		
+		rotationController = new PIDController(RobotMovementConstants.ROTATION_PID_P, RobotMovementConstants.ROTATION_PID_I, RobotMovementConstants.ROTATION_PID_D);
+		rotationController.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
+		xController.setSetpoint(targetDistanceToTag.getRotation().getRadians());
 
 		addRequirements(drivetrain);
 	}
 
-	/**
-	 * Create a new FollowTag command. Tries to follow a tag while staying a certain
-	 * distance away.
-	 * 
-	 * @param drivetrain          the drivetrain of the robot
-	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, null
-	 *                            for whatever best is
-	 * @param targetDistanceToTag the target distance away from the tag to be
-	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
-	 *                            tag, set to null to never finish
-	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Translation2d targetDistanceToTag, Integer tagID,
-			Double loseTagAfterSeconds) {
-		this(drivetrain, vision, new Transform2d(targetDistanceToTag, new Rotation2d()), tagID, loseTagAfterSeconds);
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Translation2d targetDistanceToTag) {
+		this(drivetrain, vision, tagID, new Transform2d(targetDistanceToTag, new Rotation2d()));
+	}
+	
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, double targetDistanceToTag) {
+		this(drivetrain, vision, tagID, new Transform2d(new Translation2d(targetDistanceToTag, 0), new Rotation2d()));
 	}
 
 	@Override
 	public void initialize() {
-		secondsSinceTagLastSeen = 0;
 		drivetrain.toDefaultStates();
 	}
 
 	@Override
 	public void execute() {
+		double forwardSpeed = 0;
+		double rotationSpeed = 0;
+		double leftSpeed = 0;
 
-		final Transform3d distToTag = (tagID == null) ? vision.getDistToTag() : vision.getDistToTag(tagID);
+		Transform3d transform = vision.getTransformToTag(tagID);
 
-		if (distToTag == null) {
-			secondsSinceTagLastSeen += TimedRobot.kDefaultPeriod;
-			drivetrain.stop();
-		} else {
+		if (transform != null){
+			double forward = transform.getX();
+			double left = transform.getY();
+			Rotation2d rotation = new Rotation2d(forward, left);
 
-			secondsSinceTagLastSeen = 0;
-
-			// https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/coordinate-systems.html
-			// https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation3d.html#getZ()
-			final Transform2d tagPosition = new Transform2d(
-					distToTag.getZ(),
-					distToTag.getX(),
-					Rotation2d.fromRadians(distToTag.getRotation().getZ()));
-
-			final Transform2d driveTransform = tagPosition.plus(targetDistance.inverse());
-
-			drivetrain.setDesiredPosition(drivetrain.getPosition().plus(driveTransform));
+			forwardSpeed = -xController.calculate(forward);
+			leftSpeed = yController.calculate(left);
+			rotationSpeed = -rotationController.calculate(rotation.getRadians());
 		}
 
+		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
+		double maxSpeed = Math.max(Math.abs(forwardSpeed), Math.abs(leftSpeed));
+		if (maxSpeed > speedLimit) {
+			forwardSpeed = (forwardSpeed / maxSpeed) * speedLimit;
+			leftSpeed = (leftSpeed / maxSpeed) * speedLimit;
+		}
+
+    	drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed));
 		drivetrain.updateSmartDashboard();
-	}
+  	}
 
 	@Override
 	public boolean isFinished() {
-		return (loseTagAfterSeconds != null) && (secondsSinceTagLastSeen < loseTagAfterSeconds);
+		return false;
 	}
 
 	@Override
 	public void end(boolean interrupted) {
-		drivetrain.clearDesiredPosition();
 		drivetrain.stop();
 	}
 }
