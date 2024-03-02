@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.LightConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
@@ -13,6 +14,8 @@ import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.FollowTag;
 import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
+import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.SetHangSpeed;
 import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.LightStrip;
@@ -22,6 +25,9 @@ import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
+import frc.robot.subsystems.hang.DummyHang;
+import frc.robot.subsystems.hang.Hang;
+import frc.robot.subsystems.hang.RealHang;
 import frc.robot.subsystems.intake.DummyShooter;
 import frc.robot.subsystems.intake.IntakeShooter;
 import frc.robot.subsystems.intake.RealShooter;
@@ -92,6 +98,12 @@ public class RobotContainer {
 			ArmConstants.RIGHT_MOTOR_ID,
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
+
+	private final Hang hang = Constants.HangConstants.HAS_HANG
+			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.RIGHT_MOTOR_ID,
+					HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.RIGHT_MOTOR_IS_INVERTED,
+					HangConstants.LIMIT_SWITCH_ID)
+			: new DummyHang();
 
 	private final IntakeShooter intakeShooter = Constants.IntakeShooterConstants.HAS_INTAKE ? new RealShooter(
 			IntakeShooterConstants.FLYWHEEL_MOTOR_LEFT_ID,
@@ -209,10 +221,14 @@ public class RobotContainer {
 		final Command coopLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_RED);
 
 		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
+    
+		final SetHangSpeed hangStop = new SetHangSpeed(hang, 0);
+		final SetHangSpeed hangForwarSpeed = new SetHangSpeed(hang, HangConstants.speed);
+		final SetHangSpeed hangBackwardSpeed = new SetHangSpeed(hang, -HangConstants.speed);
 
+		SmartDashboard.putString("Operator Controller", genericHIDType.toString());
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Operator Ctrl", "No Connection");
-
 		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			SmartDashboard.putString("Operator Ctrl", "Joystick");
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
@@ -221,11 +237,23 @@ public class RobotContainer {
 			joystick.button(5).onTrue(armToAmp);
 			joystick.button(6).onTrue(armToSpeaker);
 
-			joystick.button(7).onTrue(amplifyLightSignal);
-			joystick.button(8).onTrue(coopLightSignal);
+			joystick.button(7).or(joystick.button(8)).whileFalse(hangStop);
+			joystick.button(7).onTrue(hangForwarSpeed);
+			joystick.button(8).onTrue(hangBackwardSpeed);
+      
+			joystick.button(9).onTrue(amplifyLightSignal);
+			joystick.button(10).onTrue(coopLightSignal);
 		} else {
 			SmartDashboard.putString("Operator Ctrl", "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+
+			xbox.povDown().onTrue(armToIntake);
+			xbox.povUp().onTrue(armToSpeaker);
+			xbox.povLeft().onTrue(armToAmp);
+
+			xbox.rightBumper().or(xbox.leftBumper()).whileFalse(hangStop);
+			xbox.rightBumper().onTrue(hangForwarSpeed);
+			xbox.leftBumper().onTrue(hangBackwardSpeed);
 
 			xbox.leftTrigger().onTrue(armToSpeaker);
 			xbox.leftBumper().onTrue(startFlyWheel);
@@ -237,7 +265,6 @@ public class RobotContainer {
 
 			xbox.povLeft().onTrue(amplifyLightSignal);
 			xbox.povRight().onTrue(coopLightSignal);
-
 			xbox.b().onTrue(cancelCommand);
 		}
 	}
