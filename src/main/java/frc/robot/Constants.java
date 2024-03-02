@@ -48,14 +48,29 @@ public final class Constants {
 	}
 
 	public static class HangConstants {
-		public static int leftMotorID = 0;
-		public static int rightMotorID = 1;
-		public static int limitSwitchID = 2;
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					HAS_HANG = false;
+					break;
 
-		public static boolean leftMotorIsInverted = false;
-		public static boolean rightMotorIsInverted = false;
+				case COMP_BOT:
+				default:
+					HAS_HANG = true;
+					break;
+			}
+		}
 
-		public static double speed = 0.2;
+		public static final boolean HAS_HANG;
+
+		public static final int leftMotorID = 0;
+		public static final int rightMotorID = 1;
+		public static final int limitSwitchID = 2;
+
+		public static final boolean leftMotorIsInverted = false;
+		public static final boolean rightMotorIsInverted = false;
+
+		public static final double speed = 0.2;
 
 	}
 

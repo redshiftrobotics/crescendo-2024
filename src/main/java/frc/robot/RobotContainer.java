@@ -20,8 +20,10 @@ import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.ArmInterface;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
+import frc.robot.subsystems.hang.DummyHang;
+import frc.robot.subsystems.hang.Hang;
+import frc.robot.subsystems.hang.RealHang;
 import frc.robot.inputs.ChassisDriveInputs;
-import frc.robot.subsystems.Hang;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -90,8 +92,10 @@ public class RobotContainer {
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
-	private final Hang hang = new Hang(HangConstants.leftMotorID, HangConstants.rightMotorID,
-			HangConstants.leftMotorIsInverted, HangConstants.rightMotorIsInverted, HangConstants.limitSwitchID);
+	private final Hang hang = Constants.HangConstants.HAS_HANG
+			? new RealHang(HangConstants.leftMotorID, HangConstants.rightMotorID,
+					HangConstants.leftMotorIsInverted, HangConstants.rightMotorIsInverted, HangConstants.limitSwitchID)
+			: new DummyHang();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
