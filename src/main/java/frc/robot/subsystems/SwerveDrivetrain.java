@@ -8,13 +8,13 @@ import java.util.function.IntFunction;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics.SwerveDriveWheelStates;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -39,9 +39,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private final SwerveDriveKinematics kinematics;
 
 	/**
-	 * Pose estimator. Like odometry but it can use vision as well
+	 * The SwerveDriveOdometry class can be used to track the position of a swerve drive robot on the field
+	 * 
+	 * @see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
 	 */
-	private final SwerveDrivePoseEstimator poseEstimator;
+	private final SwerveDriveOdometry poseOdometry;
 
 	/** Swerve module */
 	private final SwerveModule moduleFL, moduleFR, moduleBL, moduleBR;
@@ -61,7 +63,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * 
 	 * @see https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/pose.html#pose
 	 */
-	private Pose2d pose;
+	private Pose2d pose = new Pose2d();
 
 	/**
 	 * Desired pose of robot. The desired pose is the X, Y and Rotation the robot wants to be in, relative to the last reset.
@@ -103,7 +105,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 			modulesMap(SwerveModule::getDistanceFromCenter, Translation2d[]::new));
 
 		// Create pose estimator, like odometry but cooler
-		poseEstimator = new SwerveDrivePoseEstimator(
+		poseOdometry = new SwerveDriveOdometry(
 			kinematics,
 			getHeading(),
 			getWheelPositions().positions,
@@ -131,7 +133,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	/** This is the periodic function of the swerve drivetrain, called periodically by the CommandScheduler, about every 20ms. */
 	@Override
 	public void periodic() {
-		pose = poseEstimator.update(
+		pose = poseOdometry.update(
 			getHeading(),
 			getWheelPositions());
 
@@ -168,7 +170,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * Basically zeros out position.
 	 */
 	public void resetPosition() {
-		poseEstimator.resetPosition(
+		poseOdometry.resetPosition(
 				getHeading(),
 				getWheelPositions(),
 				pose);
