@@ -56,7 +56,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_HANG = true;
+					HAS_HANG = false;
 					break;
 			}
 		}
@@ -108,12 +108,16 @@ public final class Constants {
 
 		public static final boolean HAS_ARM;
 
-		public static final double MAXIMUM_ARM_DEGREES = 1;
-		public static final double MINIMUM_ARM_DEGREES = 0;
+		// TODO: figure out positions
+		public static final double MAXIMUM_ARM_DEGREES = 50;
+		public static final double MINIMUM_ARM_DEGREES = -120;
 
-		public static final double ARM_AMP_SHOOTING_DEGREES = -20;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
-		public static final double ARM_INTAKE_DEGREES = -40;
+		// Degrees
+		public static final double ARM_START = -38;
+		public static final double ARM_DRIVE = -83;
+		public static final double ARM_AMP_SHOOTING_DEGREES = -24.8;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -71;
+		public static final double ARM_INTAKE_DEGREES = -109;
 
 		public static final int LEFT_MOTOR_ID = 5;
 		public static final int RIGHT_MOTOR_ID = 19;
@@ -144,13 +148,13 @@ public final class Constants {
 
 		public static final boolean HAS_INTAKE;
 
-		public static final boolean INTAKE_REVERSE = false;
-		public static final boolean FLYWHEEL_REVERSE = false;
+		public static final boolean INTAKE_REVERSE = true;
 
-		public static final int FLYWHEEL_MOTOR_LEFT_ID = 1;
-		public static final int FLYWHEEL_MOTOR_RIGHT_ID = 2;
-		public static final int INTAKE_MOTOR_LEFT_ID = 3;
-		public static final int INTAKE_MOTOR_RIGHT_ID = 4;
+
+		public static final int FLYWHEEL_MOTOR_LEFT_ID = 13;
+		public static final int FLYWHEEL_MOTOR_RIGHT_ID = 7;
+		public static final int INTAKE_MOTOR_LEFT_ID = 12;
+		public static final int INTAKE_MOTOR_RIGHT_ID = -1;
 	}
 
 	public static class RobotMovementConstants {

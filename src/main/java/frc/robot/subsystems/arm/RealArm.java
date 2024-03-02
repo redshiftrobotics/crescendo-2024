@@ -36,17 +36,15 @@ public class RealArm extends Arm {
 				ArmConstants.ELEVATION_PID_P,
 				ArmConstants.ELEVATION_PID_I,
 				ArmConstants.ELEVATION_PID_D);
-		
+		armRaisePIDController.setTolerance(Units.degreesToRotations(2.5));
 
 		armPosition = rightArmEncoder.getAbsolutePosition();
 
-		leftArmMotor.setIdleMode(IdleMode.kCoast);
-		rightArmMotor.setIdleMode(IdleMode.kCoast);
+		leftArmMotor.setIdleMode(IdleMode.kBrake);
+		rightArmMotor.setIdleMode(IdleMode.kBrake);
 
 		leftArmMotor.setInverted(areMotorsReversed);
 		rightArmMotor.setInverted(!areMotorsReversed);
-
-		setSetpoint(ArmConstants.ARM_INTAKE_DEGREES);
 	}
 
 	public void setSetpoint(double degrees) {

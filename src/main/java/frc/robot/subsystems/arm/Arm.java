@@ -31,4 +31,12 @@ public abstract class Arm extends SubsystemBase {
 	public void setArmToIntakePosition() {
 		setSetpoint(ArmConstants.ARM_INTAKE_DEGREES);
 	}
+
+	public void setArmToStartPosition() {
+		setSetpoint(ArmConstants.ARM_START);
+	}
+
+	public void setArmToDrivePosition() {
+		setSetpoint(ArmConstants.ARM_DRIVE);
+	}
 }

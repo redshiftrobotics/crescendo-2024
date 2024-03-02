@@ -24,4 +24,9 @@ public abstract class IntakeShooter extends SubsystemBase {
 	public void stopIntake() {
 	}
 
+	public void reverseFlywheel() {
+	}
+
+	// TODO make abstract
+
 }

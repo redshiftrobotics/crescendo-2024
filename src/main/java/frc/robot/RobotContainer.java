@@ -13,6 +13,7 @@ import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.FollowTag;
 import frc.robot.commands.AimAtTag;
+import frc.robot.commands.ArmRotateBy;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.SetHangSpeed;
@@ -36,6 +37,7 @@ import frc.robot.inputs.ChassisDriveInputs;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -146,13 +148,11 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		final Command cancelCommand = new CancelCommands(drivetrain, arm);
+		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
 
 		drivetrain.removeDefaultCommand();
 
-		if (genericHIDType == null) {
-			SmartDashboard.putString("Drive Ctrl", "No Connection");
-		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			SmartDashboard.putString("Drive Ctrl", "Joystick");
 
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
@@ -188,9 +188,8 @@ public class RobotContainer {
 					xbox::getRightX, -1,
 					Constants.DriverConstants.DEAD_ZONE);
 
-			// xbox.povDown().whileTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			// xbox.povLeft().whileTrue(Commands.run(drivetrain::toDefaultStates,
-			// drivetrain));
+			xbox.leftBumper().whileTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			xbox.rightBumper().whileTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
 
 			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
@@ -205,6 +204,11 @@ public class RobotContainer {
 		}
 	}
 
+	public void toDefaultPositions() {
+		drivetrain.toDefaultStates();
+		arm.setArmToStartPosition();
+	}
+
 	public void setUpOperatorController() {
 		// Create joysticks
 		final GenericHID genericHID = new GenericHID(DriverConstants.OPERATOR_JOYSTICK_PORT);
@@ -213,9 +217,19 @@ public class RobotContainer {
 		final Command armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
 		final Command armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
 		final Command armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+		final Command armToStart = new ArmRotateTo(arm, ArmConstants.ARM_START);
+		final Command armToDrive = new ArmRotateTo(arm, ArmConstants.ARM_DRIVE);
+
+		final Command armUp = new ArmRotateBy(arm, +ArmConstants.DEGREES_PER_SECOND * TimedRobot.kDefaultPeriod);
+		final Command armDown = new ArmRotateBy(arm, -ArmConstants.DEGREES_PER_SECOND * TimedRobot.kDefaultPeriod);
 
 		final Command intake = Commands.runOnce(intakeShooter::intake, intakeShooter);
+		final Command intakeReverse = Commands.runOnce(intakeShooter::intakeReverse, intakeShooter);
+		final Command intakeStop = Commands.runOnce(intakeShooter::stopIntake, intakeShooter);
+
 		final Command startFlyWheel = Commands.runOnce(intakeShooter::startFlyWheels, intakeShooter);
+		final Command reverseFlyWheel = Commands.runOnce(intakeShooter::reverseFlywheel, intakeShooter);
+		final Command stopFlyWheel = Commands.runOnce(intakeShooter::stopFlywheels, intakeShooter);
 
 		final Command amplifyLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_BLUE);
 
@@ -225,13 +239,10 @@ public class RobotContainer {
 		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
     
 		final SetHangSpeed hangStop = new SetHangSpeed(hang, 0);
-		final SetHangSpeed hangForwarSpeed = new SetHangSpeed(hang, HangConstants.speed);
+		final SetHangSpeed hangForwardSpeed = new SetHangSpeed(hang, HangConstants.speed);
 		final SetHangSpeed hangBackwardSpeed = new SetHangSpeed(hang, -HangConstants.speed);
 
-		SmartDashboard.putString("Operator Controller", genericHIDType.toString());
-		if (genericHIDType == null) {
-			SmartDashboard.putString("Operator Ctrl", "No Connection");
-		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
+		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
 			SmartDashboard.putString("Operator Ctrl", "Joystick");
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
@@ -240,7 +251,7 @@ public class RobotContainer {
 			joystick.button(6).onTrue(armToSpeaker);
 
 			joystick.button(7).or(joystick.button(8)).whileFalse(hangStop);
-			joystick.button(7).onTrue(hangForwarSpeed);
+			joystick.button(7).onTrue(hangForwardSpeed);
 			joystick.button(8).onTrue(hangBackwardSpeed);
       
 			joystick.button(9).onTrue(amplifyLightSignal);
@@ -249,24 +260,34 @@ public class RobotContainer {
 			SmartDashboard.putString("Operator Ctrl", "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
-			xbox.povDown().onTrue(armToIntake);
-			xbox.povUp().onTrue(armToSpeaker);
-			xbox.povLeft().onTrue(armToAmp);
+			// xbox.rightBumper().or(xbox.leftBumper()).whileFalse(hangStop);
+			// xbox.rightBumper().onTrue(hangForwardSpeed);
+			// xbox.leftBumper().onTrue(hangBackwardSpeed);
 
-			xbox.rightBumper().or(xbox.leftBumper()).whileFalse(hangStop);
-			xbox.rightBumper().onTrue(hangForwarSpeed);
-			xbox.leftBumper().onTrue(hangBackwardSpeed);
+			xbox.leftTrigger().onTrue(startFlyWheel);
+			xbox.leftTrigger().onFalse(stopFlyWheel);
 
-			xbox.leftTrigger().onTrue(armToSpeaker);
-			xbox.leftBumper().onTrue(startFlyWheel);
+			xbox.leftStick().onTrue(reverseFlyWheel);
+			xbox.leftStick().onFalse(stopFlyWheel);
 
-			xbox.rightTrigger().onTrue(armToIntake);
-			xbox.rightBumper().onTrue(intake);
+			xbox.rightTrigger().onTrue(intakeReverse);
+			xbox.rightTrigger().onFalse(intakeStop);
+
+			xbox.leftBumper().onTrue(armToIntake);
+
+			xbox.rightBumper().onTrue(armToSpeaker);
+
+			xbox.y().onTrue(intake);
+			xbox.y().onFalse(intakeStop);
+
+			xbox.pov(270).onTrue(armToStart);
+			xbox.pov(90).onTrue(armToDrive);
 
 			xbox.a().onTrue(armToAmp);
 
-			xbox.povLeft().onTrue(amplifyLightSignal);
-			xbox.povRight().onTrue(coopLightSignal);
+			// xbox.povLeft().onTrue(amplifyLightSignal);
+			// xbox.povRight().onTrue(coopLightSignal);
+
 			xbox.b().onTrue(cancelCommand);
 		}
 	}

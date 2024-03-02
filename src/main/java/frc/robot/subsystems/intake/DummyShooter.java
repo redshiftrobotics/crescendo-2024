@@ -10,6 +10,9 @@ public class DummyShooter extends IntakeShooter {
 	public void stopFlywheels() {
 	}
 
+	public void reverseFlywheel() {
+	}
+
 	public void setIntakeSpeed(double speed) {
 	}
 
