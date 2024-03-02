@@ -218,7 +218,9 @@ public class RobotContainer {
 		final Command startFlyWheel = Commands.runOnce(intakeShooter::startFlyWheels, intakeShooter);
 
 		final Command amplifyLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_BLUE);
-		final Command coopLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_RED);
+
+		// because coop light is orange
+		final Command coopLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_ORANGE);
 
 		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
     
