@@ -34,7 +34,7 @@ public class Vision extends SubsystemBase {
 	}
 
 	/**
-	 * Get distance to the distance to the best tag found by the camera
+	 * Get the transform that maps camera space (X = forward, Y = left, Z = up) to object/fiducial tag space (X forward, Y left, Z up) with the lowest reprojection error
 	 * 
 	 * @return The position of the tag (translation and rotation) based on the
 	 *         center of the robot. Returns null if no tag found.
@@ -49,7 +49,7 @@ public class Vision extends SubsystemBase {
 	}
 
 	/**
-	 * Get distance to the desired tag
+	 * Get the transform that maps camera space (X = forward, Y = left, Z = up) to object/fiducial tag space (X forward, Y left, Z up) with the lowest reprojection error
 	 * 
 	 * @param tagID the fiducial ID of the desired tag
 	 * @return the position of the tag (translation and rotation) based on the

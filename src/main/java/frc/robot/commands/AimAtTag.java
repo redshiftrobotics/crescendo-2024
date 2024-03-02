@@ -87,7 +87,7 @@ public class AimAtTag extends Command {
 
 		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -rotateSpeed);
 
-		drivetrain.setDesiredState(desiredSpeeds, false, true);
+		drivetrain.setDesiredState(desiredSpeeds, chassisDriveInputs.isFieldRelative(), true);
 
 		drivetrain.updateSmartDashboard();
 	}
