@@ -93,8 +93,9 @@ public class RobotContainer {
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
 	private final Hang hang = Constants.HangConstants.HAS_HANG
-			? new RealHang(HangConstants.leftMotorID, HangConstants.rightMotorID,
-					HangConstants.leftMotorIsInverted, HangConstants.rightMotorIsInverted, HangConstants.limitSwitchID)
+			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.RIGHT_MOTOR_ID,
+					HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.RIGHT_MOTOR_IS_INVERTED,
+					HangConstants.LIMIT_SWITCH_ID)
 			: new DummyHang();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,

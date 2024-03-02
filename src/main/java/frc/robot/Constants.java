@@ -63,12 +63,12 @@ public final class Constants {
 
 		public static final boolean HAS_HANG;
 
-		public static final int leftMotorID = 0;
-		public static final int rightMotorID = 1;
-		public static final int limitSwitchID = 2;
+		public static final int LEFT_MOTOR_ID = 0;
+		public static final int RIGHT_MOTOR_ID = 1;
+		public static final int LIMIT_SWITCH_ID = 2;
 
-		public static final boolean leftMotorIsInverted = false;
-		public static final boolean rightMotorIsInverted = false;
+		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
+		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
 
 		public static final double speed = 0.2;
 
