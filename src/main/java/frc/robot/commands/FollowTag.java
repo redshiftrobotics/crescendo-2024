@@ -72,7 +72,7 @@ public class FollowTag extends Command {
 	@Override
 	public void execute() {
 
-		final Transform3d distToTag = (tagID == null) ? vision.getDistToTag() : vision.getDistToTag(tagID);
+		final Transform3d distToTag = (tagID == null) ? vision.getTransformToTag() : vision.getTransformToTag(tagID);
 
 		if (distToTag == null) {
 			secondsSinceTagLastSeen += TimedRobot.kDefaultPeriod;

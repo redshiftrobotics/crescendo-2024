@@ -40,7 +40,7 @@ public class Vision extends SubsystemBase {
 	 *         center of the robot. Returns null if no tag found.
 	 * 
 	 */
-	public Transform3d getDistToTag() {
+	public Transform3d getTransformToTag() {
 		PhotonTrackedTarget target = camera.getLatestResult().getBestTarget();
 		if (target == null) {
 			return null;
@@ -55,7 +55,9 @@ public class Vision extends SubsystemBase {
 	 * @return the position of the tag (translation and rotation) based on the
 	 *         center of the robot. Returns null if no tag found
 	 */
-	public Transform3d getDistToTag(int tagID) {
+	public Transform3d getTransformToTag(int tagID) {
+		if (tagID == -1) return getTransformToTag();
+		
 		for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
 			if (target.getFiducialId() == tagID)
 				return target.getBestCameraToTarget().plus(cameraToRobot);

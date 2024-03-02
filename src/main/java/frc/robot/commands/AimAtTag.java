@@ -69,7 +69,7 @@ public class AimAtTag extends Command {
 
 	@Override
 	public void execute() {
-		Transform3d distToTag = (tagID == null) ? vision.getDistToTag() : vision.getDistToTag(tagID);
+		Transform3d distToTag = (tagID == null) ? vision.getTransformToTag() : vision.getTransformToTag(tagID);
 
 		double tagYawRadians = 0;
 		if (distToTag != null) {
