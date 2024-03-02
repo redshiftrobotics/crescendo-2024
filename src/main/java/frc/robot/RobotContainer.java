@@ -15,7 +15,6 @@ import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColor;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.subsystems.IntakeShooter;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
@@ -23,6 +22,9 @@ import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
+import frc.robot.subsystems.intake.DummyShooter;
+import frc.robot.subsystems.intake.IntakeShooter;
+import frc.robot.subsystems.intake.RealShooter;
 import frc.robot.inputs.ChassisDriveInputs;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -91,11 +93,11 @@ public class RobotContainer {
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
-	private final IntakeShooter intakeShooter = new IntakeShooter(
+	private final IntakeShooter intakeShooter = Constants.IntakeShooterConstants.HAS_INTAKE ? new RealShooter(
 			IntakeShooterConstants.FLYWHEEL_MOTOR_LEFT_ID,
 			IntakeShooterConstants.FLYWHEEL_MOTOR_RIGHT_ID,
 			IntakeShooterConstants.INTAKE_MOTOR_LEFT_ID,
-			IntakeShooterConstants.INTAKE_MOTOR_RIGHT_ID);
+			IntakeShooterConstants.INTAKE_MOTOR_RIGHT_ID) : new DummyShooter();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
 			gyro,
