@@ -87,8 +87,10 @@ public class RobotContainer {
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
-	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(gyro, swerveModuleFL, swerveModuleFR,
-			swerveModuleBL, swerveModuleBR);
+	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
+		gyro,
+		swerveModuleFL, swerveModuleFR,
+		swerveModuleBL, swerveModuleBR);
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 

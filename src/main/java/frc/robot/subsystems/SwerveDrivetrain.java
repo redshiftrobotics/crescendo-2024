@@ -1,12 +1,9 @@
 package frc.robot.subsystems;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-
-import org.photonvision.EstimatedRobotPose;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -59,11 +56,6 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private final AHRS gyro;
 
 	/**
-	 * Vision subsystem of robot for pose estimator
-	 */
-	private final Vision visionSystem;
-
-	/**
 	 * Pose of robot. The pose is the current the X, Y and Rotation position of the robot, relative to the last reset.
 	 * It is updated every 20ms in periodic.
 	 * 
@@ -91,13 +83,13 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @param swerveModuleBL Back left swerve module
 	 * @param swerveModuleBR Back right swerve module
 	 */
-	public SwerveDrivetrain(AHRS gyro, Vision vision,
+	public SwerveDrivetrain(
+		AHRS gyro,
 		SwerveModule swerveModuleFL, SwerveModule swerveModuleFR,
 		SwerveModule swerveModuleBL, SwerveModule swerveModuleBR) {
 
 		// save parameters
 		this.gyro = gyro;
-		this.visionSystem = vision;
 
 		moduleFL = swerveModuleFL;
 		moduleFR = swerveModuleFR;
@@ -143,12 +135,12 @@ public class SwerveDrivetrain extends SubsystemBase {
 			getHeading(),
 			getWheelPositions());
 
-		if (visionSystem != null) {
-			Optional<EstimatedRobotPose> estimatedPose = visionSystem.getEstimatedGlobalPose();
-			if (estimatedPose.isPresent()) {
-				poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), estimatedPose.get().timestampSeconds);
-			}
-		}
+		// if (visionSystem != null) {
+		// 	Optional<EstimatedRobotPose> estimatedPose = visionSystem.getEstimatedGlobalPose();
+		// 	if (estimatedPose.isPresent()) {
+		// 		poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), estimatedPose.get().timestampSeconds);
+		// 	}
+		// }
 		
 		if (desiredPose != null) {
 			// Calculate our robot speeds with the PID controllers
