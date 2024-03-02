@@ -18,6 +18,8 @@ import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.SetHangSpeed;
 import frc.robot.commands.SetLightstripColor;
+import frc.robot.commands.SpinIntakeFlywheels;
+import frc.robot.commands.SpinIntakeWheels;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -45,6 +47,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -123,6 +126,10 @@ public class RobotContainer {
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
+
+	private final Command armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+	private final Command armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+	private final Command armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -237,7 +244,7 @@ public class RobotContainer {
 		final Command coopLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_ORANGE);
 
 		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
-    
+
 		final SetHangSpeed hangStop = new SetHangSpeed(hang, 0);
 		final SetHangSpeed hangForwardSpeed = new SetHangSpeed(hang, HangConstants.speed);
 		final SetHangSpeed hangBackwardSpeed = new SetHangSpeed(hang, -HangConstants.speed);
@@ -253,9 +260,12 @@ public class RobotContainer {
 			joystick.button(7).or(joystick.button(8)).whileFalse(hangStop);
 			joystick.button(7).onTrue(hangForwardSpeed);
 			joystick.button(8).onTrue(hangBackwardSpeed);
-      
+
 			joystick.button(9).onTrue(amplifyLightSignal);
 			joystick.button(10).onTrue(coopLightSignal);
+
+			joystick.button(11).onTrue(Autos.dropInAmp(arm,  intakeShooter));
+			joystick.button(12).onTrue(Autos.dropInSpeaker(arm, intakeShooter));
 		} else {
 			SmartDashboard.putString("Operator Ctrl", "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
