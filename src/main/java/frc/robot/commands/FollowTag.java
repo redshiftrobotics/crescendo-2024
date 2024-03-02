@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.RobotMovementConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
@@ -75,6 +76,8 @@ public class FollowTag extends Command {
 		Transform3d transform = vision.getTransformToTag(tagID);
 
 		if (transform != null){
+			transform = transform.plus(VisionConstants.ROBOT_TO_FRONT);
+
 			double forward = transform.getX();
 			double left = transform.getY();
 			Rotation2d rotation = new Rotation2d(forward, left);
