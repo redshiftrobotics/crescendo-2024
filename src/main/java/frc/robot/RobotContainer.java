@@ -122,6 +122,10 @@ public class RobotContainer {
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 
+	public final Command armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
+	public final Command armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
+	public final Command armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -210,10 +214,6 @@ public class RobotContainer {
 		final GenericHID genericHID = new GenericHID(DriverConstants.OPERATOR_JOYSTICK_PORT);
 		final HIDType genericHIDType = genericHID.getType();
 
-		final Command armToIntake = new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES);
-		final Command armToAmp = new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES);
-		final Command armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
-
 		final Command intake = Commands.runOnce(intakeShooter::intake, intakeShooter);
 		final Command startFlyWheel = Commands.runOnce(intakeShooter::startFlyWheels, intakeShooter);
 
@@ -223,7 +223,7 @@ public class RobotContainer {
 		final Command coopLightSignal = new SetLightstripColor(lightStrip, LightConstants.LED_COLOR_ORANGE);
 
 		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
-    
+
 		final SetHangSpeed hangStop = new SetHangSpeed(hang, 0);
 		final SetHangSpeed hangForwarSpeed = new SetHangSpeed(hang, HangConstants.speed);
 		final SetHangSpeed hangBackwardSpeed = new SetHangSpeed(hang, -HangConstants.speed);
@@ -242,7 +242,7 @@ public class RobotContainer {
 			joystick.button(7).or(joystick.button(8)).whileFalse(hangStop);
 			joystick.button(7).onTrue(hangForwarSpeed);
 			joystick.button(8).onTrue(hangBackwardSpeed);
-      
+
 			joystick.button(9).onTrue(amplifyLightSignal);
 			joystick.button(10).onTrue(coopLightSignal);
 		} else {
