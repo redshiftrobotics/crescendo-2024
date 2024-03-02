@@ -1,20 +1,24 @@
 package frc.robot.subsystems;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
+import org.photonvision.EstimatedRobotPose;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics.SwerveDriveWheelStates;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -38,11 +42,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private final SwerveDriveKinematics kinematics;
 
 	/**
-	 * The SwerveDriveOdometry class can be used to track the position of a swerve drive robot on the field
-	 * 
-	 * @see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
+	 * Pose estimator. Like odometry but it can use vision as well
 	 */
-	private final SwerveDriveOdometry odometry;
+	private final SwerveDrivePoseEstimator poseEstimator;
 
 	/** Swerve module */
 	private final SwerveModule moduleFL, moduleFR, moduleBL, moduleBR;
@@ -55,6 +57,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @see https://ibb.co/dJrL259
 	 */
 	private final AHRS gyro;
+
+	/**
+	 * Vision subsystem of robot for pose estimator
+	 */
+	private final Vision visionSystem;
 
 	/**
 	 * Pose of robot. The pose is the current the X, Y and Rotation position of the robot, relative to the last reset.
@@ -84,12 +91,13 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @param swerveModuleBL Back left swerve module
 	 * @param swerveModuleBR Back right swerve module
 	 */
-	public SwerveDrivetrain(AHRS gyro,
+	public SwerveDrivetrain(AHRS gyro, Vision vision,
 		SwerveModule swerveModuleFL, SwerveModule swerveModuleFR,
 		SwerveModule swerveModuleBL, SwerveModule swerveModuleBR) {
 
 		// save parameters
 		this.gyro = gyro;
+		this.visionSystem = vision;
 
 		moduleFL = swerveModuleFL;
 		moduleFR = swerveModuleFR;
@@ -102,12 +110,13 @@ public class SwerveDrivetrain extends SubsystemBase {
 		kinematics = new SwerveDriveKinematics(
 			modulesMap(SwerveModule::getDistanceFromCenter, Translation2d[]::new));
 
-		// create starting state for odometry
-		odometry = new SwerveDriveOdometry(
-				kinematics,
-				getHeading(),
-				modulesMap(SwerveModule::getPosition, SwerveModulePosition[]::new));
-
+		// Create pose estimator, like odometry but cooler
+		poseEstimator = new SwerveDrivePoseEstimator(
+			kinematics,
+			getHeading(),
+			getWheelPositions().positions,
+			pose);
+		
 		// set up name and children for sendable registry
 		setName(toString());
 		for (SwerveModule module : modules) {
@@ -130,10 +139,16 @@ public class SwerveDrivetrain extends SubsystemBase {
 	/** This is the periodic function of the swerve drivetrain, called periodically by the CommandScheduler, about every 20ms. */
 	@Override
 	public void periodic() {
-		// use odometry to update the estimated pose
-		pose = odometry.update(
-				getHeading(),
-				getWheelPositions());
+		pose = poseEstimator.update(
+			getHeading(),
+			getWheelPositions());
+
+		if (visionSystem != null) {
+			Optional<EstimatedRobotPose> estimatedPose = visionSystem.getEstimatedGlobalPose();
+			if (estimatedPose.isPresent()) {
+				poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(), estimatedPose.get().timestampSeconds);
+			}
+		}
 		
 		if (desiredPose != null) {
 			// Calculate our robot speeds with the PID controllers
@@ -161,7 +176,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * Basically zeros out position.
 	 */
 	public void resetPosition() {
-		odometry.resetPosition(
+		poseEstimator.resetPosition(
 				getHeading(),
 				getWheelPositions(),
 				pose);
@@ -228,8 +243,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 */
 	public ChassisSpeeds getState() {
 		// get all module states and convert them into chassis speeds
-		return kinematics.toChassisSpeeds(
-				modulesMap(SwerveModule::getState, SwerveModuleState[]::new));
+		return kinematics.toChassisSpeeds(getWheelStates());
 	}
 
 	/**
@@ -319,9 +333,22 @@ public class SwerveDrivetrain extends SubsystemBase {
 				modulesMap(SwerveModule::getPosition, SwerveModulePosition[]::new));
 	}
 
+	/**
+	 * Get all the swerve module states
+	 * 
+	 * @return a {@link SwerveDriveWheelPositions} object which contains an array of
+	 *         all swerve module positions
+	 */
+	public SwerveDriveWheelStates getWheelStates() {
+		return new SwerveDriveWheelStates(
+				modulesMap(SwerveModule::getState, SwerveModuleState[]::new));
+	}
+
 	// --- Gyro methods ---
 
 	/**
+	 * Gyro Method
+	 * 
 	 * <p>
 	 * Return the heading of the robot as a rotation in a 2D coordinate frame
 	 * represented by a point on the unit circle (cosine and sine).
@@ -346,6 +373,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 	}
 
 	/**
+	 * Gyro Method
+	 * 
 	 * <p>
 	 * Return the heading of the robot in as a rotation in a 3D coordinate frame
 	 * represented by a quaternion.
