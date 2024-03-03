@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.ArmConstants;
 
 import com.revrobotics.CANSparkMax;
@@ -36,6 +37,7 @@ public class RealArm extends Arm {
 				ArmConstants.ELEVATION_PID_P,
 				ArmConstants.ELEVATION_PID_I,
 				ArmConstants.ELEVATION_PID_D);
+		
 		armRaisePIDController.setTolerance(Units.degreesToRotations(2.5));
 
 		armPosition = rightArmEncoder.getAbsolutePosition();

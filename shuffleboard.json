@@ -11,7 +11,7 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "4,2": {
+          "5,2": {
             "size": [
               1,
               1
@@ -52,7 +52,7 @@
               "_showGlyph": false
             }
           },
-          "4,0": {
+          "5,0": {
             "size": [
               1,
               2
@@ -86,7 +86,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "1,2": {
+          "0,2": {
             "size": [
               2,
               1
@@ -99,7 +99,7 @@
               "_showGlyph": true
             }
           },
-          "7,1": {
+          "8,1": {
             "size": [
               1,
               1
@@ -112,7 +112,7 @@
               "_showGlyph": true
             }
           },
-          "6,1": {
+          "7,1": {
             "size": [
               1,
               1
@@ -125,7 +125,7 @@
               "_showGlyph": true
             }
           },
-          "8,1": {
+          "9,1": {
             "size": [
               1,
               1
@@ -138,9 +138,9 @@
               "_showGlyph": true
             }
           },
-          "6,2": {
+          "7,2": {
             "size": [
-              2,
+              3,
               1
             ],
             "content": {
@@ -151,7 +151,7 @@
               "_showGlyph": true
             }
           },
-          "7,0": {
+          "8,0": {
             "size": [
               1,
               1
@@ -170,7 +170,7 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "6,0": {
+          "7,0": {
             "size": [
               1,
               1
@@ -189,7 +189,7 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "8,0": {
+          "9,0": {
             "size": [
               1,
               1
@@ -208,60 +208,6 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "7,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/tPoseX",
-              "_title": "tPoseX",
-              "_glyph": 110,
-              "_showGlyph": true
-            }
-          },
-          "6,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/tPoseY",
-              "_title": "tPoseY",
-              "_glyph": 111,
-              "_showGlyph": true
-            }
-          },
-          "8,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/tPoseDegrees",
-              "_title": "tPoseDegrees",
-              "_glyph": 419,
-              "_showGlyph": true
-            }
-          },
-          "8,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/tPoseActive",
-              "_title": "tPoseActive",
-              "_glyph": 288,
-              "_showGlyph": true,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
           "1,0": {
             "size": [
               2,
@@ -277,6 +223,58 @@
               "Visuals/Starting angle": 180.0,
               "Visuals/Show tick mark ring": true,
               "Visuals/Counter clockwise": false
+            }
+          },
+          "2,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Drive Ctrl",
+              "_title": "Drive Ctrl",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Operator Ctrl",
+              "_title": "Operator Ctrl",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Arm Deg",
+              "_title": "Arm Deg",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Arm SP Deg",
+              "_title": "Arm SP Deg",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }

@@ -157,6 +157,9 @@ public class RobotContainer {
 
 		final Command cancelCommand = new CancelCommands(drivetrain, arm, intakeShooter);
 
+		final Command armUp = new ArmRotateBy(arm, +ArmConstants.DEGREES_PER_SECOND * TimedRobot.kDefaultPeriod);
+		final Command armDown = new ArmRotateBy(arm, -ArmConstants.DEGREES_PER_SECOND * TimedRobot.kDefaultPeriod);
+
 		drivetrain.removeDefaultCommand();
 
 		if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
@@ -195,12 +198,16 @@ public class RobotContainer {
 					xbox::getRightX, -1,
 					Constants.DriverConstants.DEAD_ZONE);
 
-			xbox.leftBumper().whileTrue(Commands.run(drivetrain::brakeMode, drivetrain));
-			xbox.rightBumper().whileTrue(Commands.run(drivetrain::toDefaultStates, drivetrain));
+			// xbox.leftBumper().whileTrue(Commands.run(drivetrain::brakeMode, drivetrain));
+			// xbox.rightBumper().whileTrue(Commands.run(drivetrain::toDefaultStates,
+			// drivetrain));
 
 			xbox.povDown().onTrue(Commands.runOnce(inputs::decreaseSpeedLevel));
 			xbox.povUp().onTrue(Commands.runOnce(inputs::increaseSpeedLevel));
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
+
+			xbox.leftBumper().whileTrue(armUp);
+			xbox.rightBumper().whileTrue(armDown);
 
 			xbox.b().onTrue(cancelCommand);
 
@@ -226,9 +233,6 @@ public class RobotContainer {
 		final Command armToSpeaker = new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 		final Command armToStart = new ArmRotateTo(arm, ArmConstants.ARM_START);
 		final Command armToDrive = new ArmRotateTo(arm, ArmConstants.ARM_DRIVE);
-
-		final Command armUp = new ArmRotateBy(arm, +ArmConstants.DEGREES_PER_SECOND * TimedRobot.kDefaultPeriod);
-		final Command armDown = new ArmRotateBy(arm, -ArmConstants.DEGREES_PER_SECOND * TimedRobot.kDefaultPeriod);
 
 		final Command intake = Commands.runOnce(intakeShooter::intake, intakeShooter);
 		final Command intakeReverse = Commands.runOnce(intakeShooter::intakeReverse, intakeShooter);
@@ -264,7 +268,7 @@ public class RobotContainer {
 			joystick.button(9).onTrue(amplifyLightSignal);
 			joystick.button(10).onTrue(coopLightSignal);
 
-			joystick.button(11).onTrue(Autos.dropInAmp(arm,  intakeShooter));
+			joystick.button(11).onTrue(Autos.dropInAmp(arm, intakeShooter));
 			joystick.button(12).onTrue(Autos.dropInSpeaker(arm, intakeShooter));
 		} else {
 			SmartDashboard.putString("Operator Ctrl", "GamePad");
@@ -284,16 +288,12 @@ public class RobotContainer {
 			xbox.rightTrigger().onFalse(intakeStop);
 
 			xbox.leftBumper().onTrue(armToIntake);
-
 			xbox.rightBumper().onTrue(armToSpeaker);
+			xbox.rightStick().onTrue(armToAmp);
+			xbox.a().onTrue(armToDrive);
 
 			xbox.y().onTrue(intake);
 			xbox.y().onFalse(intakeStop);
-
-			xbox.pov(270).onTrue(armToStart);
-			xbox.pov(90).onTrue(armToDrive);
-
-			xbox.a().onTrue(armToAmp);
 
 			// xbox.povLeft().onTrue(amplifyLightSignal);
 			// xbox.povRight().onTrue(coopLightSignal);
