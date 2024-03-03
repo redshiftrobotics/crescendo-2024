@@ -116,7 +116,7 @@ public final class Constants {
 		public static final double ARM_START = -38;
 		public static final double ARM_DRIVE = -83;
 		public static final double ARM_AMP_SHOOTING_DEGREES = -24.8;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -71;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822;
 		public static final double ARM_INTAKE_DEGREES = -109;
 
 		public static final int LEFT_MOTOR_ID = 5;
@@ -125,7 +125,7 @@ public final class Constants {
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
 
-		public static final double DEGREES_PER_SECOND = 0.7;
+		public static final double DEGREES_PER_SECOND = 3.2;
 
 		public static final double ELEVATION_PID_P = 3.5;
 		public static final double ELEVATION_PID_I = 0;
