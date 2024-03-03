@@ -64,7 +64,7 @@ public final class Autos {
 				new SpinIntakeFlywheels(shooter, Constants.IntakeShooterConstants.FLYWHEEL_SPEED_SPEAKER),
 				new WaitCommand(1),
 				new SpinIntakeWheels(shooter, Constants.IntakeShooterConstants.WHEEL_SPEED_SPEAKER),
-				new WaitCommand(1),
+				new WaitCommand(0.25),
 				new SpinIntakeFlywheels(shooter, 0),
 				new SpinIntakeWheels(shooter, 0));
 	}

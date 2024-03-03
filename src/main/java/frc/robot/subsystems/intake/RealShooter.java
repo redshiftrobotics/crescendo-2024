@@ -27,19 +27,15 @@ public class RealShooter extends IntakeShooter {
 	private final WPI_VictorSPX flywheel1;
 	private final WPI_VictorSPX flywheel2;
 
-	private final CANSparkMax intake1;
+	private final CANSparkMax intake;
 	// private final CANSparkMax intake2; // might not exist
 
 	public RealShooter(int flywheel1id, int flywheel2id, int intake1id, int intake2id) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2id);
 
-		this.intake1 = new CANSparkMax(intake1id, CANSparkLowLevel.MotorType.kBrushless);
-		// this.intake2 = new CANSparkMax(intake2id,
-		// CANSparkLowLevel.MotorType.kBrushless);
-
-		intake1.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
-		// intake2.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
+		this.intake = new CANSparkMax(intake1id, CANSparkLowLevel.MotorType.kBrushless);
+		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
 	}
 
 	public void setFlyWheelSpeed(double speed) {
@@ -60,7 +56,7 @@ public class RealShooter extends IntakeShooter {
 	}
 
 	public void setIntakeSpeed(double speed) {
-		intake1.set(speed);
+		intake.set(speed);
 		// intake2.set(speed);
 	}
 

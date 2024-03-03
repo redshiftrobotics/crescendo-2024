@@ -7,11 +7,9 @@ import frc.robot.Constants.LightConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
-import frc.robot.commands.FollowTag;
 import frc.robot.commands.AimAtTag;
 import frc.robot.commands.ArmRotateBy;
 import frc.robot.commands.ArmRotateTo;
@@ -204,7 +202,9 @@ public class RobotContainer {
 			xbox.b().onTrue(cancelCommand);
 
 			xbox.a().whileTrue(new AimAtTag(drivetrain, vision, 1, inputs));
-			xbox.x().whileTrue(new FollowTag(drivetrain, vision, 1, AutoConstants.PREFERRED_TAG_DISTANCE));
+			xbox.x().onTrue(Autos.dropInAmp(arm, intakeShooter));
+			// xbox.x().whileTrue(new FollowTag(drivetrain, vision, 1,
+			// AutoConstants.PREFERRED_TAG_DISTANCE));
 
 			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
 		}

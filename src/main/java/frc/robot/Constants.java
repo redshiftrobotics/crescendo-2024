@@ -148,18 +148,18 @@ public final class Constants {
 
 		public static final boolean HAS_INTAKE;
 
-		public static final boolean INTAKE_REVERSE = true;
+		public static final boolean INTAKE_REVERSE = false;
 
 		public static final int FLYWHEEL_MOTOR_LEFT_ID = 13;
 		public static final int FLYWHEEL_MOTOR_RIGHT_ID = 7;
 		public static final int INTAKE_MOTOR_LEFT_ID = 12;
 		public static final int INTAKE_MOTOR_RIGHT_ID = -1;
 
-		public static final double FLYWHEEL_SPEED_AMP = .2;
-		public static final double FLYWHEEL_SPEED_SPEAKER = .5;
+		public static final double FLYWHEEL_SPEED_AMP = .5;
+		public static final double FLYWHEEL_SPEED_SPEAKER = 1;
 
-		public static final double WHEEL_SPEED_AMP = .2;
-		public static final double WHEEL_SPEED_SPEAKER = .5;
+		public static final double WHEEL_SPEED_AMP = 1;
+		public static final double WHEEL_SPEED_SPEAKER = 1;
 	}
 
 	public static class RobotMovementConstants {
