@@ -7,7 +7,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
 public class AutoDriveTo extends Command {
@@ -15,8 +14,6 @@ public class AutoDriveTo extends Command {
 
 	private final PIDController xMovePID, yMovePID;
 	private double initX, initY, goalX, goalY;
-
-	private boolean xOnlyMode;
 
 	/***
 	 * Command to autonomously drive somewhere
@@ -28,8 +25,6 @@ public class AutoDriveTo extends Command {
 
 		goalX = translation.getX();
 		goalY = translation.getY();
-
-		xOnlyMode = Math.abs(goalX) > Math.abs(goalY);
 
 		xMovePID = new PIDController(
 				RobotMovementConstants.TRANSLATION_PID_P,
@@ -61,32 +56,21 @@ public class AutoDriveTo extends Command {
 	public void execute() {
 		Pose2d position = this.drivetrain.getPosition();
 
-		double x = position.getX() - initX;
-		double y = position.getY() - initY;
+		double targetX = position.getX() - initX;
+		double targetY = position.getY() - initY;
 
-		SmartDashboard.putNumber("PoseY", position.getY());
-		SmartDashboard.putNumber("PoseX", position.getX());
-		SmartDashboard.putNumber("PoseDegrees", position.getRotation().getDegrees());
+		double xSpeed = xMovePID.calculate(targetX, goalX);
+		double ySpeed = yMovePID.calculate(targetY, goalY);
 
-		double xSpeed = xMovePID.calculate(x, goalX);
-		double ySpeed = yMovePID.calculate(y, goalY);
+		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
+		double maxSpeed = Math.max(Math.abs(xSpeed), Math.abs(ySpeed));
 
-		if (xOnlyMode)
-			ySpeed = 0;
-		else
-			xSpeed = 0;
-
-		// TEMP FIX: LEAVE HERE UNTIL BUMPERS!!!
-		if (Math.abs(xSpeed) > 0.5) {
-			xSpeed = 0.5 * Math.signum(xSpeed);
+		if (maxSpeed > speedLimit) {
+			xSpeed = (xSpeed / maxSpeed) * speedLimit;
+			ySpeed = (ySpeed / maxSpeed) * speedLimit;
 		}
 
-		final ChassisSpeeds speeds = new ChassisSpeeds(
-				xSpeed,
-				ySpeed,
-				0);
-
-		drivetrain.setDesiredState(speeds);
+		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, 0));
 		drivetrain.updateSmartDashboard();
 	}
 

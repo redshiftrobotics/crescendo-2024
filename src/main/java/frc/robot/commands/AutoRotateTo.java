@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
 public class AutoRotateTo extends Command {
@@ -48,7 +47,7 @@ public class AutoRotateTo extends Command {
 	public void initialize() {
 		currentAngleGoal = fieldRelative ? 0 : drivetrain.getHeading().getRadians();
 		currentAngleGoal += angleGoal;
-		SmartDashboard.putNumber("Target Angle Auto", currentAngleGoal);
+		// SmartDashboard.putNumber("Target Angle Auto", currentAngleGoal);
 	}
 
 	@Override
@@ -56,7 +55,7 @@ public class AutoRotateTo extends Command {
 		final double currentAngle = drivetrain.getHeading().getRadians();
 
 		double turnsSeed = rotatePID.calculate(currentAngle, this.currentAngleGoal);
-		SmartDashboard.putNumber("Turn Speed Auto", turnsSeed);
+		// SmartDashboard.putNumber("Turn Speed Auto", turnsSeed);
 
 		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
 
