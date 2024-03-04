@@ -254,6 +254,18 @@ public final class Constants {
 	public static class VisionConstants {
 
 		public static final Transform3d CAMERA_POSE = new Transform3d(0.5, 0, 0.25, new Rotation3d());
-		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					CAMERA_NAME = "Arducam_OV2311_USB_Camera";
+					break;
+				case COMP_BOT:
+				default:
+					CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+					break;
+			}
+		}
+		public static final String CAMERA_NAME;
+		// public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 	}
 }

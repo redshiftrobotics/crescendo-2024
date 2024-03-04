@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** Vision subsystem */
 public class Vision extends SubsystemBase {
 
-	private final static boolean DEBUG_INFO = false;
+	private final static boolean DEBUG_INFO = true;
 
 	final PhotonCamera camera;
 	final Transform3d robotToCamera;
