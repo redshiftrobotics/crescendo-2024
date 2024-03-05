@@ -42,9 +42,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private final SwerveDriveKinematics kinematics;
 
 	/**
-	 * The SwerveDriveOdometry class can be used to track the position of a swerve
-	 * drive robot on the field
-	 * 
+	 * The SwerveDriveOdometry class can be used to track the position of a swerve drive robot on the field
+	 *
 	 * @see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
 	 */
 	private final SwerveDriveOdometry poseOdometry;
@@ -468,10 +467,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 	}
 
 	/**
-	 * Utility method. Function to easily run a function on each swerve module and
-	 * collect results to array.
-	 * Insures that we don't mix up order of swerve modules, as this could lead to
-	 * hard to spot bugs.
+	 * Utility method. Function to easily run a function on each swerve module and collect results to array.
+	 * Insures that we don't mix up order of swerve modules, as this could lead to hard-to-spot bugs.
 	 * 
 	 * @param <T>              type that is returned by function and should be
 	 *                         collected

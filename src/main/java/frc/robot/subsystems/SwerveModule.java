@@ -65,7 +65,7 @@ public class SwerveModule extends SubsystemBase {
 		// --- Drive Motor ---
 		driveMotor = new CANSparkMax(driveMotorDeviceId, MotorType.kBrushless);
 
-		// You most restore factory defaults if you want to use velocity encoder.
+		// You must restore factory defaults if you want to use velocity encoder.
 		// If you do not do this, everything will break and shake itself to death
 		driveMotor.restoreFactoryDefaults();
 
