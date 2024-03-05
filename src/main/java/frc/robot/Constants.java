@@ -15,7 +15,9 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public final class Constants {
 	public static enum Bot {
-		WOOD_BOT, COMP_BOT
+		WOOD_BOT,
+		COMP_BOT,
+		SIM_BOT
 	}
 
 	public static final Bot currentBot;
@@ -36,6 +38,10 @@ public final class Constants {
 		serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "simulation";
 
 		switch (serialNumber) {
+			case "simulation":
+				currentBot = Bot.SIM_BOT;
+				break;
+
 			case "03282B00": // Wood Bot Serial Number
 				currentBot = Bot.WOOD_BOT;
 				break;
@@ -50,6 +56,7 @@ public final class Constants {
 	public static class HangConstants {
 		static {
 			switch (currentBot) {
+				case SIM_BOT:
 				case WOOD_BOT:
 					HAS_HANG = false;
 					break;
@@ -95,6 +102,7 @@ public final class Constants {
 	public static class ArmConstants {
 		static {
 			switch (currentBot) {
+				case SIM_BOT:
 				case WOOD_BOT:
 					HAS_ARM = false;
 					break;
@@ -135,6 +143,7 @@ public final class Constants {
 	public static class IntakeShooterConstants {
 		static {
 			switch (currentBot) {
+				case SIM_BOT:
 				case WOOD_BOT:
 					HAS_INTAKE = false;
 					break;
@@ -184,6 +193,7 @@ public final class Constants {
 
 		static {
 			switch (currentBot) {
+				case SIM_BOT:
 				case WOOD_BOT:
 					// Front Left
 					VELOCITY_MOTOR_ID_FL = 41;
@@ -292,6 +302,7 @@ public final class Constants {
 	public static class SwerveDrivetrainConstants {
 		static {
 			switch (currentBot) {
+				case SIM_BOT:
 				case WOOD_BOT:
 					MODULE_LOCATION_X = 26.0 / 100;
 					MODULE_LOCATION_Y = 28.5 / 100;
