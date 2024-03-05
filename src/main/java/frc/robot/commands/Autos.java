@@ -47,7 +47,7 @@ public final class Autos {
 	public static Command shootStartingAuto(Arm arm, SwerveDrivetrain drivetrain, IntakeShooter shooter,
 			boolean invertY) {
 		return Commands.sequence(
-				dropInSpeaker(arm, shooter),
+				shootInSpeaker(arm, shooter),
 				startingAuto(arm, drivetrain, invertY));
 	}
 
