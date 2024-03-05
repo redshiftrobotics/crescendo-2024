@@ -47,6 +47,13 @@ public final class Autos {
 				new AutoRotateTo(drivetrain, new Rotation2d(Math.PI / -2 * invert)));
 	}
 
+	public static Command shootStartingAuto(Arm arm, SwerveDrivetrain drivetrain, IntakeShooter shooter,
+			boolean invertY) {
+		return Commands.sequence(
+				dropInSpeaker(arm, shooter),
+				startingAuto(arm, drivetrain, invertY));
+	}
+
 	public static Command dropInAmp(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_AMP_SHOOTING_DEGREES),
