@@ -53,7 +53,7 @@ public class AimAtTag extends Command {
 	 * 
 	 * @param drivetrain the drivetrain of the robot
 	 * @param vision     the vision subsystem of the robot
-	 * @param tagID      the numerical ID of the the tag to turn to, null for best
+	 * @param tagID      the numerical ID of the tag to turn to, null for best
 	 *                   tag
 	 */
 	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, Integer tagID) {
