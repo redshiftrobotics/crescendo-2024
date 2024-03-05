@@ -114,10 +114,10 @@ public final class Constants {
 		public static final double ROTATION_PID_I = 0;
 		public static final double ROTATION_PID_D = 0;
 
-		public static final double TRANSLATION_PID_P = 30;
-		public static final double TRANSLATION_PID_I = 0.5;
-		public static final double TRANSLATION_PID_D = 15;
-		public static final double MAX_TRANSLATION_SPEED = 0.2;
+		public static final double TRANSLATION_PID_P = 1; //pids all temporarily set low
+		public static final double TRANSLATION_PID_I = 0; 
+		public static final double TRANSLATION_PID_D = 0;
+		public static final double MAX_TRANSLATION_SPEED = 0.1;
 	}
 
 	public static class OperatorConstants {

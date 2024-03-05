@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.Constants.AutoConstants;
 
 public class AutoPosition extends Command {
 	private final SwerveDrivetrain drivetrain;
@@ -29,14 +30,16 @@ public class AutoPosition extends Command {
 			return;
 		}
 
-		double angle = dist3d.getRotation().getZ();
+		double angle = Math.PI+dist3d.getRotation().getZ();
 		Translation2d trans = new Translation2d(
-				dist3d.getX() - 0.5, dist3d.getY());
+				dist3d.getX()-AutoConstants.PREFERRED_TAG_DISTANCE*Math.cos(angle), 
+				dist3d.getY()-AutoConstants.PREFERRED_TAG_DISTANCE*Math.sin(angle));
 		SmartDashboard.putNumber("ANGLE", angle);
 		SmartDashboard.putNumber("tr X", trans.getX());
 		SmartDashboard.putNumber("tr Y", trans.getY());
-		Rotation2d rot = new Rotation2d(-(Math.PI - angle));
+		Rotation2d rot = new Rotation2d(angle);
 		Commands.sequence(
+				//new AutoDriveTo(drivetrain,trans),
 				new AutoRotateTo(drivetrain, rot, false), new AutoDriveTo(drivetrain, trans)).schedule();
 		;
 
