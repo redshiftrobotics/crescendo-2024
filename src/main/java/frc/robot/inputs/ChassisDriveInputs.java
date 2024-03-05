@@ -78,6 +78,21 @@ public class ChassisDriveInputs {
 		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
 	}
 
+	public void slowMode() {
+		speedLevel = 0;
+		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
+	}
+	
+	public void normalMode() {
+		speedLevel = 1;
+		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
+	}
+
+	public void fastMode() {
+		speedLevel = 2;
+		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
+	}
+
 	public void enableFieldRelative() {
 		isFieldRelative = true;
 	}

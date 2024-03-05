@@ -32,10 +32,12 @@ public class RealHang extends Hang {
 		SmartDashboard.putBoolean("Is Arm at Bottom?", isAtBottom());
 	}
 
+	@Override
 	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
 
+	@Override
 	public boolean isAtBottom() {
 		return limitSwitch.get();
 	}

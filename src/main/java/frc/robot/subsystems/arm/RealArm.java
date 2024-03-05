@@ -37,7 +37,7 @@ public class RealArm extends Arm {
 				ArmConstants.ELEVATION_PID_I,
 				ArmConstants.ELEVATION_PID_D);
 		
-		armRaisePIDController.setTolerance(Units.degreesToRotations(2.5));
+		armRaisePIDController.setTolerance(Units.degreesToRotations(2));
 
 		armPosition = rightArmEncoder.getAbsolutePosition();
 
@@ -48,30 +48,33 @@ public class RealArm extends Arm {
 		rightArmMotor.setInverted(!areMotorsReversed);
 	}
 
+	@Override
 	public void setSetpoint(double degrees) {
 		degrees = Math.max(degrees, ArmConstants.MINIMUM_ARM_DEGREES);
 		degrees = Math.min(degrees, ArmConstants.MAXIMUM_ARM_DEGREES);
-
+		
 		SmartDashboard.putNumber("Arm SP Deg", degrees);
-
+		
 		armRaisePIDController.setSetpoint(Units.degreesToRotations(degrees));
 	}
 
+	@Override
+	public void setSetpoint(Rotation2d rotation) {
+		setSetpoint(rotation.getDegrees());
+	}
+	
+	@Override
 	public Rotation2d getArmPosition() {
 		return Rotation2d.fromRotations(armPosition.refresh().getValueAsDouble());
 	}
-
+	
+	@Override
 	public boolean isAtDesiredPosition() {
 		return armRaisePIDController.atSetpoint();
 	}
 
-	/**
-	 * This method is called periodically by the CommandScheduler, about every 20ms.
-	 */
 	@Override
 	public void periodic() {
-		// This method will be called once per scheduler run
-
 		Rotation2d currentOnPosition = getArmPosition();
 
 		double armSpeed = armRaisePIDController.calculate(currentOnPosition.getRotations());

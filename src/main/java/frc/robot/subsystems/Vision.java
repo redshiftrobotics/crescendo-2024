@@ -56,13 +56,24 @@ public class Vision extends SubsystemBase {
 	 *         center of the robot. Returns null if no tag found
 	 */
 	public Transform3d getTransformToTag(int tagID) {
-		if (tagID == -1) return getTransformToTag();
-		
-		for (PhotonTrackedTarget target : camera.getLatestResult().getTargets()) {
-			if (target.getFiducialId() == tagID)
-				return target.getBestCameraToTarget().plus(cameraToRobot);
+		try {
+			if (tagID == -1) return getTransformToTag();
+
+			var results = camera.getLatestResult();
+
+			if (!results.hasTargets()) {
+				return null;
+			}
+			
+			for (PhotonTrackedTarget target :results.getTargets()) {
+				if (target.getFiducialId() == tagID)
+					return target.getBestCameraToTarget().plus(cameraToRobot);
+			}
+			return null;
+			
+		} catch (Exception e) {
+			return null;
 		}
-		return null;
 	}
 
 	@Override

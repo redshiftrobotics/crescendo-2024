@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.IntakeShooterConstants;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -26,50 +27,52 @@ public class RealShooter extends IntakeShooter {
 
 	private final WPI_VictorSPX flywheel1;
 	private final WPI_VictorSPX flywheel2;
+	private long flywheelSpinUpStartTimeMillis;
 
 	private final CANSparkMax intake;
-	// private final CANSparkMax intake2; // might not exist
 
-	public RealShooter(int flywheel1id, int flywheel2id, int intake1id, int intake2id) {
-		this.flywheel1 = new WPI_VictorSPX(flywheel1id);
-		this.flywheel2 = new WPI_VictorSPX(flywheel2id);
+	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID) {
+		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
+		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
 
-		this.intake = new CANSparkMax(intake1id, CANSparkLowLevel.MotorType.kBrushless);
+		flywheelSpinUpStartTimeMillis = System.currentTimeMillis();
+
+		this.intake = new CANSparkMax(intakeID, CANSparkLowLevel.MotorType.kBrushless);
 		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
 	}
 
-	public void setFlyWheelSpeed(double speed) {
-		flywheel1.set(-speed);
-		flywheel2.set(-speed);
+	@Override
+	public void setFlyWheelShooterSpeed(double speed) {
+		speed = -speed;
+
+		if (speed != flywheel1.get() || speed != flywheel2.get()) {
+			flywheelSpinUpStartTimeMillis = System.currentTimeMillis();
+		}
+		
+		flywheel1.set(speed);
+		flywheel2.set(speed);
+		
 	}
 
-	public void startFlyWheels() {
-		setFlyWheelSpeed(1);
+	@Override
+	public double getFlyWheelShooterSpinUpTimeSeconds() {
+		long currentTimeMillis = System.currentTimeMillis();
+		return Units.millisecondsToSeconds(currentTimeMillis - flywheelSpinUpStartTimeMillis);
 	}
 
-	public void stopFlywheels() {
-		setFlyWheelSpeed(0);
+	@Override
+	public void eject() {
+		setIntakeGrabberSpeed(-1);
 	}
 
-	public void reverseFlywheel() {
-		setFlyWheelSpeed(-0.075);
+	@Override
+	public void stop() {
+		setFlyWheelShooterSpeed(0);
+		setIntakeGrabberSpeed(0);
 	}
 
-	public void setIntakeSpeed(double speed) {
+	@Override
+	public void setIntakeGrabberSpeed(double speed) {
 		intake.set(speed);
-		// intake2.set(speed);
 	}
-
-	public void intake() {
-		setIntakeSpeed(1);
-	}
-
-	public void intakeReverse() {
-		setIntakeSpeed(-1);
-	}
-
-	public void stopIntake() {
-		setIntakeSpeed(0);
-	}
-
 }

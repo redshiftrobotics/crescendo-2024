@@ -1,27 +1,34 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.util.Units;
+
 public class DummyShooter extends IntakeShooter {
-	public void setFlyWheelSpeed(double speed) {
-	};
 
-	public void startFlyWheels() {
+	private long flywheelSpinUpTime;
+
+	public DummyShooter() {
+		flywheelSpinUpTime = System.currentTimeMillis();
 	}
 
-	public void stopFlywheels() {
+	@Override
+	public void setFlyWheelShooterSpeed(double speed) {
+		flywheelSpinUpTime = System.currentTimeMillis();
 	}
 
-	public void reverseFlywheel() {
+	@Override
+	public double getFlyWheelShooterSpinUpTimeSeconds() {
+		return Units.millisecondsToSeconds(flywheelSpinUpTime);
 	}
 
-	public void setIntakeSpeed(double speed) {
+	@Override
+	public void setIntakeGrabberSpeed(double speed) {
 	}
 
-	public void intake() {
+	@Override
+	public void eject() {
 	}
 
-	public void intakeReverse() {
-	}
-
-	public void stopIntake() {
+	@Override
+	public void stop() {
 	}
 }

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 
 /**
@@ -17,14 +19,9 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
  */
 public final class Autos {
 	/** Example static factory for an autonomous command. */
-	public static Command driveAuto(SwerveDrivetrain drivetrain, double meters) {
+	public static Command driveAuto(SwerveDrivetrain drivetrain, Translation2d translation) {
 		return Commands.sequence(
-				new AutoDriveTo(drivetrain, new Translation2d(meters, meters)));
-	}
-
-	public static Command rotateTestAuto(SwerveDrivetrain drivetrain, double degrees, boolean fieldRelative) {
-		return Commands.sequence(
-				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), fieldRelative));
+				new AutoDriveTo(drivetrain, translation));
 	}
 
 	/** Linden did this */
@@ -49,31 +46,37 @@ public final class Autos {
 
 	public static Command dropInAmp(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
-				new ArmRotateTo(arm, Constants.ArmConstants.ARM_AMP_SHOOTING_DEGREES),
-				new SpinIntakeFlywheels(shooter, Constants.IntakeShooterConstants.FLYWHEEL_SPEED_AMP),
-				new WaitCommand(1),
-				new SpinIntakeWheels(shooter, Constants.IntakeShooterConstants.WHEEL_SPEED_AMP),
-				new WaitCommand(1),
-				new SpinIntakeFlywheels(shooter, 0),
-				new SpinIntakeWheels(shooter, 0));
+				new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES).alongWith(
+						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP),
+						new WaitCommand(1)),
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_AMP),
+				new WaitCommand(0.2),
+				new SpinFlywheelShooter(shooter, 0),
+				new SpinIntakeGrabbers(shooter, 0));
 	}
 
-	public static Command dropInSpeaker(Arm arm, IntakeShooter shooter) {
+	public static Command shootInSpeaker(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
-				new ArmRotateTo(arm, Constants.ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
-				new SpinIntakeFlywheels(shooter, Constants.IntakeShooterConstants.FLYWHEEL_SPEED_SPEAKER),
-				new WaitCommand(1),
-				new SpinIntakeWheels(shooter, Constants.IntakeShooterConstants.WHEEL_SPEED_SPEAKER),
-				new WaitCommand(0.25),
-				new SpinIntakeFlywheels(shooter, 0),
-				new SpinIntakeWheels(shooter, 0));
+				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
+				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new WaitCommand(0.2),
+				new SpinFlywheelShooter(shooter, 0),
+				new SpinIntakeGrabbers(shooter, 0));
 	}
 
-	/*
-	 * 1 set arm to right position
-	 * rotate arm
-	 * 
-	 */
+	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
+		return Commands.sequence(
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
+	}
+
+	public static Command intakeFromFloorEnd(Arm arm, IntakeShooter shooter) {
+		return Commands.sequence(
+				new SpinIntakeGrabbers(shooter, -0.1),
+				new WaitCommand(0.1),
+				new SpinIntakeGrabbers(shooter, 0));
+	}
 
 	private Autos() {
 		throw new UnsupportedOperationException("This is a utility class!");

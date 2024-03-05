@@ -3,30 +3,13 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class IntakeShooter extends SubsystemBase {
-	public void setFlyWheelSpeed(double speed) {
-	};
+	public abstract void setFlyWheelShooterSpeed(double speed);
 
-	public void startFlyWheels() {
-	}
+	public abstract double getFlyWheelShooterSpinUpTimeSeconds();
 
-	public void stopFlywheels() {
-	}
+	public abstract void setIntakeGrabberSpeed(double speed);
 
-	public void setIntakeSpeed(double speed) {
-	}
+	public abstract void eject();
 
-	public void intake() {
-	}
-
-	public void intakeReverse() {
-	}
-
-	public void stopIntake() {
-	}
-
-	public void reverseFlywheel() {
-	}
-
-	// TODO make abstract
-
+	public abstract void stop();
 }

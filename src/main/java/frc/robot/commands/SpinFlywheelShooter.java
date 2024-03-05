@@ -3,30 +3,24 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.IntakeShooter;
 
-public class SpinIntakeWheels extends Command {
+public class SpinFlywheelShooter extends Command {
 	private IntakeShooter intakeShooter;
 	private double speed;
 
-	public SpinIntakeWheels(IntakeShooter intake, double speed) {
-		intakeShooter = intake;
+	public SpinFlywheelShooter(IntakeShooter intakeShooter, double speed) {
+		this.intakeShooter = intakeShooter;
 		this.speed = speed;
+
+		addRequirements(intakeShooter);
 	}
 
 	@Override
 	public void initialize() {
-		intakeShooter.setIntakeSpeed(speed);
+		intakeShooter.setFlyWheelShooterSpeed(speed);
 	}
-
-	// @Override
-	// public void execute() { }
 
 	@Override
 	public boolean isFinished() {
 		return true;
-	}
-
-	@Override
-	public void end(boolean interrupted) {
-		// end
 	}
 }

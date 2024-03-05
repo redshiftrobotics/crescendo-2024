@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -90,6 +91,8 @@ public final class Constants {
 
 		// max angular velocity for drivetrain, in radians per second
 		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
+
+		public static final Rotation2d FIELD_RELATIVE = Rotation2d.fromDegrees(180);
 	}
 
 	public static class ArmConstants {
@@ -113,9 +116,10 @@ public final class Constants {
 		public static final double MINIMUM_ARM_DEGREES = -120;
 
 		// Degrees
-		public static final double ARM_START = -38;
-		public static final double ARM_DRIVE = -83;
-		public static final double ARM_AMP_SHOOTING_DEGREES = -24.8;
+		public static final double ARM_START_DEGREES = -38;
+		public static final double ARM_STOW_DEGREES = -83;
+		public static final double ARM_STOW_2_DEGREES = -100;
+		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
 		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822;
 		public static final double ARM_INTAKE_DEGREES = -109;
 
@@ -125,9 +129,9 @@ public final class Constants {
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
 
-		public static final double DEGREES_PER_SECOND = 3.2;
+		public static final double DEGREES_PER_SECOND = 1;
 
-		public static final double ELEVATION_PID_P = 3.5;
+		public static final double ELEVATION_PID_P = 10;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
 	}
@@ -150,16 +154,17 @@ public final class Constants {
 
 		public static final boolean INTAKE_REVERSE = false;
 
-		public static final int FLYWHEEL_MOTOR_LEFT_ID = 13;
-		public static final int FLYWHEEL_MOTOR_RIGHT_ID = 7;
-		public static final int INTAKE_MOTOR_LEFT_ID = 12;
-		public static final int INTAKE_MOTOR_RIGHT_ID = -1;
+		public static final int FLYWHEEL_MOTOR_1_ID = 13;
+		public static final int FLYWHEEL_MOTOR_2_ID = 7;
 
-		public static final double FLYWHEEL_SPEED_AMP = .5;
-		public static final double FLYWHEEL_SPEED_SPEAKER = 1;
+		public static final int INTAKE_MOTOR_ID = 12;
 
-		public static final double WHEEL_SPEED_AMP = 1;
-		public static final double WHEEL_SPEED_SPEAKER = 1;
+		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = 0.5;
+		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = 1;
+
+		public static final double INTAKE_GRABBER_SPEED_AMP = 1;
+		public static final double INTAKE_GRABBER_SPEED_SPEAKER = 1;
+		public static final double INTAKE_GRABBER_SPEED_INTAKE = -1;
 	}
 
 	public static class RobotMovementConstants {
@@ -173,7 +178,7 @@ public final class Constants {
 		public static final double TRANSLATION_PID_P = 30;
 		public static final double TRANSLATION_PID_I = 0.5;
 		public static final double TRANSLATION_PID_D = 15;
-		public static final double MAX_TRANSLATION_SPEED = 0.2;
+		public static final double MAX_TRANSLATION_SPEED = 1;
 	}
 
 	public static class OperatorConstants {
