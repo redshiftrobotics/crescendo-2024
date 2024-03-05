@@ -28,9 +28,7 @@ public class AimAtTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to turn to, -1 for
-	 *                            best tag
-	 * @param chassisDriveControl collection of inputs for driving
+	 * @param tagID               the numerical ID of the tag to turn to, -1 for best tag
 	 */
 	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, ChassisDriveInputs chassisDriveInputs) {
 		this.drivetrain = drivetrain;

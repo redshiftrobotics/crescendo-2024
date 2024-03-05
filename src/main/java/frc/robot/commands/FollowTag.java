@@ -28,10 +28,8 @@ public class FollowTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, -1 for best tag
+	 * @param tagID               the numerical ID of the tag to follow, -1 for best tag
 	 * @param targetDistanceToTag the target distance away from the tag to be in meters
-	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
-	 *                            tag, set to null to never finish
 	 */
 	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Transform2d targetDistanceToTag) {
 		this.drivetrain = drivetrain;
