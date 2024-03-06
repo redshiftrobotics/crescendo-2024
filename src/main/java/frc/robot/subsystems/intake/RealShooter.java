@@ -3,7 +3,7 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -27,7 +27,6 @@ public class RealShooter extends IntakeShooter {
 
 	private final WPI_VictorSPX flywheel1;
 	private final WPI_VictorSPX flywheel2;
-	private long flywheelSpinUpStartTimeMillis;
 
 	private final CANSparkMax intake;
 
@@ -35,44 +34,35 @@ public class RealShooter extends IntakeShooter {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
 
-		flywheelSpinUpStartTimeMillis = System.currentTimeMillis();
-
 		this.intake = new CANSparkMax(intakeID, CANSparkLowLevel.MotorType.kBrushless);
 		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
 	}
 
 	@Override
 	public void setFlyWheelShooterSpeed(double speed) {
-		speed = -speed;
+		SmartDashboard.putNumber("FlywheelShooter", speed);
 
-		if (speed != flywheel1.get() || speed != flywheel2.get()) {
-			flywheelSpinUpStartTimeMillis = System.currentTimeMillis();
-		}
-		
+		speed = -speed;
 		flywheel1.set(speed);
 		flywheel2.set(speed);
-		
+
 	}
 
 	@Override
-	public double getFlyWheelShooterSpinUpTimeSeconds() {
-		long currentTimeMillis = System.currentTimeMillis();
-		return Units.millisecondsToSeconds(currentTimeMillis - flywheelSpinUpStartTimeMillis);
+	public void setIntakeGrabberSpeed(double speed) {
+		SmartDashboard.putNumber("IntakeGrabber", speed);
+		intake.set(speed);
 	}
 
 	@Override
 	public void eject() {
 		setIntakeGrabberSpeed(-1);
+		setFlyWheelShooterSpeed(-0.1);
 	}
 
 	@Override
 	public void stop() {
 		setFlyWheelShooterSpeed(0);
 		setIntakeGrabberSpeed(0);
-	}
-
-	@Override
-	public void setIntakeGrabberSpeed(double speed) {
-		intake.set(speed);
 	}
 }

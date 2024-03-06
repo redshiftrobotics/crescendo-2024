@@ -38,7 +38,7 @@ public class ChassisRemoteControl extends Command {
 	public void initialize() {
 		drivetrain.toDefaultStates();
 
-		SmartDashboard.putBoolean("ControlActive", true);
+		SmartDashboard.putBoolean("Control Active", true);
 	}
 
 	/**
@@ -84,6 +84,6 @@ public class ChassisRemoteControl extends Command {
 	public void end(boolean interrupted) {
 		drivetrain.stop();
 
-		SmartDashboard.putBoolean("ControlActive", false);
+		SmartDashboard.putBoolean("Control Active", false);
 	}
 }

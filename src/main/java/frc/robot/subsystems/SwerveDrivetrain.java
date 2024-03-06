@@ -21,7 +21,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.RobotMovementConstants;
 
 /**
@@ -60,6 +59,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @see https://ibb.co/dJrL259
 	 */
 	private final AHRS gyro;
+
+	/**
+	 * Amount to add to gyro position for field relative drive and SmartDashboard display
+	 */
+	private Rotation2d frontOffset = new Rotation2d();
 
 	/**
 	 * Pose of robot. The pose is the current the X, Y and Rotation position of the
@@ -347,7 +351,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 		if (fieldRelative) {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
-					getHeading().plus(DriverConstants.FIELD_RELATIVE));
+					getHeading().plus(frontOffset));
 		}
 
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
@@ -425,6 +429,16 @@ public class SwerveDrivetrain extends SubsystemBase {
 		return gyro.getRotation3d();
 	}
 
+	
+	/**
+	 * Set amount to add to gyro position for field relative drive and SmartDashboard display
+	 * 
+	 * @param frontOffset rotation2d to add
+	 */
+	public void setFrontOffset(Rotation2d frontOffset) {
+		this.frontOffset = frontOffset;
+	}
+
 	// --- Util ---
 
 	/** Update SmartDashboard with robot values */
@@ -442,8 +456,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 				.sqrt(Math.pow(currentSpeeds.vxMetersPerSecond, 2) + Math.pow(currentSpeeds.vyMetersPerSecond, 2));
 
 		final double metersPerSecondToMilesPerHourConversion = 2.237;
-		SmartDashboard.putNumber("Robot Speed", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
-		SmartDashboard.putNumber("Heading Degrees", getHeading().plus(DriverConstants.FIELD_RELATIVE).getDegrees());
+		SmartDashboard.putNumber("Robot MPH", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
+		SmartDashboard.putNumber("Heading Degrees", getHeading().plus(frontOffset).getDegrees());
 
 		// final boolean hasTargetPose = desiredPose != null;
 		// final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();

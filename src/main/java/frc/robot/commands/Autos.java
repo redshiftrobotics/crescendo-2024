@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intake.IntakeShooter;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,11 +48,17 @@ public final class Autos {
 	public static Command shootStartingAuto(Arm arm, SwerveDrivetrain drivetrain, IntakeShooter shooter,
 			boolean invertY) {
 		return Commands.sequence(
-				shootInSpeaker(arm, shooter),
+				shootInSpeaker(arm, shooter, null),
 				startingAuto(arm, drivetrain, invertY));
 	}
 
-	public static Command dropInAmp(Arm arm, IntakeShooter shooter) {
+	public static Command dropInAmp(Arm arm, IntakeShooter shooter, Vision vision) {
+		if (vision != null && vision.isEnabled()) {
+			return Commands.sequence(
+				dropInAmp(arm, shooter, null)
+			);
+		}
+
 		return Commands.sequence(
 				new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES).alongWith(
 						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP),
@@ -62,7 +69,7 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 
-	public static Command shootInSpeaker(Arm arm, IntakeShooter shooter) {
+	public static Command shootInSpeaker(Arm arm, IntakeShooter shooter, Vision vision) {
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
@@ -72,13 +79,13 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 
-	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
+	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter, Vision vision) {
 		return Commands.sequence(
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
 	}
 
-	public static Command intakeFromFloorEnd(Arm arm, IntakeShooter shooter) {
+	public static Command intakeFromFloorEnd(Arm arm, IntakeShooter shooter, Vision vision) {
 		return Commands.sequence(
 				new SpinIntakeGrabbers(shooter, -0.1),
 				new WaitCommand(0.1),

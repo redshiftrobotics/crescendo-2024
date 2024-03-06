@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -57,7 +56,6 @@ public final class Constants {
 	public static class HangConstants {
 		static {
 			switch (currentBot) {
-				case SIM_BOT:
 				case WOOD_BOT:
 					HAS_HANG = false;
 					break;
@@ -98,14 +96,11 @@ public final class Constants {
 
 		// max angular velocity for drivetrain, in radians per second
 		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
-
-		public static final Rotation2d FIELD_RELATIVE = Rotation2d.fromDegrees(180);
 	}
 
 	public static class ArmConstants {
 		static {
 			switch (currentBot) {
-				case SIM_BOT:
 				case WOOD_BOT:
 					HAS_ARM = false;
 					break;
@@ -147,11 +142,10 @@ public final class Constants {
 	public static class IntakeShooterConstants {
 		static {
 			switch (currentBot) {
-				case SIM_BOT:
 				case WOOD_BOT:
-					HAS_INTAKE = false;
-					break;
-
+				HAS_INTAKE = false;
+				break;
+				
 				case COMP_BOT:
 				default:
 					HAS_INTAKE = true;
@@ -198,7 +192,6 @@ public final class Constants {
 
 		static {
 			switch (currentBot) {
-				case SIM_BOT:
 				case WOOD_BOT:
 					// Front Left
 					VELOCITY_MOTOR_ID_FL = 41;
@@ -307,7 +300,6 @@ public final class Constants {
 	public static class SwerveDrivetrainConstants {
 		static {
 			switch (currentBot) {
-				case SIM_BOT:
 				case WOOD_BOT:
 					MODULE_LOCATION_X = 26.0 / 100;
 					MODULE_LOCATION_Y = 28.5 / 100;
@@ -354,5 +346,7 @@ public final class Constants {
 		public static final double LED_COLOR_PURPLE = 0.91;
 		public static final double LED_COLOR_WHITE = 0.93;
 		public static final double LED_COLOR_RAINBOW = -0.99;
+
+		public static final double LED_COLOR_DEFAULT = 0.99;
 	}
 }

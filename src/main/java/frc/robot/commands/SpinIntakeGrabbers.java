@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.IntakeShooter;
 
 public class SpinIntakeGrabbers extends Command {
-	private IntakeShooter intakeShooter;
-	private double speed;
+	private final IntakeShooter intakeShooter;
+	private final double speed;
 
 	public SpinIntakeGrabbers(IntakeShooter intakeShooter, double speed) {
 		this.intakeShooter = intakeShooter;
