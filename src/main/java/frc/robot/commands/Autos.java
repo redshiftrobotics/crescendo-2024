@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
+import frc.robot.subsystems.hang.Hang;
 
 /**
  * This class just contains a bunch of auto-modes. Do not call this class
@@ -26,7 +27,7 @@ public final class Autos {
 	}
 
 	/** Linden did this */
-	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, boolean invertY) {
+	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, Hang hang, boolean invertY) {
 
 		// assumes start position in corner
 		double invert = 1;
@@ -34,29 +35,29 @@ public final class Autos {
 			invert = -1;
 		}
 
-		return Commands.sequence(
+		return Commands.parallel(Commands.sequence(
 				// 2.9, 0.2 and 1.2 are not arbitrary, they move the robot so that the note is
 				// right in front; 0.05 can be changed, it's for the amount of extra spacing
 				// that we want
 				new AutoDriveTo(drivetrain,
 						new Translation2d(2.9 - 0.2 - SwerveDrivetrainConstants.MODULE_LOCATION_X - 0.05,
 								invert * (1.2 - SwerveDrivetrainConstants.MODULE_LOCATION_Y))),
+				new SetHangSpeed(hang, 1)),
 
 				new AutoRotateTo(drivetrain, new Rotation2d(Math.PI / -2 * invert)));
 	}
 
-	public static Command shootStartingAuto(Arm arm, SwerveDrivetrain drivetrain, IntakeShooter shooter,
+	public static Command shootStartingAuto(Hang hang, Arm arm, SwerveDrivetrain drivetrain, IntakeShooter shooter,
 			boolean invertY) {
 		return Commands.sequence(
 				shootInSpeaker(arm, shooter, null),
-				startingAuto(arm, drivetrain, invertY));
+				startingAuto(arm, drivetrain, hang, invertY));
 	}
 
 	public static Command dropInAmp(Arm arm, IntakeShooter shooter, Vision vision) {
 		if (vision != null && vision.isEnabled()) {
 			return Commands.sequence(
-				dropInAmp(arm, shooter, null)
-			);
+					dropInAmp(arm, shooter, null));
 		}
 
 		return Commands.sequence(

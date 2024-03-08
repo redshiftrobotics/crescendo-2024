@@ -10,16 +10,19 @@ public class RealHang extends Hang {
 	private final CANSparkMax leftMotor;
 	private final CANSparkMax rightMotor;
 
-	private final DigitalInput limitSwitch;
+	private final DigitalInput leftLimitSwitch;
+	private final DigitalInput rightLimitSwitch;
 
-	private double speed;
+	private double leftSpeed;
+	private double rightSpeed;
 
 	public RealHang(int leftMotorID, int rightMotorID, boolean leftMotorIsInverted, boolean rightMotorIsInverted,
-			int limitSwitchId) {
+			int leftLimitSwitchId, int rightLimitSwitchId) {
 		leftMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
 		rightMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
 
-		limitSwitch = new DigitalInput(limitSwitchId);
+		leftLimitSwitch = new DigitalInput(leftLimitSwitchId);
+		rightLimitSwitch = new DigitalInput(rightLimitSwitchId);
 
 		leftMotor.setInverted(leftMotorIsInverted);
 		rightMotor.setInverted(rightMotorIsInverted);
@@ -27,18 +30,29 @@ public class RealHang extends Hang {
 
 	@Override
 	public void periodic() {
-		leftMotor.set(speed);
-		rightMotor.set(speed);
-		SmartDashboard.putBoolean("Is Arm at Bottom?", isAtBottom());
+		leftMotor.set(leftSpeed);
+		rightMotor.set(rightSpeed);
+		SmartDashboard.putBoolean("Is Left Arm at Bottom?", isAtBottomLeft());
+		SmartDashboard.putBoolean("Is Right Arm at Bottom?", isAtBottomRight());
 	}
 
 	@Override
-	public void setSpeed(double speed) {
-		this.speed = speed;
+	public void setLeftSpeed(double speed) {
+		this.leftSpeed = speed;
 	}
 
 	@Override
-	public boolean isAtBottom() {
-		return limitSwitch.get();
+	public void setRightSpeed(double speed) {
+		this.rightSpeed = speed;
+	}
+
+	@Override
+	public boolean isAtBottomLeft() {
+		return leftLimitSwitch.get();
+	}
+
+	@Override
+	public boolean isAtBottomRight() {
+		return rightLimitSwitch.get();
 	}
 }
