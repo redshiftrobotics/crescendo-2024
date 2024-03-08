@@ -87,7 +87,7 @@ public class FollowTag extends Command {
 			Rotation2d rotation = new Rotation2d(forward, left);
 
 			forwardSpeed = -xController.calculate(forward);
-			leftSpeed = yController.calculate(left);
+			leftSpeed = -yController.calculate(left);
 			rotationSpeed = -rotationController.calculate(rotation.getRadians());
 		}
 
@@ -98,7 +98,9 @@ public class FollowTag extends Command {
 			leftSpeed = (leftSpeed / maxSpeed) * speedLimit;
 		}
 
-		drivetrain.setDesiredState(new ChassisSpeeds(0, leftSpeed, rotationSpeed));
+		rotationSpeed = 0;
+		forwardSpeed = 0;
+		drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed));
 		drivetrain.updateSmartDashboard();
 	}
 
