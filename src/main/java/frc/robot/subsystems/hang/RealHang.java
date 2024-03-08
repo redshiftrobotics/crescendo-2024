@@ -1,6 +1,7 @@
 package frc.robot.subsystems.hang;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +27,8 @@ public class RealHang extends Hang {
 
 		leftMotor.setInverted(leftMotorIsInverted);
 		rightMotor.setInverted(rightMotorIsInverted);
+		leftMotor.setIdleMode(IdleMode.kBrake);
+		rightMotor.setIdleMode(IdleMode.kBrake);
 	}
 
 	@Override
