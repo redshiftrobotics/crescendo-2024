@@ -156,9 +156,9 @@ public class RobotContainer {
 
 		drivetrain.removeDefaultCommand();
 
-		final Command coopLightSignal = new SetLightstripColorFor(lightStrip, LightConstants.LED_COLOR_ORANGE, 10,
+		final Command coopLightSignal = new SetLightstripColorFor(lightStrip, LightConstants.LED_COLOR_YELLOW, 10,
 				"Coop");
-		final Command amplifyLightSignal = new SetLightstripColorFor(lightStrip, LightConstants.LED_COLOR_BLUE, 10,
+		final Command amplifyLightSignal = new SetLightstripColorFor(lightStrip, LightConstants.LED_COLOR_PURPLE, 10,
 				"Amplify");
 
 		final Command cancelCommand = new SequentialCommandGroup(
