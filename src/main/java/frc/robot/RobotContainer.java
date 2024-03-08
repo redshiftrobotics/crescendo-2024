@@ -32,6 +32,7 @@ import frc.robot.inputs.ChassisDriveInputs;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -174,7 +175,7 @@ public class RobotContainer {
 
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
-			inputs = new ChassisDriveInputs(
+			ChassisDriveInputs inputs = new ChassisDriveInputs(
 					joystick::getX, -1,
 					joystick::getY, -1,
 					joystick::getTwist, -1,
@@ -195,7 +196,7 @@ public class RobotContainer {
 
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
-			inputs = new ChassisDriveInputs(
+			ChassisDriveInputs inputs = new ChassisDriveInputs(
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,

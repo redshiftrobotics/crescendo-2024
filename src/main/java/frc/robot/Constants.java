@@ -325,13 +325,22 @@ public final class Constants {
 	}
 
 	public static class VisionConstants {
-
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					CAMERA_NAME = "Arducam_OV2311_USB_Camera";
+					break;
+				case COMP_BOT:
+				default:
+					CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+					break;
+			}
+		}
+		public static final String CAMERA_NAME;
 		public static final Transform3d CAMERA_POSE = new Transform3d(Units.inchesToMeters(13), 0,
 				Units.inchesToMeters(11), new Rotation3d(0, Units.degreesToRadians(-20), 0));
 		public static final Transform3d ROBOT_TO_FRONT = new Transform3d(Units.inchesToMeters(-13), 0, 0,
 				new Rotation3d());
-		public static final String CAMERA_NAME = "Arducam_OV2311_USB_Camera";
-		// public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
 	}
 
 	public static class LightConstants {
