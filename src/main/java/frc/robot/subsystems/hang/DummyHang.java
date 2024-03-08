@@ -3,8 +3,20 @@ package frc.robot.subsystems.hang;
 public class DummyHang extends Hang {
 
 	@Override
-	public void setSpeed(double speed) { }
+	public void setLeftSpeed(double speed) {
+	}
 
 	@Override
-	public boolean isAtBottom() { return false; }
+	public void setRightSpeed(double speed) {
+	}
+
+	@Override
+	public boolean isAtBottomLeft() {
+		return false;
+	}
+
+	@Override
+	public boolean isAtBottomRight() {
+		return false;
+	}
 }

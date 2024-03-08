@@ -69,9 +69,10 @@ public final class Constants {
 
 		public static final boolean HAS_HANG;
 
-		public static final int LEFT_MOTOR_ID = 0; // TODO get value
-		public static final int RIGHT_MOTOR_ID = 1;  // TODO get value
-		public static final int LIMIT_SWITCH_ID = 2;  // TODO get value
+		public static final int LEFT_MOTOR_ID = 0;
+		public static final int RIGHT_MOTOR_ID = 1;
+		public static final int LEFT_LIMIT_SWITCH_ID = 2;
+		public static final int RIGHT_LIMIT_SWITCH_ID = 3;
 
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
 		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
@@ -143,9 +144,9 @@ public final class Constants {
 		static {
 			switch (currentBot) {
 				case WOOD_BOT:
-				HAS_INTAKE = false;
-				break;
-				
+					HAS_INTAKE = false;
+					break;
+
 				case COMP_BOT:
 				default:
 					HAS_INTAKE = true;

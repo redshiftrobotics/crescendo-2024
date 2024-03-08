@@ -103,15 +103,14 @@ public class RobotContainer {
 	private final Hang hang = Constants.HangConstants.HAS_HANG
 			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.RIGHT_MOTOR_ID,
 					HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.RIGHT_MOTOR_IS_INVERTED,
-					HangConstants.LIMIT_SWITCH_ID)
+					HangConstants.LEFT_LIMIT_SWITCH_ID, HangConstants.RIGHT_LIMIT_SWITCH_ID)
 			: new DummyHang();
 
 	private final IntakeShooter intakeShooter = Constants.IntakeShooterConstants.HAS_INTAKE ? new RealShooter(
 			IntakeShooterConstants.FLYWHEEL_MOTOR_1_ID,
 			IntakeShooterConstants.FLYWHEEL_MOTOR_2_ID,
 			IntakeShooterConstants.INTAKE_MOTOR_ID,
-			IntakeShooterConstants.INTAKE_LIMIT_SWITCH_ID 
-			) : new DummyShooter();
+			IntakeShooterConstants.INTAKE_LIMIT_SWITCH_ID) : new DummyShooter();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
 			gyro,
@@ -168,7 +167,7 @@ public class RobotContainer {
 		final Command cancelCommand = new SequentialCommandGroup(
 				new CancelCommands(drivetrain, lightStrip),
 				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
-				new InstantCommand(lightStrip::toDefaultPattern, lightStrip);
+		new InstantCommand(lightStrip::toDefaultPattern, lightStrip);
 
 		ChassisDriveInputs inputs = null;
 
@@ -210,10 +209,10 @@ public class RobotContainer {
 			xbox.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
-			
+
 			xbox.povLeft().onTrue(coopLightSignal);
 			xbox.povRight().onTrue(amplifyLightSignal);
-			
+
 			xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
 			xbox.a().whileTrue(new FollowTag(drivetrain, vision, 1, 1));
