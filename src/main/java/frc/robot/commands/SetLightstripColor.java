@@ -4,9 +4,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LightStrip;
 
 public class SetLightstripColor extends Command {
-	private LightStrip lightStrip;
-
-	private double pattern;
+	private final LightStrip lightStrip;
+	private final double pattern;
 
 	/**
 	 * Set the color of the robot's lightstrip
@@ -21,17 +20,11 @@ public class SetLightstripColor extends Command {
 
 	@Override
 	public void initialize() {
-		System.out.println("*** Command: Selecting pattern " + pattern);
 		lightStrip.setPattern(pattern);
 	}
 
 	@Override
 	public boolean isFinished() {
 		return true;
-	}
-
-	@Override
-	public void end(boolean interrupted) {
-		// Don't think I have to do anything
 	}
 }

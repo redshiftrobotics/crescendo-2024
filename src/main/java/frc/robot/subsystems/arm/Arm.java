@@ -11,10 +11,8 @@ import frc.robot.Constants.ArmConstants;
 public abstract class Arm extends SubsystemBase {
 
 	public abstract void setSetpoint(double degrees);
-	
-	public void setSetpoint(Rotation2d rotation) {
-		setSetpoint(rotation.getDegrees());
-	}
+
+	public abstract void setSetpoint(Rotation2d rotation);
 
 	public abstract boolean isAtDesiredPosition();
 
@@ -30,5 +28,13 @@ public abstract class Arm extends SubsystemBase {
 
 	public void setArmToIntakePosition() {
 		setSetpoint(ArmConstants.ARM_INTAKE_DEGREES);
+	}
+
+	public void setArmToStartPosition() {
+		setSetpoint(ArmConstants.ARM_START_DEGREES);
+	}
+
+	public void setArmToDrivePosition() {
+		setSetpoint(ArmConstants.ARM_STOW_DEGREES);
 	}
 }

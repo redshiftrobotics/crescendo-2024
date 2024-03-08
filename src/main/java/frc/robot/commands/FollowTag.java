@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.RobotMovementConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
@@ -27,38 +28,42 @@ public class FollowTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the the tag to follow, -1 for best tag
-	 * @param targetDistanceToTag the target distance away from the tag to be in meters
-	 * @param loseTagAfterSeconds how long to wait before giving up on rediscover
-	 *                            tag, set to null to never finish
+	 * @param tagID               the numerical ID of the tag to follow, -1 for best
+	 *                            tag
+	 * @param targetDistanceToTag the target distance away from the tag to be in
+	 *                            meters
 	 */
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Transform2d targetDistanceToTag, int tagID) {
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Transform2d targetDistanceToTag) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
 		this.tagID = tagID;
 
-		xController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D); xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		xController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
+		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		xController.setSetpoint(targetDistanceToTag.getX());
-		
-		yController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
+
+		yController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
 		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		xController.setSetpoint(targetDistanceToTag.getY());
-		
-		rotationController = new PIDController(RobotMovementConstants.ROTATION_PID_P, RobotMovementConstants.ROTATION_PID_I, RobotMovementConstants.ROTATION_PID_D);
+
+		rotationController = new PIDController(RobotMovementConstants.ROTATION_PID_P,
+				RobotMovementConstants.ROTATION_PID_I, RobotMovementConstants.ROTATION_PID_D);
 		rotationController.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 		xController.setSetpoint(targetDistanceToTag.getRotation().getRadians());
 
 		addRequirements(drivetrain);
 	}
 
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, Translation2d targetDistanceToTag, int tagID) {
-		this(drivetrain, vision, new Transform2d(targetDistanceToTag, new Rotation2d()), tagID);
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Translation2d targetDistanceToTag) {
+		this(drivetrain, vision, tagID, new Transform2d(targetDistanceToTag, new Rotation2d()));
 	}
-	
-	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, double targetDistanceToTag, int tagID) {
-		this(drivetrain, vision, new Transform2d(new Translation2d(targetDistanceToTag, 0), new Rotation2d()), tagID);
+
+	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, double targetDistanceToTag) {
+		this(drivetrain, vision, tagID, new Transform2d(new Translation2d(targetDistanceToTag, 0), new Rotation2d()));
 	}
 
 	@Override
@@ -74,19 +79,30 @@ public class FollowTag extends Command {
 
 		Transform3d transform = vision.getTransformToTag(tagID);
 
-		if (transform != null){
+		if (transform != null) {
+			transform = transform.plus(VisionConstants.ROBOT_TO_FRONT);
+
 			double forward = transform.getX();
 			double left = transform.getY();
 			Rotation2d rotation = new Rotation2d(forward, left);
 
 			forwardSpeed = -xController.calculate(forward);
-			leftSpeed = yController.calculate(left);
+			leftSpeed = -yController.calculate(left);
 			rotationSpeed = -rotationController.calculate(rotation.getRadians());
 		}
 
-    	drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed));
+		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
+		double maxSpeed = Math.max(Math.abs(forwardSpeed), Math.abs(leftSpeed));
+		if (maxSpeed > speedLimit) {
+			forwardSpeed = (forwardSpeed / maxSpeed) * speedLimit;
+			leftSpeed = (leftSpeed / maxSpeed) * speedLimit;
+		}
+
+		rotationSpeed = 0;
+		forwardSpeed = 0;
+		drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed));
 		drivetrain.updateSmartDashboard();
-  	}
+	}
 
 	@Override
 	public boolean isFinished() {

@@ -15,7 +15,9 @@ import edu.wpi.first.wpilibj.RobotController;
  */
 public final class Constants {
 	public static enum Bot {
-		WOOD_BOT, COMP_BOT
+		WOOD_BOT,
+		COMP_BOT,
+		SIM_BOT
 	}
 
 	public static final Bot currentBot;
@@ -36,6 +38,10 @@ public final class Constants {
 		serialNumber = RobotBase.isReal() ? RobotController.getSerialNumber() : "simulation";
 
 		switch (serialNumber) {
+			case "simulation":
+				currentBot = Bot.SIM_BOT;
+				break;
+
 			case "03282B00": // Wood Bot Serial Number
 				currentBot = Bot.WOOD_BOT;
 				break;
@@ -45,6 +51,34 @@ public final class Constants {
 				currentBot = Bot.COMP_BOT;
 				break;
 		}
+	}
+
+	public static class HangConstants {
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					HAS_HANG = false;
+					break;
+
+				case COMP_BOT:
+				default:
+					HAS_HANG = false;
+					break;
+			}
+		}
+
+		public static final boolean HAS_HANG;
+
+		public static final int LEFT_MOTOR_ID = 0;
+		public static final int RIGHT_MOTOR_ID = 1;
+		public static final int LEFT_LIMIT_SWITCH_ID = 2;
+		public static final int RIGHT_LIMIT_SWITCH_ID = 3;
+
+		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
+		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
+
+		public static final double speed = 0.2;
+
 	}
 
 	public static class DriverConstants {
@@ -81,29 +115,61 @@ public final class Constants {
 
 		public static final boolean HAS_ARM;
 
-		public static final double MAXIMUM_ARM_DEGREES = 1;
-		public static final double MINIMUM_ARM_DEGREES = 0;
+		// TODO: figure out positions
+		public static final double MAXIMUM_ARM_DEGREES = 50;
+		public static final double MINIMUM_ARM_DEGREES = -120;
 
-		public static final double ARM_AMP_SHOOTING_DEGREES = -20;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = 45;
-		public static final double ARM_INTAKE_DEGREES = -40;
+		// Degrees
+		public static final double ARM_START_DEGREES = -38;
+		public static final double ARM_STOW_DEGREES = -83;
+		public static final double ARM_STOW_2_DEGREES = -100;
+		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822;
+		public static final double ARM_INTAKE_DEGREES = -109;
 
 		public static final int LEFT_MOTOR_ID = 5;
- 		public static final int RIGHT_MOTOR_ID = 19;
+		public static final int RIGHT_MOTOR_ID = 19;
 		public static final int RIGHT_ENCODER_ID = 6;
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
 
-		public static final double DEGREES_PER_SECOND = 2.0;
+		public static final double DEGREES_PER_SECOND = 1;
 
-		public static final double ELEVATION_PID_P = 15;
+		public static final double ELEVATION_PID_P = 10;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
 	}
 
 	public static class IntakeShooterConstants {
-		public static final boolean INTAKE_REVERSE = false;	
-		public static final boolean FLYWHEEL_REVERSE = false;	
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					HAS_INTAKE = false;
+					break;
+
+				case COMP_BOT:
+				default:
+					HAS_INTAKE = true;
+					break;
+			}
+		}
+
+		public static final boolean HAS_INTAKE;
+
+		public static final boolean INTAKE_REVERSE = false;
+
+		public static final int FLYWHEEL_MOTOR_1_ID = 13;
+		public static final int FLYWHEEL_MOTOR_2_ID = 7;
+
+		public static final int INTAKE_MOTOR_ID = 12;
+		public static final int INTAKE_LIMIT_SWITCH_ID = -1; // TODO get value
+
+		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = 0.5;
+		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = 1;
+
+		public static final double INTAKE_GRABBER_SPEED_AMP = 1;
+		public static final double INTAKE_GRABBER_SPEED_SPEAKER = 1;
+		public static final double INTAKE_GRABBER_SPEED_INTAKE = -1;
 	}
 
 	public static class RobotMovementConstants {
@@ -114,10 +180,10 @@ public final class Constants {
 		public static final double ROTATION_PID_I = 0;
 		public static final double ROTATION_PID_D = 0;
 
-		public static final double TRANSLATION_PID_P = 1; //pids all temporarily set low
-		public static final double TRANSLATION_PID_I = 0; 
-		public static final double TRANSLATION_PID_D = 0;
-		public static final double MAX_TRANSLATION_SPEED = 0.1;
+		public static final double TRANSLATION_PID_P = 100;
+		public static final double TRANSLATION_PID_I = 0.5;
+		public static final double TRANSLATION_PID_D = 15;
+		public static final double MAX_TRANSLATION_SPEED = 1;
 	}
 
 	public static class OperatorConstants {
@@ -255,14 +321,29 @@ public final class Constants {
 	}
 
 	public static class AutoConstants {
-		// preffered distance to tag, specifically for autopositioning the robot to in front of the tag
-		public static final double PREFERRED_TAG_DISTANCE=2;
+		// preffered distance to tag, specifically for autopositioning the robot to in
+		// front of the tag
+		public static final double PREFERRED_TAG_DISTANCE = 2;
 	}
 
 	public static class VisionConstants {
+		static {
+			switch (currentBot) {
+				case WOOD_BOT:
+					CAMERA_NAME = "Arducam_OV2311_USB_Camera";
+					break;
+				case COMP_BOT:
+				default:
+					CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+					break;
+			}
+		}
+		public static final String CAMERA_NAME;
 
-		public static final Transform3d CAMERA_POSE = new Transform3d(0, 0, 0, new Rotation3d());
-		public static final String CAMERA_NAME = "Arducam_OV9281_USB_Camera";
+		public static final Transform3d CAMERA_POSE = new Transform3d(Units.inchesToMeters(13), 0,
+				Units.inchesToMeters(11), new Rotation3d(0, Units.degreesToRadians(-20), 0));
+		public static final Transform3d ROBOT_TO_FRONT = new Transform3d(Units.inchesToMeters(-13), 0, 0,
+				new Rotation3d());
 	}
 
 	public static class LightConstants {
@@ -277,5 +358,7 @@ public final class Constants {
 		public static final double LED_COLOR_PURPLE = 0.91;
 		public static final double LED_COLOR_WHITE = 0.93;
 		public static final double LED_COLOR_RAINBOW = -0.99;
+
+		public static final double LED_COLOR_DEFAULT = 0.99;
 	}
 }

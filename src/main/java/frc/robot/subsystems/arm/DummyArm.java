@@ -20,10 +20,16 @@ public class DummyArm extends Arm {
 	}
 
 	@Override
+	public void setSetpoint(Rotation2d rotation) {
+		setSetpoint(rotation.getDegrees());
+	}
+
+	@Override
 	public Rotation2d getArmPosition() {
 		return armPosition;
 	}
 
+	@Override
 	public boolean isAtDesiredPosition() {
 		return true;
 	}
