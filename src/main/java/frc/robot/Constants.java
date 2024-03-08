@@ -69,10 +69,10 @@ public final class Constants {
 
 		public static final boolean HAS_HANG;
 
-		public static final int LEFT_MOTOR_ID = 0;
-		public static final int RIGHT_MOTOR_ID = 1;
-		public static final int LEFT_LIMIT_SWITCH_ID = 2;
-		public static final int RIGHT_LIMIT_SWITCH_ID = 3;
+		public static final int LEFT_MOTOR_ID = 1;
+		public static final int RIGHT_MOTOR_ID = 18;
+		public static final int LEFT_LIMIT_SWITCH_ID = 1;
+		public static final int RIGHT_LIMIT_SWITCH_ID = 2;
 
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
 		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
@@ -108,7 +108,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_ARM = true;
+					HAS_ARM = false;
 					break;
 			}
 		}

@@ -13,16 +13,8 @@ public class LightStrip extends SubsystemBase {
 	 * +1 corresponds to 2000us
 	 */
 	private Spark ledStrip;
+	private Spark ledStrip2;
 	private double pattern;
-
-	/**
-	 * Creates a new LightStrip subsystem.
-	 * 
-	 * @param ledstrip The 'spark' representing the Blinkin
-	 */
-	public LightStrip(Spark ledstrip) {
-		ledStrip = ledstrip;
-	}
 
 	/**
 	 * Creates a new LightStrip subsystem.
@@ -31,6 +23,17 @@ public class LightStrip extends SubsystemBase {
 	 */
 	public LightStrip(int pwmPort) {
 		ledStrip = new Spark(pwmPort);
+		ledStrip2 = null;
+	}
+
+	/**
+	 * Creates a new LightStrip subsystem.
+	 * 
+	 * @param pwmPort The port number for the blinkin
+	 */
+	public LightStrip(int pwmPort1, int pwmPort2) {
+		ledStrip = new Spark(pwmPort1);
+		ledStrip2 = new Spark(pwmPort2);
 	}
 
 	/**
@@ -50,5 +53,8 @@ public class LightStrip extends SubsystemBase {
 	@Override
 	public void periodic() {
 		ledStrip.set(pattern);
+		if (ledStrip2 != null) {
+			ledStrip2.set(pattern);
+		}
 	}
 }

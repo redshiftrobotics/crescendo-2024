@@ -69,6 +69,9 @@ public class FollowTag extends Command {
 	@Override
 	public void initialize() {
 		drivetrain.toDefaultStates();
+		xController.reset();
+		yController.reset();
+		rotationController.reset();
 	}
 
 	@Override

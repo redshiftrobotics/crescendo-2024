@@ -28,8 +28,6 @@ import frc.robot.subsystems.intake.DummyShooter;
 import frc.robot.subsystems.intake.IntakeShooter;
 import frc.robot.subsystems.intake.RealShooter;
 import frc.robot.inputs.ChassisDriveInputs;
-import frc.robot.commands.FollowTag;
-
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -147,7 +145,6 @@ public class RobotContainer {
 		arm.setArmToStartPosition();
 		intakeShooter.stop();
 		lightStrip.toDefaultPattern();
-		// TODO Put hanger down
 	}
 
 	public void setUpDriveController() {
@@ -214,8 +211,6 @@ public class RobotContainer {
 			xbox.povRight().onTrue(amplifyLightSignal);
 
 			xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
-
-			xbox.a().whileTrue(new FollowTag(drivetrain, vision, 1, 1));
 
 			xbox.b().onTrue(cancelCommand);
 		}
