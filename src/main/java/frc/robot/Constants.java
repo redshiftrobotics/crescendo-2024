@@ -338,6 +338,7 @@ public final class Constants {
 			}
 		}
 		public static final String CAMERA_NAME;
+		
 		public static final Transform3d CAMERA_POSE = new Transform3d(Units.inchesToMeters(13), 0,
 				Units.inchesToMeters(11), new Rotation3d(0, Units.degreesToRadians(-20), 0));
 		public static final Transform3d ROBOT_TO_FRONT = new Transform3d(Units.inchesToMeters(-13), 0, 0,

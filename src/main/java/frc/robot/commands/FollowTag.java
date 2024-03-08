@@ -28,8 +28,10 @@ public class FollowTag extends Command {
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the tag to follow, -1 for best tag
-	 * @param targetDistanceToTag the target distance away from the tag to be in meters
+	 * @param tagID               the numerical ID of the tag to follow, -1 for best
+	 *                            tag
+	 * @param targetDistanceToTag the target distance away from the tag to be in
+	 *                            meters
 	 */
 	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Transform2d targetDistanceToTag) {
 		this.drivetrain = drivetrain;
@@ -37,15 +39,19 @@ public class FollowTag extends Command {
 		this.vision = vision;
 		this.tagID = tagID;
 
-		xController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D); xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		xController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
+		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		xController.setSetpoint(targetDistanceToTag.getX());
-		
-		yController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P, RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
+
+		yController = new PIDController(RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I, RobotMovementConstants.TRANSLATION_PID_D);
 		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		xController.setSetpoint(targetDistanceToTag.getY());
-		
-		rotationController = new PIDController(RobotMovementConstants.ROTATION_PID_P, RobotMovementConstants.ROTATION_PID_I, RobotMovementConstants.ROTATION_PID_D);
+
+		rotationController = new PIDController(RobotMovementConstants.ROTATION_PID_P,
+				RobotMovementConstants.ROTATION_PID_I, RobotMovementConstants.ROTATION_PID_D);
 		rotationController.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 		xController.setSetpoint(targetDistanceToTag.getRotation().getRadians());
 
@@ -55,7 +61,7 @@ public class FollowTag extends Command {
 	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Translation2d targetDistanceToTag) {
 		this(drivetrain, vision, tagID, new Transform2d(targetDistanceToTag, new Rotation2d()));
 	}
-	
+
 	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, double targetDistanceToTag) {
 		this(drivetrain, vision, tagID, new Transform2d(new Translation2d(targetDistanceToTag, 0), new Rotation2d()));
 	}
@@ -73,7 +79,7 @@ public class FollowTag extends Command {
 
 		Transform3d transform = vision.getTransformToTag(tagID);
 
-		if (transform != null){
+		if (transform != null) {
 			transform = transform.plus(VisionConstants.ROBOT_TO_FRONT);
 
 			double forward = transform.getX();
@@ -92,9 +98,9 @@ public class FollowTag extends Command {
 			leftSpeed = (leftSpeed / maxSpeed) * speedLimit;
 		}
 
-    	drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed));
+		drivetrain.setDesiredState(new ChassisSpeeds(0, leftSpeed, rotationSpeed));
 		drivetrain.updateSmartDashboard();
-  	}
+	}
 
 	@Override
 	public boolean isFinished() {

@@ -10,7 +10,6 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
-import frc.robot.commands.FollowTag;
 import frc.robot.commands.SetHangSpeed;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
@@ -29,11 +28,11 @@ import frc.robot.subsystems.intake.DummyShooter;
 import frc.robot.subsystems.intake.IntakeShooter;
 import frc.robot.subsystems.intake.RealShooter;
 import frc.robot.inputs.ChassisDriveInputs;
+import frc.robot.commands.FollowTag;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -180,7 +179,7 @@ public class RobotContainer {
 
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
-			ChassisDriveInputs inputs = new ChassisDriveInputs(
+			inputs = new ChassisDriveInputs(
 					joystick::getX, -1,
 					joystick::getY, -1,
 					joystick::getTwist, -1,
@@ -201,7 +200,7 @@ public class RobotContainer {
 
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
-			ChassisDriveInputs inputs = new ChassisDriveInputs(
+			inputs = new ChassisDriveInputs(
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
@@ -211,7 +210,6 @@ public class RobotContainer {
 			xbox.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
-
 			
 			xbox.povLeft().onTrue(coopLightSignal);
 			xbox.povRight().onTrue(amplifyLightSignal);
