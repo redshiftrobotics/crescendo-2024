@@ -30,7 +30,7 @@ public class AimAtTagWithAutoLock extends Command {
 	 * @param vision              the vision subsystem of the robot
 	 * @param tagID               the numerical ID of the tag to turn to, -1 for best tag
 	 */
-	public AimAtTagWithAutoLock(SwerveDrivetrain drivetrain, Vision vision, int tagID, double offse ChassisDriveInputs chassisDriveInputs) {
+	public AimAtTagWithAutoLock(SwerveDrivetrain drivetrain, Vision vision, int tagID, double yOffsetMeters, ChassisDriveInputs chassisDriveInputs) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
@@ -41,9 +41,10 @@ public class AimAtTagWithAutoLock extends Command {
 				RobotMovementConstants.ROTATION_PID_P,
 				RobotMovementConstants.ROTATION_PID_I,
 				RobotMovementConstants.ROTATION_PID_D);
-		rotatePID.enableContinuousInput(-1, 1);
+		rotatePID.enableContinuousInput(-1, +1);
 		rotatePID.setTolerance(Units.radiansToDegrees(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS));
-		rotatePID.setSetpoint(0);
+
+		rotatePID.setSetpoint(yOffsetMeters);
 
 		addRequirements(drivetrain);
 	}
@@ -56,8 +57,8 @@ public class AimAtTagWithAutoLock extends Command {
 	 * @param tagID      the numerical ID of the tag to turn to, null for best
 	 *                   tag
 	 */
-	public AimAtTagWithAutoLock(SwerveDrivetrain drivetrain, Vision vision, Integer tagID) {
-		this(drivetrain, vision, tagID, null);
+	public AimAtTagWithAutoLock(SwerveDrivetrain drivetrain, Vision vision, Integer tagID, double yOffsetMeters) {
+		this(drivetrain, vision, tagID, yOffsetMeters, null);
 	}
 
 	@Override

@@ -41,7 +41,7 @@ public class AimAtTag extends Command {
 				RobotMovementConstants.ROTATION_PID_P,
 				RobotMovementConstants.ROTATION_PID_I,
 				RobotMovementConstants.ROTATION_PID_D);
-		rotatePID.enableContinuousInput(-1, 1);
+		rotatePID.enableContinuousInput(-1, +1);
 		rotatePID.setTolerance(Units.radiansToDegrees(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS));
 		rotatePID.setSetpoint(0);
 
