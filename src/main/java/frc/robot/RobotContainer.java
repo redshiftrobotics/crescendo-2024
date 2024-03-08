@@ -119,7 +119,7 @@ public class RobotContainer {
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
 
-	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
+	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT, LightConstants.LED_CONTROLLER_PWM_SLOT_2);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.

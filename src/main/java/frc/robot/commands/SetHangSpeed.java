@@ -8,6 +8,7 @@ public class SetHangSpeed extends Command {
 	private final Hang hang;
 	private final double speed;
 	private final int counterMax = 5;
+
 	private int counter = 0;
 
 	public SetHangSpeed(Hang hang, double speed) {
@@ -16,32 +17,28 @@ public class SetHangSpeed extends Command {
 	}
 
 	@Override
-	public void execute() {
-		if (counter < counterMax) {
-			counter++;
-		} else {
-			if (hang.isAtBottomLeft()) {
-				hang.setLeftSpeed(0);
-			} else {
-				hang.setLeftSpeed(speed);
-			}
-			if (hang.isAtBottomRight()) {
-				hang.setRightSpeed(0);
-			} else {
-				hang.setRightSpeed(speed);
-			}
+	public void initialize() {
+		counter = 0;
+	}
 
+	@Override
+	public void execute() {
+		if (hang.isAtBottomLeft() && counter < counterMax) {
+			hang.setLeftSpeed(0);
+		} else {
+			hang.setLeftSpeed(speed);
+		}
+
+		if (hang.isAtBottomRight() && counter < counterMax) {
+			hang.setRightSpeed(0);
+		} else {
+			hang.setRightSpeed(speed);
 		}
 	}
 
 	@Override
 	public boolean isFinished() {
-		return hang.isAtBottomLeft() && hang.isAtBottomRight();
-	}
-
-	@Override
-	public void initialize() {
-		counter = 0;
+		return (counter > counterMax) && (hang.isAtBottomLeft() && hang.isAtBottomRight());
 	}
 
 	@Override

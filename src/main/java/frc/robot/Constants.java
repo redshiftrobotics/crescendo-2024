@@ -348,6 +348,7 @@ public final class Constants {
 
 	public static class LightConstants {
 		public static final int LED_CONTROLLER_PWM_SLOT = 1;
+		public static final int LED_CONTROLLER_PWM_SLOT_2 = 3;
 		public static final int LED_QUANTITY = 60;
 
 		public static final double LED_COLOR_RED = 0.61;

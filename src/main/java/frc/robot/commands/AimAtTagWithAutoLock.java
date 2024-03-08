@@ -13,7 +13,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** Command to automatically aim at a tag, ends once facing the tag */
-public class AimAtTag extends Command {
+public class AimAtTagWithAutoLock extends Command {
 	private final SwerveDrivetrain drivetrain;
 	private final ChassisDriveInputs chassisDriveInputs;
 
@@ -30,7 +30,7 @@ public class AimAtTag extends Command {
 	 * @param vision              the vision subsystem of the robot
 	 * @param tagID               the numerical ID of the tag to turn to, -1 for best tag
 	 */
-	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, ChassisDriveInputs chassisDriveInputs) {
+	public AimAtTagWithAutoLock(SwerveDrivetrain drivetrain, Vision vision, int tagID, double offse ChassisDriveInputs chassisDriveInputs) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
@@ -56,7 +56,7 @@ public class AimAtTag extends Command {
 	 * @param tagID      the numerical ID of the tag to turn to, null for best
 	 *                   tag
 	 */
-	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, Integer tagID) {
+	public AimAtTagWithAutoLock(SwerveDrivetrain drivetrain, Vision vision, Integer tagID) {
 		this(drivetrain, vision, tagID, null);
 	}
 
