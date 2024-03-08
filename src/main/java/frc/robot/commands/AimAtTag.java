@@ -77,15 +77,17 @@ public class AimAtTag extends Command {
 
 		double xSpeed = 0;
 		double ySpeed = 0;
+		boolean fieldRelative = false;
 		if (chassisDriveInputs != null) {
 			xSpeed = chassisDriveInputs.getX();
 			ySpeed = chassisDriveInputs.getY();
+			fieldRelative = chassisDriveInputs.isFieldRelative();
 		}
 		double rotateSpeed = rotatePID.calculate(tagYawRadians);
 
 		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -rotateSpeed);
 
-		drivetrain.setDesiredState(desiredSpeeds, chassisDriveInputs.isFieldRelative(), true);
+		drivetrain.setDesiredState(desiredSpeeds, fieldRelative, true);
 
 		drivetrain.updateSmartDashboard();
 	}

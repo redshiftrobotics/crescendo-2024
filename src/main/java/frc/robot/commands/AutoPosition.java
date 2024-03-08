@@ -39,14 +39,12 @@ public class AutoPosition extends Command {
 		SmartDashboard.putNumber("tr Y", trans.getY());
 		Rotation2d rot = new Rotation2d(angle);
 		Commands.sequence(
-				//new AutoDriveTo(drivetrain,trans),
-				new AutoRotateTo(drivetrain, rot, false), new AutoDriveTo(drivetrain, trans)).schedule();
+			new AutoDriveTo(drivetrain, trans),
+			new AutoRotateTo(drivetrain, rot, false),
+			new AimAtTag(drivetrain, vision, 1)).schedule();
 		;
+		drivetrain.updateSmartDashboard();
 
-	}
-
-	@Override
-	public void execute() {
 	}
 
 	@Override
