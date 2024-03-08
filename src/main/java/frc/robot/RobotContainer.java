@@ -10,6 +10,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
+import frc.robot.commands.FollowTag;
 import frc.robot.commands.SetHangSpeed;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
@@ -108,7 +109,9 @@ public class RobotContainer {
 	private final IntakeShooter intakeShooter = Constants.IntakeShooterConstants.HAS_INTAKE ? new RealShooter(
 			IntakeShooterConstants.FLYWHEEL_MOTOR_1_ID,
 			IntakeShooterConstants.FLYWHEEL_MOTOR_2_ID,
-			IntakeShooterConstants.INTAKE_MOTOR_ID) : new DummyShooter();
+			IntakeShooterConstants.INTAKE_MOTOR_ID,
+			IntakeShooterConstants.INTAKE_LIMIT_SWITCH_ID 
+			) : new DummyShooter();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
 			gyro,
@@ -145,6 +148,7 @@ public class RobotContainer {
 		arm.setArmToStartPosition();
 		intakeShooter.stop();
 		lightStrip.toDefaultPattern();
+		// TODO Put hanger down
 	}
 
 	public void setUpDriveController() {
@@ -162,8 +166,9 @@ public class RobotContainer {
 				"Amplify");
 
 		final Command cancelCommand = new SequentialCommandGroup(
-				new CancelCommands(drivetrain, arm, intakeShooter, lightStrip),
-				new InstantCommand(this::toDefaultPositions));
+				new CancelCommands(drivetrain, lightStrip),
+				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
+				new InstantCommand(lightStrip::toDefaultPattern, lightStrip);
 
 		ChassisDriveInputs inputs = null;
 
@@ -206,12 +211,15 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.b().onTrue(cancelCommand);
-
+			
 			xbox.povLeft().onTrue(coopLightSignal);
 			xbox.povRight().onTrue(amplifyLightSignal);
-
+			
 			xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
+
+			xbox.a().whileTrue(new FollowTag(drivetrain, vision, 1, 1));
+
+			xbox.b().onTrue(cancelCommand);
 		}
 
 		if (inputs != null)
@@ -232,13 +240,12 @@ public class RobotContainer {
 		final Command stowArm = new ArmRotateTo(arm, ArmConstants.ARM_STOW_DEGREES);
 		final Command stowArm2 = new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES);
 
-		final SetHangSpeed hangStop = new SetHangSpeed(hang, 0);
 		final SetHangSpeed hangUp = new SetHangSpeed(hang, HangConstants.speed);
 		final SetHangSpeed hangDown = new SetHangSpeed(hang, -HangConstants.speed);
 
 		final Command cancelCommand = new SequentialCommandGroup(
-				new CancelCommands(drivetrain, arm, intakeShooter, lightStrip),
-				new InstantCommand(this::toDefaultPositions));
+				new CancelCommands(arm, intakeShooter),
+				new InstantCommand(intakeShooter::stop, intakeShooter));
 
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Operator Ctrl", onPortMsg + "None");
@@ -259,11 +266,9 @@ public class RobotContainer {
 
 			joystick.button(7).whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
-			joystick.button(8).onTrue(hangUp);
-			joystick.button(8).onFalse(hangStop);
+			joystick.button(8).whileTrue(hangUp);
 
-			joystick.button(9).onTrue(hangDown);
-			joystick.button(9).onFalse(hangStop);
+			joystick.button(9).whileTrue(hangDown);
 
 			joystick.button(10).onTrue(cancelCommand);
 
@@ -283,11 +288,8 @@ public class RobotContainer {
 
 			xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
-			xbox.povUp().onTrue(hangUp);
-			xbox.povUp().onFalse(hangStop);
-
-			xbox.povDown().onTrue(hangDown);
-			xbox.povDown().onFalse(hangStop);
+			xbox.povUp().whileTrue(hangUp);
+			xbox.povDown().whileTrue(hangDown);
 
 			xbox.b().onTrue(cancelCommand);
 		}

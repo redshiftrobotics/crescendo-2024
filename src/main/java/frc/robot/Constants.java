@@ -69,9 +69,9 @@ public final class Constants {
 
 		public static final boolean HAS_HANG;
 
-		public static final int LEFT_MOTOR_ID = 0;
-		public static final int RIGHT_MOTOR_ID = 1;
-		public static final int LIMIT_SWITCH_ID = 2;
+		public static final int LEFT_MOTOR_ID = 0; // TODO get value
+		public static final int RIGHT_MOTOR_ID = 1;  // TODO get value
+		public static final int LIMIT_SWITCH_ID = 2;  // TODO get value
 
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
 		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
@@ -161,6 +161,7 @@ public final class Constants {
 		public static final int FLYWHEEL_MOTOR_2_ID = 7;
 
 		public static final int INTAKE_MOTOR_ID = 12;
+		public static final int INTAKE_LIMIT_SWITCH_ID = -1; // TODO get value
 
 		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = 0.5;
 		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = 1;

@@ -14,6 +14,11 @@ public class DummyShooter extends IntakeShooter {
 	}
 
 	@Override
+	public boolean hasNoteInIntake() {
+		return false;
+	}
+
+	@Override
 	public void eject() {
 	}
 

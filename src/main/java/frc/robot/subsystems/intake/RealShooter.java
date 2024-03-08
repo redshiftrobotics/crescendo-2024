@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -30,9 +31,13 @@ public class RealShooter extends IntakeShooter {
 
 	private final CANSparkMax intake;
 
-	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID) {
+	private final DigitalInput intakeSwitch;
+
+	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
+
+		this.intakeSwitch = new DigitalInput(intakeLimitSwitchId);
 
 		this.intake = new CANSparkMax(intakeID, CANSparkLowLevel.MotorType.kBrushless);
 		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
@@ -42,9 +47,8 @@ public class RealShooter extends IntakeShooter {
 	public void setFlyWheelShooterSpeed(double speed) {
 		SmartDashboard.putNumber("FlywheelShooter", speed);
 
-		speed = -speed;
-		flywheel1.set(speed);
-		flywheel2.set(speed);
+		flywheel1.set(-speed);
+		flywheel2.set(-speed);
 
 	}
 
@@ -52,6 +56,11 @@ public class RealShooter extends IntakeShooter {
 	public void setIntakeGrabberSpeed(double speed) {
 		SmartDashboard.putNumber("IntakeGrabber", speed);
 		intake.set(speed);
+	}
+
+	@Override
+	public boolean hasNoteInIntake() {
+		return intakeSwitch.get();
 	}
 
 	@Override

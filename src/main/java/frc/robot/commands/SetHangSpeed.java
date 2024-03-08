@@ -14,12 +14,12 @@ public class SetHangSpeed extends Command {
 	}
 
 	@Override
-	public boolean isFinished() {
-		return true;
+	public void initialize() {
+		hang.setSpeed(speed);
 	}
 
 	@Override
-	public void initialize() {
-		hang.setSpeed(speed);
+	public void end(boolean interrupted) {
+		hang.setSpeed(0);
 	}
 }

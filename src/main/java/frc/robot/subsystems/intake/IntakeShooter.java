@@ -6,6 +6,8 @@ public abstract class IntakeShooter extends SubsystemBase {
 	public abstract void setFlyWheelShooterSpeed(double speed);
 
 	public abstract void setIntakeGrabberSpeed(double speed);
+	
+	public abstract boolean hasNoteInIntake();
 
 	public abstract void eject();
 

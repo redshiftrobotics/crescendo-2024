@@ -81,7 +81,7 @@ public final class Autos {
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter, Vision vision) {
 		return Commands.sequence(
-				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new IntakeUntilHasPiece(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
 	}
 
