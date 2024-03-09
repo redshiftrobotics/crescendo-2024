@@ -207,8 +207,8 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.povLeft().onTrue(coopLightSignal);
-			xbox.povRight().onTrue(amplifyLightSignal);
+			xbox.leftBumper().onTrue(coopLightSignal);
+			xbox.rightBumper().onTrue(amplifyLightSignal);
 
 			xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
@@ -281,8 +281,8 @@ public class RobotContainer {
 
 			xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
-			xbox.povUp().whileTrue(hangUp);
-			xbox.povDown().whileTrue(hangDown);
+			xbox.leftStick().whileTrue(hangUp);
+			xbox.rightStick().whileTrue(hangDown);
 
 			xbox.b().onTrue(cancelCommand);
 		}

@@ -62,7 +62,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_HANG = false;
+					HAS_HANG = true;
 					break;
 			}
 		}
@@ -77,7 +77,7 @@ public final class Constants {
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
 		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
 
-		public static final double speed = 0.2;
+		public static final double speed = 1;
 
 	}
 
@@ -108,7 +108,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_ARM = false;
+					HAS_ARM = true;
 					break;
 			}
 		}

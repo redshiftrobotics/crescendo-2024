@@ -51,7 +51,8 @@ public final class Autos {
 			boolean invertY) {
 		return Commands.sequence(
 				shootInSpeaker(arm, shooter, null),
-				startingAuto(arm, drivetrain, hang, invertY));
+				startingAuto(arm, drivetrain, hang, invertY),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
 
 	public static Command dropInAmp(Arm arm, IntakeShooter shooter, Vision vision) {
@@ -75,21 +76,21 @@ public final class Autos {
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
-				new WaitCommand(0.2),
+				new WaitCommand(0.4),
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter, Vision vision) {
 		return Commands.sequence(
-				new IntakeUntilHasPiece(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
 	}
 
 	public static Command intakeFromFloorEnd(Arm arm, IntakeShooter shooter, Vision vision) {
 		return Commands.sequence(
-				new SpinIntakeGrabbers(shooter, -0.1),
-				new WaitCommand(0.1),
+				new SpinIntakeGrabbers(shooter, -1),
+				new WaitCommand(0.04),
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 

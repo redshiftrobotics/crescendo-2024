@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -31,13 +30,13 @@ public class RealShooter extends IntakeShooter {
 
 	private final CANSparkMax intake;
 
-	private final DigitalInput intakeSwitch;
+	// private final DigitalInput intakeSwitch;
 
 	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
 
-		this.intakeSwitch = new DigitalInput(intakeLimitSwitchId);
+		// this.intakeSwitch = new DigitalInput(intakeLimitSwitchId);
 
 		this.intake = new CANSparkMax(intakeID, CANSparkLowLevel.MotorType.kBrushless);
 		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
@@ -60,7 +59,8 @@ public class RealShooter extends IntakeShooter {
 
 	@Override
 	public boolean hasNoteInIntake() {
-		return intakeSwitch.get();
+		return false;
+		// return intakeSwitch.get();
 	}
 
 	@Override

@@ -347,7 +347,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
 		SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
 		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
-		SmartDashboard.putBoolean("Field Relieve", fieldRelative);
+		SmartDashboard.putBoolean("Field Relative", fieldRelative);
 
 		if (fieldRelative) {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
