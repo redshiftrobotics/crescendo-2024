@@ -10,6 +10,7 @@ public class PullHangerDown extends Command {
 	public PullHangerDown(Hang hanger, double speed) {
 		this.hanger = hanger;
 		this.speed = speed;
+		
 		addRequirements(hanger);
 	}
 

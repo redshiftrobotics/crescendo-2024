@@ -47,7 +47,9 @@ public final class Autos {
 			Hang rightHang) {
 		return Commands.sequence(
 				shootInSpeaker(drivetrain, arm, shooter, null, null),
-				startingAuto(drivetrain, arm, leftHang, rightHang));
+				startingAuto(drivetrain, arm, leftHang, rightHang),
+				new SpinIntakeGrabbers(shooter, 0),
+				new SpinFlywheelShooter(shooter, 0));
 	}
 
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision, ChassisDriveInputs inputs) {

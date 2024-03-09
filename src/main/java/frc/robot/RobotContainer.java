@@ -136,9 +136,6 @@ public class RobotContainer {
 
 		configureBindings();
 
-		setUpDriveController();
-		setUpOperatorController();
-
 		drivetrain.setFrontOffset(Rotation2d.fromDegrees(180));
 
 		PortForwarder.add(5800, "photonvision.local", 5800);
@@ -262,6 +259,16 @@ public class RobotContainer {
 
 			joystick.button(7).whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
+			leftHang.setDefaultCommand(new HangControl(
+				leftHang,
+				() -> linearDeadBand(-joystick.getX(), DriverConstants.DEAD_ZONE)
+			));
+
+			rightHang.setDefaultCommand(new HangControl(
+				rightHang,
+				() -> linearDeadBand(-joystick.getY(), DriverConstants.DEAD_ZONE)
+			));
+
 			joystick.button(10).onTrue(cancelCommand);
 
 		} else {
@@ -302,7 +309,9 @@ public class RobotContainer {
 	}
 
 	/** Use this method to define your trigger->command mappings. */
-	private void configureBindings() {
+	public void configureBindings() {
+		setUpDriveController();
+		setUpOperatorController();
 	}
 
 	/**

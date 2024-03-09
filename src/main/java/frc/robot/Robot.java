@@ -88,8 +88,7 @@ public class Robot extends TimedRobot {
 			autonomousCommand.cancel();
 		}
 
-		robotContainer.setUpDriveController();
-		robotContainer.setUpOperatorController();
+		robotContainer.configureBindings();
 		robotContainer.toDefaultPositions();
 	}
 

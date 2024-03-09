@@ -16,6 +16,7 @@ public class HangControl extends Command {
 	public HangControl(Hang hanger, Supplier<Double> speedSupplier) {
 		this.hanger = hanger;
 		this.speedSupplier = speedSupplier;
+
 		addRequirements(hanger);
 	}
 
@@ -29,20 +30,19 @@ public class HangControl extends Command {
 
 		double speed = speedSupplier.get();
 
-		double currentTime = System.currentTimeMillis();
+		// double currentTime = System.currentTimeMillis();
 
-		if (!hanger.isAtBottom()) {
-			timeToBeginBlock = null;
-		} else if (timeToBeginBlock == null) {
-			timeToBeginBlock = currentTime + MILLIS_TILL_BLOCK;
-		}
+		// if (!hanger.isAtBottom()) {
+		// 	timeToBeginBlock = null;
+		// } else if (timeToBeginBlock == null) {
+		// 	timeToBeginBlock = currentTime + MILLIS_TILL_BLOCK;
+		// }
 
-		if (timeToBeginBlock != null && currentTime >= timeToBeginBlock) {
-			speed = 0;
-		}
+		// if (timeToBeginBlock != null && currentTime >= timeToBeginBlock) {
+		// 	speed = 0;
+		// }
 
 		hanger.setSpeed(speed);
-
 	}
 
 	@Override

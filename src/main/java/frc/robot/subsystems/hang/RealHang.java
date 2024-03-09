@@ -12,7 +12,6 @@ public class RealHang extends Hang {
 	private final DigitalInput leftLimitSwitch;
 	private final String name;
 
-
 	public RealHang(int motorID, boolean motorIsInverted, int rightLimitSwitchId, String name) {
 		motor = new CANSparkMax(motorID, MotorType.kBrushless);
 		motor.setInverted(motorIsInverted);
@@ -21,6 +20,8 @@ public class RealHang extends Hang {
 		leftLimitSwitch = new DigitalInput(rightLimitSwitchId);
 
 		this.name = name;
+
+		setName(name + "Hang");
 	}
 
 	public RealHang(int motorID, boolean motorIsInverted, int rightLimitSwitchId) {
@@ -31,7 +32,7 @@ public class RealHang extends Hang {
 	public void periodic() {
 		SmartDashboard.putString(name + "Hang", motor.get() + "p" + (isAtBottom() ? " - Down" : ""));
 	}
-
+	
 	@Override
 	public void setSpeed(double speed) {
 		motor.set(speed);
