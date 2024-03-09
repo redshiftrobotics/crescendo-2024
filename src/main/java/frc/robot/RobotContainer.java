@@ -98,11 +98,11 @@ public class RobotContainer {
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
 	private final Hang leftHang = Constants.HangConstants.HAS_HANG
-			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.LEFT_LIMIT_SWITCH_ID) 
+			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.LEFT_LIMIT_SWITCH_ID, "Left") 
 			: new DummyHang();
 
 	private final Hang rightHang = Constants.HangConstants.HAS_HANG
-			? new RealHang(HangConstants.RIGHT_MOTOR_ID, HangConstants.RIGHT_MOTOR_IS_INVERTED, HangConstants.RIGHT_LIMIT_SWITCH_ID)
+			? new RealHang(HangConstants.RIGHT_MOTOR_ID, HangConstants.RIGHT_MOTOR_IS_INVERTED, HangConstants.RIGHT_LIMIT_SWITCH_ID, "Right")
 			: new DummyHang();
 
 	private final IntakeShooter intakeShooter = Constants.IntakeShooterConstants.HAS_INTAKE ? new RealShooter(
@@ -122,12 +122,14 @@ public class RobotContainer {
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 
+	private ChassisDriveInputs inputs = null;
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		autoChooser.setDefaultOption("Backward", Autos.startingAuto(arm, drivetrain, leftHang, rightHang));
-		autoChooser.addOption("ShootBackward", Autos.shootStartingAuto(arm, drivetrain, intakeShooter, leftHang, rightHang));
+		autoChooser.setDefaultOption("Backward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
+		autoChooser.addOption("ShootBackward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -168,8 +170,6 @@ public class RobotContainer {
 				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
 		new InstantCommand(lightStrip::toDefaultPattern, lightStrip);
 
-		ChassisDriveInputs inputs = null;
-
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Drive Ctrl", onPortMsg + "None");
 		} else if (genericHIDType.equals(GenericHID.HIDType.kHIDJoystick)) {
@@ -189,7 +189,8 @@ public class RobotContainer {
 
 			joystick.button(4).onTrue(coopLightSignal);
 			joystick.button(5).onTrue(amplifyLightSignal);
-			joystick.button(6).onTrue(Commands.runOnce(vision::toggleUsing, vision));
+
+			if (vision != null) joystick.button(6).onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
 			joystick.button(10).onTrue(cancelCommand);
 
@@ -212,7 +213,7 @@ public class RobotContainer {
 			xbox.leftBumper().onTrue(coopLightSignal);
 			xbox.rightBumper().onTrue(amplifyLightSignal);
 
-			xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
+			if (vision != null) xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
 			xbox.b().onTrue(cancelCommand);
 		}
@@ -249,12 +250,12 @@ public class RobotContainer {
 			SmartDashboard.putString("Operator Ctrl", onPortMsg + "Joystick");
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
-			joystick.button(1).onTrue(Autos.intakeFromFloorStart(arm, intakeShooter, vision));
-			joystick.button(1).onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter, vision));
+			joystick.button(1).onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
+			joystick.button(1).onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			joystick.button(2).onTrue(Autos.shootInSpeaker(arm, intakeShooter, vision));
+			joystick.button(2).onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs));
 
-			joystick.button(3).onTrue(Autos.dropInAmp(arm, intakeShooter, vision));
+			joystick.button(3).onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
 
 			joystick.button(4).onTrue(stowArm);
 			joystick.button(6).onTrue(stowArm);
@@ -267,12 +268,12 @@ public class RobotContainer {
 			SmartDashboard.putString("Operator Ctrl", onPortMsg + "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
 
-			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter, vision));
-			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter, vision));
+			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
+			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(arm, intakeShooter, vision));
+			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs));
 
-			xbox.rightBumper().onTrue(Autos.dropInAmp(arm, intakeShooter, vision));
+			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);

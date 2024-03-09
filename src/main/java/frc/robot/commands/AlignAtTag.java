@@ -6,56 +6,55 @@ import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** Command to automatically aim at a tag, ends once facing the tag */
-public class AimAtTag extends Command {
+/** Command to automatically align at a tag, ends once facing the tag */
+public class AlignAtTag extends Command {
 	private final SwerveDrivetrain drivetrain;
 	private final ChassisDriveInputs chassisDriveInputs;
 
 	private final Vision vision;
 	private final int tagID;
 
-	private final PIDController rotatePID;
+	private final PIDController yController;
 
 	/**
-	 * Create a new AimAtTag command. Tries to constants aim at a tag while still
+	 * Create a new AlignAtTag command. Tries to constants Align at a tag while still
 	 * allowing driver to control robot.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
 	 * @param vision              the vision subsystem of the robot
 	 * @param tagID               the numerical ID of the tag to turn to, -1 for best tag
 	 */
-	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, ChassisDriveInputs chassisDriveInputs) {
+	public AlignAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, ChassisDriveInputs chassisDriveInputs) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
 		this.tagID = tagID;
 		this.chassisDriveInputs = chassisDriveInputs;
 
-		rotatePID = new PIDController(
-				RobotMovementConstants.ROTATION_PID_P,
-				RobotMovementConstants.ROTATION_PID_I,
-				RobotMovementConstants.ROTATION_PID_D);
-		rotatePID.enableContinuousInput(-1, 1);
-		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
-		rotatePID.setSetpoint(0);
+		yController = new PIDController(
+			RobotMovementConstants.TRANSLATION_PID_P,
+			RobotMovementConstants.TRANSLATION_PID_I,
+			RobotMovementConstants.TRANSLATION_PID_D);
+
+		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		yController.setSetpoint(0);
 
 		addRequirements(drivetrain);
 	}
 
 	/**
-	 * Create a new AimAtTag command. Tries to aim at a tag.
+	 * Create a new AlignAtTag command. Tries to Align at a tag.
 	 * 
 	 * @param drivetrain the drivetrain of the robot
 	 * @param vision     the vision subsystem of the robot
 	 * @param tagID      the numerical ID of the tag to turn to, null for best
 	 *                   tag
 	 */
-	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, Integer tagID) {
+	public AlignAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID) {
 		this(drivetrain, vision, tagID, null);
 	}
 
@@ -68,21 +67,19 @@ public class AimAtTag extends Command {
 	public void execute() {
 		Transform3d transform = vision.getTransformToTag(tagID);
 
-		double tagYawRadians = 0;
+		double ySpeed = 0;
 		if (transform != null) {
-			Rotation2d angleToTag = new Rotation2d(transform.getX(), transform.getY());
-			tagYawRadians = angleToTag.getRadians();
+			ySpeed = yController.calculate(transform.getY());
 		}
 
 		double xSpeed = 0;
-		double ySpeed = 0;
+		double rotationSpeed = 0;
 		if (chassisDriveInputs != null) {
 			xSpeed = chassisDriveInputs.getX();
-			ySpeed = chassisDriveInputs.getY();
+			// rotationSpeed = chassisDriveInputs.getRotation();
 		}
-		double rotateSpeed = rotatePID.calculate(tagYawRadians);
 
-		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -rotateSpeed);
+		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
 
 		drivetrain.setDesiredState(desiredSpeeds, false, true);
 
@@ -91,7 +88,7 @@ public class AimAtTag extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return (chassisDriveInputs == null) && (rotatePID.atSetpoint());
+		return yController.atSetpoint();
 	}
 
 	@Override

@@ -103,7 +103,7 @@ public class FollowTag extends Command {
 
 		rotationSpeed = 0;
 		forwardSpeed = 0;
-		drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed));
+		drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed), false, true);
 		drivetrain.updateSmartDashboard();
 	}
 

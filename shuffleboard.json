@@ -80,7 +80,7 @@
               "_showGlyph": true
             }
           },
-          "5,2": {
+          "5,3": {
             "size": [
               1,
               1
@@ -184,15 +184,15 @@
               "_children": [
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/SpeedY",
-                  "_title": "SpeedY",
+                  "_source0": "network_table:///SmartDashboard/SpeedX",
+                  "_title": "SpeedX",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/SpeedX",
-                  "_title": "SpeedX",
+                  "_source0": "network_table:///SmartDashboard/SpeedY",
+                  "_title": "SpeedY",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
@@ -220,16 +220,16 @@
               "_children": [
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/PoseY",
-                  "_title": "PoseY",
-                  "_glyph": 115,
+                  "_source0": "network_table:///SmartDashboard/PoseX",
+                  "_title": "PoseX",
+                  "_glyph": 114,
                   "_showGlyph": true
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/PoseX",
-                  "_title": "PoseX",
-                  "_glyph": 114,
+                  "_source0": "network_table:///SmartDashboard/PoseY",
+                  "_title": "PoseY",
+                  "_glyph": 115,
                   "_showGlyph": true
                 },
                 {
@@ -266,10 +266,10 @@
               "_type": "Number Bar",
               "_source0": "network_table:///SmartDashboard/Robot MPH",
               "_title": "Robot MPH",
-              "_glyph": 148,
-              "_showGlyph": false,
+              "_glyph": 152,
+              "_showGlyph": true,
               "Range/Min": 0.0,
-              "Range/Max": 60.0,
+              "Range/Max": 25.0,
               "Range/Center": 0.0,
               "Visuals/Num tick marks": 5,
               "Visuals/Show text": true,
@@ -306,34 +306,30 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "6,3": {
+          "5,2": {
             "size": [
               1,
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Is Left Arm at Bottom?",
-              "_title": "Is Left Arm at Bottom?",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/LeftHang",
+              "_title": "LeftHang",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_showGlyph": false
             }
           },
-          "5,3": {
+          "6,2": {
             "size": [
               1,
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Is Right Arm at Bottom?",
-              "_title": "Is Right Arm at Bottom?",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/RightHang",
+              "_title": "RightHang",
               "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_showGlyph": false
             }
           }
         }
