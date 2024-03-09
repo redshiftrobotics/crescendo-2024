@@ -347,7 +347,7 @@ public final class Constants {
 	}
 
 	public static class LightConstants {
-		public static final int LED_CONTROLLER_PWM_SLOT = 1; // TODO find real value for this
+		public static final int LED_CONTROLLER_PWM_SLOT = 0; // TODO find real value for this
 		public static final int LED_QUANTITY = 60;
 
 		public static final double LED_COLOR_RED = 0.61;
