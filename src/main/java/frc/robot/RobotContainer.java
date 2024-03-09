@@ -10,7 +10,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
-import frc.robot.commands.SetHangSpeed;
+import frc.robot.commands.HangControl;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
 import frc.robot.Constants.VisionConstants;
@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -98,10 +97,12 @@ public class RobotContainer {
 			ArmConstants.RIGHT_ENCODER_ID,
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
-	private final Hang hang = Constants.HangConstants.HAS_HANG
-			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.RIGHT_MOTOR_ID,
-					HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.RIGHT_MOTOR_IS_INVERTED,
-					HangConstants.LEFT_LIMIT_SWITCH_ID, HangConstants.RIGHT_LIMIT_SWITCH_ID)
+	private final Hang leftHang = Constants.HangConstants.HAS_HANG
+			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.LEFT_LIMIT_SWITCH_ID) 
+			: new DummyHang();
+
+	private final Hang rightHang = Constants.HangConstants.HAS_HANG
+			? new RealHang(HangConstants.RIGHT_MOTOR_ID, HangConstants.RIGHT_MOTOR_IS_INVERTED, HangConstants.RIGHT_LIMIT_SWITCH_ID)
 			: new DummyHang();
 
 	private final IntakeShooter intakeShooter = Constants.IntakeShooterConstants.HAS_INTAKE ? new RealShooter(
@@ -125,7 +126,8 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		autoChooser.addOption("Backward", Autos.driveAuto(drivetrain, new Translation2d(Units.feetToMeters(-7), 0)));
+		autoChooser.setDefaultOption("Backward", Autos.startingAuto(arm, drivetrain, leftHang, rightHang));
+		autoChooser.addOption("ShootBackward", Autos.shootStartingAuto(arm, drivetrain, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -233,8 +235,8 @@ public class RobotContainer {
 		final Command stowArm = new ArmRotateTo(arm, ArmConstants.ARM_STOW_DEGREES);
 		final Command stowArm2 = new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES);
 
-		final SetHangSpeed hangUp = new SetHangSpeed(hang, HangConstants.speed);
-		final SetHangSpeed hangDown = new SetHangSpeed(hang, -HangConstants.speed);
+		leftHang.removeDefaultCommand();
+		rightHang.removeDefaultCommand();
 
 		final Command cancelCommand = new SequentialCommandGroup(
 				new CancelCommands(arm, intakeShooter),
@@ -259,10 +261,6 @@ public class RobotContainer {
 
 			joystick.button(7).whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
-			joystick.button(8).whileTrue(hangUp);
-
-			joystick.button(9).whileTrue(hangDown);
-
 			joystick.button(10).onTrue(cancelCommand);
 
 		} else {
@@ -281,11 +279,25 @@ public class RobotContainer {
 
 			xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
-			xbox.leftStick().whileTrue(hangUp);
-			xbox.rightStick().whileTrue(hangDown);
+			leftHang.setDefaultCommand(new HangControl(
+				leftHang,
+				() -> linearDeadBand(-xbox.getLeftY(), DriverConstants.DEAD_ZONE)
+			));
+
+			rightHang.setDefaultCommand(new HangControl(
+				rightHang,
+				() -> linearDeadBand(-xbox.getRightY(), DriverConstants.DEAD_ZONE)
+			));
 
 			xbox.b().onTrue(cancelCommand);
 		}
+	}
+
+	private static double linearDeadBand(double raw, double deadBand) {
+		// temp put this here
+		if (Math.abs(raw) < deadBand) return 0;
+
+		return raw * (1 + deadBand) - Math.signum(raw) * deadBand;
 	}
 
 	/** Use this method to define your trigger->command mappings. */

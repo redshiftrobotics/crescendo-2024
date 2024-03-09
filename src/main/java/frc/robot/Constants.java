@@ -77,7 +77,7 @@ public final class Constants {
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
 		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
 
-		public static final double speed = 1;
+		public static final double SPEED = 1;
 
 	}
 
@@ -85,7 +85,7 @@ public final class Constants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
 
-		public static final double DEAD_ZONE = 0.25;
+		public static final double DEAD_ZONE = 0.05;
 
 		public static final int NUMBER_OF_SPEED_OPTIONS = 2;
 

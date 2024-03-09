@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
-import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.subsystems.hang.Hang;
 
 /**
@@ -27,40 +27,25 @@ public final class Autos {
 	}
 
 	/** Linden did this */
-	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, Hang hang, boolean invertY) {
+	public static Command startingAuto(Arm arm, SwerveDrivetrain drivetrain, Hang leftHang, Hang rightHang) {
 
-		// assumes start position in corner
-		double invert = 1;
-		if (invertY) {
-			invert = -1;
-		}
-
-		return Commands.parallel(Commands.sequence(
-				// 2.9, 0.2 and 1.2 are not arbitrary, they move the robot so that the note is
-				// right in front; 0.05 can be changed, it's for the amount of extra spacing
-				// that we want
-				new AutoDriveTo(drivetrain,
-						new Translation2d(2.9 - 0.2 - SwerveDrivetrainConstants.MODULE_LOCATION_X - 0.05,
-								invert * (1.2 - SwerveDrivetrainConstants.MODULE_LOCATION_Y))),
-				new SetHangSpeed(hang, 1)),
-
-				new AutoRotateTo(drivetrain, new Rotation2d(Math.PI / -2 * invert)));
+		return Commands.parallel(
+				Commands.sequence(
+						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+						new AutoDriveTo(drivetrain, new Translation2d(-7, 0)),
+						new AutoRotateTo(drivetrain, new Rotation2d(Math.PI / -2))),
+				new PullHangerDown(rightHang, HangConstants.SPEED),
+				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
 
-	public static Command shootStartingAuto(Hang hang, Arm arm, SwerveDrivetrain drivetrain, IntakeShooter shooter,
-			boolean invertY) {
+	public static Command shootStartingAuto(Arm arm, SwerveDrivetrain drivetrain, IntakeShooter shooter, Hang leftHang,
+			Hang rightHang) {
 		return Commands.sequence(
 				shootInSpeaker(arm, shooter, null),
-				startingAuto(arm, drivetrain, hang, invertY),
-				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
+				startingAuto(arm, drivetrain, leftHang, rightHang));
 	}
 
 	public static Command dropInAmp(Arm arm, IntakeShooter shooter, Vision vision) {
-		if (vision != null && vision.isEnabled()) {
-			return Commands.sequence(
-					dropInAmp(arm, shooter, null));
-		}
-
 		return Commands.sequence(
 				new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES).alongWith(
 						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP),
