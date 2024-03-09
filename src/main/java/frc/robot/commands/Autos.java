@@ -32,8 +32,7 @@ public final class Autos {
 		return Commands.parallel(
 				Commands.sequence(
 						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
-						new AutoDriveTo(drivetrain, new Translation2d(-7, 0)),
-						new AutoRotateTo(drivetrain, new Rotation2d(Math.PI / -2))),
+						new AutoDriveTo(drivetrain, new Translation2d(-7, 0))),
 				new PullHangerDown(rightHang, HangConstants.SPEED),
 				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
