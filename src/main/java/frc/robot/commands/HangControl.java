@@ -16,6 +16,7 @@ public class HangControl extends Command {
 	public HangControl(Hang hanger, Supplier<Double> speedSupplier) {
 		this.hanger = hanger;
 		this.speedSupplier = speedSupplier;
+		addRequirements(hanger);
 	}
 
 	@Override

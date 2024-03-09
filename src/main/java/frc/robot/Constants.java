@@ -108,7 +108,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_ARM = true;
+					HAS_ARM = false;
 					break;
 			}
 		}
