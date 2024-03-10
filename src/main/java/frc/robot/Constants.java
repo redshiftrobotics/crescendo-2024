@@ -108,7 +108,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_ARM = false;
+					HAS_ARM = true;
 					break;
 			}
 		}
@@ -124,7 +124,7 @@ public final class Constants {
 		public static final double ARM_STOW_DEGREES = -83;
 		public static final double ARM_STOW_2_DEGREES = -100;
 		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5;
 		public static final double ARM_INTAKE_DEGREES = -109;
 
 		public static final int LEFT_MOTOR_ID = 5;
@@ -270,7 +270,7 @@ public final class Constants {
 		public static final double DRIVE_PID_MAX_I = 0.001;
 
 		// Steering PID values
-		public static final double STEERING_PID_P = 1;
+		public static final double STEERING_PID_P = 1.5;
 		public static final double STEERING_PID_I = 0;
 		public static final double STEERING_PID_D = 0;
 

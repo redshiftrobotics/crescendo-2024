@@ -71,7 +71,11 @@ public class RealShooter extends IntakeShooter {
 
 	@Override
 	public void stop() {
-		setFlyWheelShooterSpeed(0);
-		setIntakeGrabberSpeed(0);
+		flywheel1.set(0);
+		flywheel2.set(0);
+		intake.set(0);
+		flywheel1.stopMotor();
+		flywheel2.stopMotor();
+		intake.stopMotor();
 	}
 }

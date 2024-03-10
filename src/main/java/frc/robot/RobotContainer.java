@@ -118,7 +118,8 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
+	// private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
+	private final Vision vision = null;
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 
@@ -237,6 +238,7 @@ public class RobotContainer {
 		rightHang.removeDefaultCommand();
 
 		final Command cancelCommand = new SequentialCommandGroup(
+				new InstantCommand(intakeShooter::stop, intakeShooter),
 				new CancelCommands(arm, intakeShooter),
 				new InstantCommand(intakeShooter::stop, intakeShooter));
 
@@ -256,8 +258,6 @@ public class RobotContainer {
 
 			joystick.button(4).onTrue(stowArm);
 			joystick.button(6).onTrue(stowArm);
-
-			joystick.button(7).whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
 			leftHang.setDefaultCommand(new HangControl(
 				leftHang,
@@ -285,7 +285,9 @@ public class RobotContainer {
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);
 
-			xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
+			// xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
+			xbox.x().onTrue(Commands.runOnce(intakeShooter::eject, intakeShooter));
+			xbox.x().onFalse(Commands.runOnce(intakeShooter::stop, intakeShooter));
 
 			leftHang.setDefaultCommand(new HangControl(
 				leftHang,

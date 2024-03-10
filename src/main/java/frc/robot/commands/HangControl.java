@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.hang.Hang;
 
@@ -29,6 +30,7 @@ public class HangControl extends Command {
 	public void execute() {
 
 		double speed = speedSupplier.get();
+		// SmartDashboard.putNumber(hanger.getName()+"hs", speed);
 
 		// double currentTime = System.currentTimeMillis();
 

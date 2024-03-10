@@ -38,9 +38,10 @@ public final class Autos {
 		return Commands.parallel(
 				Commands.sequence(
 						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
-						new AutoDriveTo(drivetrain, new Translation2d(-7, 0))),
+						new AutoDriveTo(drivetrain, new Translation2d(7, 0))),
 				new PullHangerDown(rightHang, HangConstants.SPEED),
-				new PullHangerDown(leftHang, HangConstants.SPEED));
+				new PullHangerDown(leftHang, HangConstants.SPEED)
+				);
 	}
 
 	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
@@ -106,7 +107,8 @@ public final class Autos {
 
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
+				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES, 1),
+				new WaitCommand(0.5),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.4),
 				new SpinFlywheelShooter(shooter, 0),

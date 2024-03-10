@@ -37,8 +37,6 @@ public class RealArm extends Arm {
 				ArmConstants.ELEVATION_PID_I,
 				ArmConstants.ELEVATION_PID_D);
 		
-		armRaisePIDController.setTolerance(Units.degreesToRotations(2));
-
 		armPosition = rightArmEncoder.getAbsolutePosition();
 
 		leftArmMotor.setIdleMode(IdleMode.kBrake);
@@ -50,6 +48,11 @@ public class RealArm extends Arm {
 
 	@Override
 	public void setSetpoint(double degrees) {
+		setSetpoint(degrees, 2);
+	}
+	
+	@Override
+	public void setSetpoint(double degrees, double toleranceAngle) {
 		degrees = Math.max(degrees, ArmConstants.MINIMUM_ARM_DEGREES);
 		degrees = Math.min(degrees, ArmConstants.MAXIMUM_ARM_DEGREES);
 		
@@ -60,6 +63,11 @@ public class RealArm extends Arm {
 
 	@Override
 	public void setSetpoint(Rotation2d rotation) {
+		setSetpoint(rotation, Units.degreesToRotations(2));
+	}
+	
+	@Override
+	public void setSetpoint(Rotation2d rotation, double toleranceAngle) {
 		setSetpoint(rotation.getDegrees());
 	}
 	
