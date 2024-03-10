@@ -31,7 +31,6 @@ public class RealHang extends Hang {
 	@Override
 	public void periodic() {
 		SmartDashboard.putString(name + "Hang", motor.get() + "p" + (isAtBottom() ? " - Down" : ""));
-		// SmartDashboard.putBoolean(name + "Switch", isAtBottom());
 	}
 
 	@Override

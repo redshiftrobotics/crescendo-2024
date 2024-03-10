@@ -32,7 +32,7 @@ public class ArmRotateTo extends Command {
 
 	@Override
 	public void initialize() {
-		arm.setSetpoint(setpoint);
+		arm.setSetpoint(setpoint, toleranceAngle);
 	}
 
 	@Override
