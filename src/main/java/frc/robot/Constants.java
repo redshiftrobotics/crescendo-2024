@@ -124,7 +124,7 @@ public final class Constants {
 		public static final double ARM_STOW_DEGREES = -83;
 		public static final double ARM_STOW_2_DEGREES = -100;
 		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5 + 4;
 		public static final double ARM_INTAKE_DEGREES = -109;
 
 		public static final int LEFT_MOTOR_ID = 5;
@@ -226,25 +226,25 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FL = 2;
 					ANGULAR_MOTOR_ID_FL = 3;
 					ANGULAR_MOTOR_ENCODER_ID_FL = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.364013671875;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.88134765625 + 0.5;
 
 					// Front right
 					VELOCITY_MOTOR_ID_FR = 16;
 					ANGULAR_MOTOR_ID_FR = 17;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.42114257812;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.920166015625 + 0.5;
 
 					// Back left
 					VELOCITY_MOTOR_ID_BL = 8;
 					ANGULAR_MOTOR_ID_BL = 9;
 					ANGULAR_MOTOR_ENCODER_ID_BL = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.13134765625 + 0.5;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.637939453125;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 10;
 					ANGULAR_MOTOR_ID_BR = 11;
 					ANGULAR_MOTOR_ENCODER_ID_BR = 1;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.54736328125;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.54833984375;
 					break;
 			}
 		}

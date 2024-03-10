@@ -260,7 +260,7 @@ public class RobotContainer {
 
 			leftHang.setDefaultCommand(new HangControl(
 				leftHang,
-				() -> linearDeadBand(-joystick.getX(), DriverConstants.DEAD_ZONE)
+				() -> linearDeadBand(joystick.getX(), DriverConstants.DEAD_ZONE)
 			));
 
 			rightHang.setDefaultCommand(new HangControl(
@@ -290,7 +290,7 @@ public class RobotContainer {
 
 			leftHang.setDefaultCommand(new HangControl(
 				leftHang,
-				() -> linearDeadBand(-xbox.getLeftY(), DriverConstants.DEAD_ZONE)
+				() -> linearDeadBand(xbox.getLeftY(), DriverConstants.DEAD_ZONE)
 			));
 
 			rightHang.setDefaultCommand(new HangControl(
