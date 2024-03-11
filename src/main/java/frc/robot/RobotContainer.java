@@ -13,6 +13,7 @@ import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
+import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
@@ -26,14 +27,13 @@ import frc.robot.subsystems.hang.RealHang;
 import frc.robot.subsystems.intake.DummyShooter;
 import frc.robot.subsystems.intake.IntakeShooter;
 import frc.robot.subsystems.intake.RealShooter;
-import frc.robot.inputs.ChassisDriveInputs;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -97,11 +97,13 @@ public class RobotContainer {
 			ArmConstants.ARE_MOTORS_REVERSED) : new DummyArm();
 
 	private final Hang leftHang = Constants.HangConstants.HAS_HANG
-			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.LEFT_MOTOR_IS_INVERTED, HangConstants.LEFT_LIMIT_SWITCH_ID, "Left") 
+			? new RealHang(HangConstants.LEFT_MOTOR_ID, HangConstants.LEFT_MOTOR_IS_INVERTED,
+					HangConstants.LEFT_LIMIT_SWITCH_ID, "Left")
 			: new DummyHang();
 
 	private final Hang rightHang = Constants.HangConstants.HAS_HANG
-			? new RealHang(HangConstants.RIGHT_MOTOR_ID, HangConstants.RIGHT_MOTOR_IS_INVERTED, HangConstants.RIGHT_LIMIT_SWITCH_ID, "Right")
+			? new RealHang(HangConstants.RIGHT_MOTOR_ID, HangConstants.RIGHT_MOTOR_IS_INVERTED,
+					HangConstants.RIGHT_LIMIT_SWITCH_ID, "Right")
 			: new DummyHang();
 
 	private final IntakeShooter intakeShooter = Constants.IntakeShooterConstants.HAS_INTAKE ? new RealShooter(
@@ -117,7 +119,8 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	// private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
+	// private final Vision vision = new Vision(VisionConstants.CAMERA_NAME,
+	// VisionConstants.CAMERA_POSE);
 	private final Vision vision = null;
 
 	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
@@ -128,17 +131,18 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		autoChooser.setDefaultOption("Backward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
-		autoChooser.addOption("ShootBackward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.setDefaultOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
+		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("2+Forward", Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
 		configureBindings();
 
-		drivetrain.setFrontOffset(Rotation2d.fromDegrees(180));
-
-		PortForwarder.add(5800, "photonvision.local", 5800);
+		if (vision != null) {
+			PortForwarder.add(5800, "photonvision.local", 5800);
+		}
 	}
 
 	public void toDefaultPositions() {
@@ -178,7 +182,7 @@ public class RobotContainer {
 					joystick::getX, -1,
 					joystick::getY, -1,
 					joystick::getTwist, -1,
-					Constants.DriverConstants.DEAD_ZONE);
+					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
 			joystick.button(1).whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
 			joystick.button(2).whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
@@ -187,7 +191,8 @@ public class RobotContainer {
 			joystick.button(4).onTrue(coopLightSignal);
 			joystick.button(5).onTrue(amplifyLightSignal);
 
-			if (vision != null) joystick.button(6).onTrue(Commands.runOnce(vision::toggleUsing, vision));
+			if (vision != null)
+				joystick.button(6).onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
 			joystick.button(10).onTrue(cancelCommand);
 
@@ -200,7 +205,7 @@ public class RobotContainer {
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
-					Constants.DriverConstants.DEAD_ZONE);
+					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
 			xbox.rightTrigger().whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
 			xbox.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
@@ -210,7 +215,8 @@ public class RobotContainer {
 			xbox.leftBumper().onTrue(coopLightSignal);
 			xbox.rightBumper().onTrue(amplifyLightSignal);
 
-			if (vision != null) xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
+			if (vision != null)
+				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
 			xbox.b().onTrue(cancelCommand);
 		}
@@ -258,16 +264,6 @@ public class RobotContainer {
 			joystick.button(4).onTrue(stowArm);
 			joystick.button(6).onTrue(stowArm);
 
-			leftHang.setDefaultCommand(new HangControl(
-				leftHang,
-				() -> linearDeadBand(joystick.getX(), DriverConstants.DEAD_ZONE)
-			));
-
-			rightHang.setDefaultCommand(new HangControl(
-				rightHang,
-				() -> linearDeadBand(-joystick.getY(), DriverConstants.DEAD_ZONE)
-			));
-
 			joystick.button(10).onTrue(cancelCommand);
 
 		} else {
@@ -284,29 +280,16 @@ public class RobotContainer {
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);
 
-			// xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
+			// xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject,
+			// intakeShooter::stop, intakeShooter));
 			xbox.x().onTrue(Commands.runOnce(intakeShooter::eject, intakeShooter));
 			xbox.x().onFalse(Commands.runOnce(intakeShooter::stop, intakeShooter));
 
-			leftHang.setDefaultCommand(new HangControl(
-				leftHang,
-				() -> linearDeadBand(xbox.getLeftY(), DriverConstants.DEAD_ZONE)
-			));
-
-			rightHang.setDefaultCommand(new HangControl(
-				rightHang,
-				() -> linearDeadBand(-xbox.getRightY(), DriverConstants.DEAD_ZONE)
-			));
+			leftHang.setDefaultCommand(new HangControl(leftHang, xbox::getLeftY));
+			rightHang.setDefaultCommand(new HangControl(rightHang, xbox::getRightY));
 
 			xbox.b().onTrue(cancelCommand);
 		}
-	}
-
-	private static double linearDeadBand(double raw, double deadBand) {
-		// temp put this here
-		if (Math.abs(raw) < deadBand) return 0;
-
-		return raw * (1 + deadBand) - Math.signum(raw) * deadBand;
 	}
 
 	/** Use this method to define your trigger->command mappings. */

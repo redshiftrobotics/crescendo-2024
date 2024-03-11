@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -53,8 +54,7 @@ public class RealArm extends Arm {
 	
 	@Override
 	public void setSetpoint(double degrees, double toleranceAngle) {
-		degrees = Math.max(degrees, ArmConstants.MINIMUM_ARM_DEGREES);
-		degrees = Math.min(degrees, ArmConstants.MAXIMUM_ARM_DEGREES);
+		degrees = MathUtil.clamp(toleranceAngle, ArmConstants.MINIMUM_ARM_DEGREES, ArmConstants.MAXIMUM_ARM_DEGREES);
 		
 		SmartDashboard.putNumber("Arm SP Deg", degrees);
 		

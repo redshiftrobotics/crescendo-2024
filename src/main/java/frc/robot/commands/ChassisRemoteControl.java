@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.inputs.ChassisDriveInputs;
+import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 
 /**
@@ -60,7 +60,7 @@ public class ChassisRemoteControl extends Command {
 				speedRotation);
 
 
-		drivetrain.setDesiredState(speeds, isFieldRelative, true);
+		drivetrain.setDesiredState(speeds, isFieldRelative);
 
 		drivetrain.updateSmartDashboard();
 	}
