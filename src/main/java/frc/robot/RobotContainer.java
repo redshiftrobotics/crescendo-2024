@@ -133,7 +133,6 @@ public class RobotContainer {
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
 		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("2+Forward", Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -280,10 +279,7 @@ public class RobotContainer {
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);
 
-			// xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject,
-			// intakeShooter::stop, intakeShooter));
-			xbox.x().onTrue(Commands.runOnce(intakeShooter::eject, intakeShooter));
-			xbox.x().onFalse(Commands.runOnce(intakeShooter::stop, intakeShooter));
+			xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
 			leftHang.setDefaultCommand(new HangControl(leftHang, xbox::getLeftY));
 			rightHang.setDefaultCommand(new HangControl(rightHang, xbox::getRightY));

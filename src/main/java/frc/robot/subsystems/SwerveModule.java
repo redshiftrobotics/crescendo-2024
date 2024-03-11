@@ -231,9 +231,8 @@ public class SwerveModule extends SubsystemBase {
 			// velocity.
 
 			// The CANSparkMaxes have a builtin PID controller on them we can use to set a
-			// target velocity.
-			// We first convert our speed from meters per second to rotations per minute, as
-			// that is the native unit of our devices
+			// target velocity. We first convert our speed from meters per second to
+			// rotations per minute, as that is the native unit of our devices
 			final double desiredDriveRotationsPerMinute = (state.speedMetersPerSecond * 60)
 					/ SwerveModuleConstants.WHEEL_CIRCUMFERENCE;
 			drivePIDController.setReference(desiredDriveRotationsPerMinute, ControlType.kVelocity);

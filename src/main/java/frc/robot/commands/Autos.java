@@ -55,26 +55,6 @@ public final class Autos {
 				new SpinFlywheelShooter(shooter, 0));
 	}
 
-	public static Command shoot2StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
-			Hang rightHang) {
-		return Commands.sequence(
-				shootStartingAuto(drivetrain, arm, shooter, leftHang, rightHang),
-				
-				new AutoDriveTo(drivetrain, null),
-
-				intakeFromFloorStart(arm, shooter),
-				new AutoDriveTo(drivetrain, new Translation2d(0.25, 0)),
-
-				intakeFromFloorEnd(arm, shooter),
-				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
-				new AutoDriveTo(drivetrain, new Translation2d(0.25 + 7, 0)),
-
-				shootInSpeaker(drivetrain, arm, shooter, null, null),
-
-				new SpinIntakeGrabbers(shooter, 0),
-				new SpinFlywheelShooter(shooter, 0));
-	}
-
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision, ChassisDriveInputs inputs) {
 
 		Optional<Alliance> ally = DriverStation.getAlliance();
