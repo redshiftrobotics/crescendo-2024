@@ -40,8 +40,7 @@ public final class Autos {
 						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
 						new AutoDriveTo(drivetrain, new Translation2d(7, 0))),
 				new PullHangerDown(rightHang, HangConstants.SPEED),
-				new PullHangerDown(leftHang, HangConstants.SPEED)
-				);
+				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
 
 	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
@@ -53,11 +52,12 @@ public final class Autos {
 				new SpinFlywheelShooter(shooter, 0));
 	}
 
-	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision, ChassisDriveInputs inputs) {
+	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
+			ChassisDriveInputs inputs) {
 
 		Optional<Alliance> ally = DriverStation.getAlliance();
 		if (vision != null && vision.isEnabled() && ally.isPresent()) {
-			
+
 			int tagId = -1;
 			Rotation2d rotation = Rotation2d.fromDegrees(90);
 			if (ally.get() == Alliance.Red) {
@@ -68,10 +68,9 @@ public final class Autos {
 			}
 
 			return Commands.sequence(
-				new AutoRotateTo(drivetrain, rotation, true),
-				new AlignAtTag(drivetrain, vision, tagId, inputs),
-				shootInSpeaker(drivetrain, arm, shooter, null, inputs)
-			);
+					new AutoRotateTo(drivetrain, rotation, true),
+					new AlignAtTag(drivetrain, vision, tagId, inputs),
+					shootInSpeaker(drivetrain, arm, shooter, null, inputs));
 		}
 
 		return Commands.sequence(
@@ -84,11 +83,12 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 
-	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision, ChassisDriveInputs inputs) {
+	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
+			ChassisDriveInputs inputs) {
 
 		Optional<Alliance> ally = DriverStation.getAlliance();
 		if (vision != null && vision.isEnabled() && ally.isPresent()) {
-			
+
 			int tagId = -1;
 			Rotation2d rotation = Rotation2d.fromDegrees(0);
 			if (ally.get() == Alliance.Red) {
@@ -99,10 +99,9 @@ public final class Autos {
 			}
 
 			return Commands.sequence(
-				new AutoRotateTo(drivetrain, rotation, true),
-				new AlignAtTag(drivetrain, vision, tagId, inputs),
-				shootInSpeaker(drivetrain, arm, shooter, null, inputs)
-			);
+					new AutoRotateTo(drivetrain, rotation, true),
+					new AlignAtTag(drivetrain, vision, tagId, inputs),
+					shootInSpeaker(drivetrain, arm, shooter, null, inputs));
 		}
 
 		return Commands.sequence(
@@ -110,7 +109,7 @@ public final class Autos {
 				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES, 1),
 				new WaitCommand(0.5),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
-				new WaitCommand(0.4),
+				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, 0));
 	}
