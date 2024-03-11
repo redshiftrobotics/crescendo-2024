@@ -88,7 +88,7 @@ public final class Constants {
 		public static final double DEAD_ZONE = 0.02;
 		
 		public static final int SLEW_RATE_LIMIT_UP = 3;
-		public static final int SLEW_RATE_LIMIT_DOWN = 2;
+		public static final int SLEW_RATE_LIMIT_DOWN = 3;
 
 		public static final int NUMBER_OF_SPEED_OPTIONS = 3;
 
