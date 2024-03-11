@@ -47,9 +47,42 @@ public final class Autos {
 			Hang rightHang) {
 		return Commands.sequence(
 				shootInSpeaker(drivetrain, arm, shooter, null, null),
+
 				startingAuto(drivetrain, arm, leftHang, rightHang),
 				new SpinIntakeGrabbers(shooter, 0),
 				new SpinFlywheelShooter(shooter, 0));
+	}
+
+	/**
+	 * This factory creates a new command sequence that picks shoots a preloaded note and picks up another one before shooting it as well.
+	 *
+	 * It also pulls both hangers down.
+	 *
+	 * @author Linden, Aceius E.
+	 * @param drivetrain  The robot drivetrain
+	 * @param arm         The main arm
+	 * @param shooter     The shooter
+	 * @param leftHang    The left hanger
+	 * @param rightHang   The right hanger
+	 * @return Command schedule instructions
+	 */
+	public static Command shoot2StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang, Hang rightHang) {
+		final double driveDistanceForNote1 = -1.59;
+
+		return Commands.parallel(
+			Commands.sequence(
+					shootInSpeaker(drivetrain, arm, shooter, null, null),
+					new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+					Commands.parallel(
+							new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
+							new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER)
+					),
+					new SpinIntakeGrabbers(shooter, 0),
+					new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0)),
+					shootInSpeaker(drivetrain, arm, shooter, null, null)
+			),
+			new PullHangerDown(rightHang, HangConstants.SPEED),
+			new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
 
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
