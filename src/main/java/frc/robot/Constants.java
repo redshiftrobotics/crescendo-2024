@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 
@@ -22,6 +23,7 @@ public final class Constants {
 
 	public static final Bot currentBot;
 	public static final String serialNumber;
+	public static final double BOT_WIDTH = 0.885; // metres
 
 	/**
 	 * This code determines what bot is being deployed and sets constants

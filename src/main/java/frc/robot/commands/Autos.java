@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.Arm;
@@ -26,6 +27,8 @@ import frc.robot.subsystems.hang.Hang;
  * itself.
  */
 public final class Autos {
+	private static final Translation2d rightNotePickup = new Translation2d((Constants.BOT_WIDTH / 2) - Units.inchesToMeters(77.875/2), Units.inchesToMeters(39));
+
 	/** Example static factory for an autonomous command. */
 	public static Command driveAuto(SwerveDrivetrain drivetrain, Translation2d translation) {
 		return Commands.sequence(
@@ -83,6 +86,20 @@ public final class Autos {
 			),
 			new PullHangerDown(rightHang, HangConstants.SPEED),
 			new PullHangerDown(leftHang, HangConstants.SPEED));
+	}
+
+	public static Command shoot3StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision, Hang leftHanger, Hang rightHanger) throws Exception {
+		final Optional<Alliance> ally = DriverStation.getAlliance();
+
+		if (!vision.isEnabled()) throw new UnsupportedOperationException("This auto requires vision!");
+		if (ally.isEmpty()) throw new Exception("DriverStation.getAlliance is not present. Set the alliance in the driver station.");
+
+		final int speakerTagId = ally.get() == Alliance.Red ? 4 : 7;
+
+		return Commands.sequence(
+				shoot2StartingAuto(drivetrain, arm,shooter,leftHanger,rightHanger),
+				new AutoDriveTo(drivetrain, rightNotePickup)
+		);
 	}
 
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
