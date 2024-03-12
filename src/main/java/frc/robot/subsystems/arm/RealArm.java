@@ -37,7 +37,8 @@ public class RealArm extends Arm {
 				ArmConstants.ELEVATION_PID_P,
 				ArmConstants.ELEVATION_PID_I,
 				ArmConstants.ELEVATION_PID_D);
-		
+		armRaisePIDController.setSetpoint(ArmConstants.ARM_START_DEGREES);
+
 		armPosition = rightArmEncoder.getAbsolutePosition();
 
 		leftArmMotor.setIdleMode(IdleMode.kBrake);
@@ -51,13 +52,13 @@ public class RealArm extends Arm {
 	public void setSetpoint(double degrees) {
 		setSetpoint(degrees, 2);
 	}
-	
+
 	@Override
 	public void setSetpoint(double degrees, double toleranceAngle) {
-		degrees = MathUtil.clamp(toleranceAngle, ArmConstants.MINIMUM_ARM_DEGREES, ArmConstants.MAXIMUM_ARM_DEGREES);
-		
+		degrees = Math.max(degrees, ArmConstants.MINIMUM_ARM_DEGREES);
+		degrees = Math.min(degrees, ArmConstants.MAXIMUM_ARM_DEGREES);
 		SmartDashboard.putNumber("Arm SP Deg", degrees);
-		
+
 		armRaisePIDController.setSetpoint(Units.degreesToRotations(degrees));
 	}
 
@@ -65,17 +66,17 @@ public class RealArm extends Arm {
 	public void setSetpoint(Rotation2d rotation) {
 		setSetpoint(rotation, Units.degreesToRotations(2));
 	}
-	
+
 	@Override
 	public void setSetpoint(Rotation2d rotation, double toleranceAngle) {
 		setSetpoint(rotation.getDegrees());
 	}
-	
+
 	@Override
 	public Rotation2d getArmPosition() {
 		return Rotation2d.fromRotations(armPosition.refresh().getValueAsDouble());
 	}
-	
+
 	@Override
 	public boolean isAtDesiredPosition() {
 		return armRaisePIDController.atSetpoint();

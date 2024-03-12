@@ -86,7 +86,7 @@ public final class Constants {
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
 
 		public static final double DEAD_ZONE = 0.02;
-		
+
 		public static final int SLEW_RATE_LIMIT_UP = 3;
 		public static final int SLEW_RATE_LIMIT_DOWN = 3;
 
@@ -235,7 +235,7 @@ public final class Constants {
 					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.88134765625 + 0.5;
 
 					// Front right
-					VELOCITY_MOTOR_ID_FR = 16;
+					VELOCITY_MOTOR_ID_FR = 14;
 					ANGULAR_MOTOR_ID_FR = 17;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 4;
 					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.920166015625 + 0.5;
@@ -258,7 +258,7 @@ public final class Constants {
 		// Values from
 		// https://www.swervedrivespecialties.com/products/mk4-swerve-module. We have L1
 		// Modules.
-		public static final double DRIVE_MOTOR_GEAR_RATIO = 1 / 8.4;
+		public static final double DRIVE_MOTOR_GEAR_RATIO = 1.0 / 8.4;
 		public static final double STEERING_MOTOR_GEAR_RATIO = 12.8;
 
 		public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
@@ -325,7 +325,7 @@ public final class Constants {
 		public static final double MODULE_LOCATION_Y;
 		public static final double MODULE_LOCATION_X;
 
-		public static final double MAX_OBTAINABLE_SPEED = 3; // 3 Meters per Second
+		public static final double MAX_OBTAINABLE_SPEED = 2; // 3 Meters per Second
 	}
 
 	public static class VisionConstants {
