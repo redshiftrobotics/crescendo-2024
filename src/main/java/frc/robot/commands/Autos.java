@@ -46,7 +46,7 @@ public final class Autos {
 	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
 			Hang rightHang) {
 		return Commands.sequence(
-				shootInSpeaker(drivetrain, arm, shooter, null, null),
+				shootSpeakerFromFront(drivetrain, arm, shooter, null, null),
 
 				startingAuto(drivetrain, arm, leftHang, rightHang),
 				new SpinIntakeGrabbers(shooter, 0),
@@ -54,35 +54,43 @@ public final class Autos {
 	}
 
 	/**
-	 * This factory creates a new command sequence that picks shoots a preloaded note and picks up another one before shooting it as well.
+	 * This factory creates a new command sequence that picks shoots a preloaded
+	 * note and picks up another one before shooting it as well.
 	 *
 	 * It also pulls both hangers down.
 	 *
 	 * @author Linden, Aceius E.
-	 * @param drivetrain  The robot drivetrain
-	 * @param arm         The main arm
-	 * @param shooter     The shooter
-	 * @param leftHang    The left hanger
-	 * @param rightHang   The right hanger
+	 * @param drivetrain The robot drivetrain
+	 * @param arm        The main arm
+	 * @param shooter    The shooter
+	 * @param leftHang   The left hanger
+	 * @param rightHang  The right hanger
 	 * @return Command schedule instructions
 	 */
-	public static Command shoot2StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang, Hang rightHang) {
+
+	public static Command shoot2SideStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
+			Hang rightHang) {
+		return Commands.parallel(
+			Commands.sequence()
+		);
+	}
+
+	public static Command shoot2FrontStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
+			Hang rightHang) {
 		final double driveDistanceForNote1 = -1.59;
 
 		return Commands.parallel(
-			Commands.sequence(
-					shootInSpeaker(drivetrain, arm, shooter, null, null),
-					new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
-					Commands.parallel(
-							new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
-							new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER)
-					),
-					new SpinIntakeGrabbers(shooter, 0),
-					new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0)),
-					shootInSpeaker(drivetrain, arm, shooter, null, null)
-			),
-			new PullHangerDown(rightHang, HangConstants.SPEED),
-			new PullHangerDown(leftHang, HangConstants.SPEED));
+				Commands.sequence(
+						shootSpeakerFromFront(drivetrain, arm, shooter, null, null),
+						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+						Commands.parallel(
+								new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
+								new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER)),
+						new SpinIntakeGrabbers(shooter, 0),
+						new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0)),
+						shootSpeakerFromFront(drivetrain, arm, shooter, null, null)),
+				new PullHangerDown(rightHang, HangConstants.SPEED),
+				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
 
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
@@ -103,7 +111,7 @@ public final class Autos {
 			return Commands.sequence(
 					new AutoRotateTo(drivetrain, rotation, true),
 					new AlignAtTag(drivetrain, vision, tagId, inputs),
-					shootInSpeaker(drivetrain, arm, shooter, null, inputs));
+					shootSpeakerFromFront(drivetrain, arm, shooter, null, inputs));
 		}
 
 		return Commands.sequence(
@@ -116,7 +124,15 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 
-	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
+	public static Command shootSpeakerFromFront(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			Vision vision,
+			ChassisDriveInputs inputs) {
+		return shootInSpeaker(drivetrain, arm, shooter, ArmConstants.ARM_SPEAKER_FRONT_SHOOTING_DEGREES, vision,
+				inputs);
+	}
+
+	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, double angle,
+			Vision vision,
 			ChassisDriveInputs inputs) {
 
 		Optional<Alliance> ally = DriverStation.getAlliance();
@@ -134,7 +150,7 @@ public final class Autos {
 			return Commands.sequence(
 					new AutoRotateTo(drivetrain, rotation, true),
 					new AlignAtTag(drivetrain, vision, tagId, inputs),
-					shootInSpeaker(drivetrain, arm, shooter, null, inputs));
+					shootSpeakerFromFront(drivetrain, arm, shooter, null, inputs));
 		}
 
 		return Commands.sequence(
@@ -142,7 +158,7 @@ public final class Autos {
 						Commands.sequence(
 								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 								new WaitCommand(0.5)),
-						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES, 1)),
+						new ArmRotateTo(arm, angle, 1)),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
