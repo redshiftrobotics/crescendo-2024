@@ -144,11 +144,11 @@ public final class Autos {
 						Commands.sequence(
 								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 								new WaitCommand(0.5)),
-						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES, 1)),
+						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
-				new SpinIntakeGrabbers(shooter, 0));
+				new SpinIntakeGrabbers(shooter, 0)));
 	}
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
