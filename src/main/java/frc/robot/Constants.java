@@ -90,10 +90,10 @@ public final class Constants {
 		public static final int SLEW_RATE_LIMIT_UP = 3;
 		public static final int SLEW_RATE_LIMIT_DOWN = 3;
 
-		public static final int NUMBER_OF_SPEED_OPTIONS = 3;
+		public static final int NUMBER_OF_SPEED_OPTIONS = 4;
 
 		// Names of options for displaying
-		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost" };
+		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost", "Boost++"};
 
 		public static final double MAX_SPEED = SwerveDrivetrainConstants.MAX_OBTAINABLE_SPEED;
 		public static final double MAX_ROTATION_SPEED = Math.PI;
