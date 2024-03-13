@@ -126,6 +126,8 @@ public final class Constants {
 		public static final double MAXIMUM_ARM_DEGREES = 50;
 		public static final double MINIMUM_ARM_DEGREES = -120;
 
+		public static final double ARM_TOLERANCE_DEGREES = 2;
+
 		// Degrees
 		public static final double ARM_START_DEGREES = -38;
 		public static final double ARM_STOW_DEGREES = -83;
@@ -139,8 +141,6 @@ public final class Constants {
 		public static final int RIGHT_ENCODER_ID = 6;
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
-
-		public static final double DEGREES_PER_SECOND = 1;
 
 		public static final double ELEVATION_PID_P = 6.5;
 		public static final double ELEVATION_PID_I = 0;
