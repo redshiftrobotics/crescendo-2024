@@ -19,9 +19,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics.SwerveDriveWheelState
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotMovementConstants;
+import frc.robot.Constants.SwerveDrivetrainConstants;
 
 /**
  * Subsystem for full drive train of robot. Contains 4 {@link SwerveModule}
@@ -155,12 +157,11 @@ public class SwerveDrivetrain extends SubsystemBase {
 				getWheelPositions());
 
 		// if (visionSystem != null) {
-		// Optional<EstimatedRobotPose> estimatedPose =
-		// visionSystem.getEstimatedGlobalPose();
-		// if (estimatedPose.isPresent()) {
-		// poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(),
-		// estimatedPose.get().timestampSeconds);
-		// }
+		// 	Optional<EstimatedRobotPose> estimatedPose =visionSystem.getEstimatedGlobalPose();
+		// 	if (estimatedPose.isPresent()) {
+		// 		poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(),
+		// 		estimatedPose.get().timestampSeconds);
+		// 	}
 		// }
 
 		if (desiredPose != null) {
@@ -301,16 +302,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 		setDesiredState(speeds, false);
 	}
 
-	/**
-	 * Set speeds of robot using default speeds units.
-	 * 
-	 * @param speeds        Desired speeds of drivetrain (using swerve modules)
-	 * @param fieldRelative True if the robot is using a field relative coordinate
-	 *                      system,
-	 *                      false if using a robot relive coordinate system
-	 */
-	public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative) {
-		setDesiredState(speeds, fieldRelative, false);
+	public void drive(ChassisSpeeds speeds, boolean fieldRelative) {
+		setDesiredState(speeds, fieldRelative);
 	}
 
 	/**
@@ -329,39 +322,26 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * rotation of the robot.
 	 * If robot relative, forward will be whatever direction the robot is facing in.
 	 * 
-	 * <p>
-	 * If power drive mode then speeds X, Y, and Omega are in motor powers from -1
-	 * to 1.
-	 * If normal drive mode then X and Y are in meters per second and Omega is in
-	 * radians per second
-	 * 
 	 * @param speeds         Desired speeds of drivetrain (using swerve modules)
 	 * @param fieldRelative  True if the robot is using a field relative coordinate
 	 *                       system,
 	 *                       false if using a robot relive coordinate system
-	 * @param powerDriveMode True if in power drive mode with motor powers,
-	 *                       false if in normal drive mode with default units
 	 */
-	public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative, boolean powerDriveMode) {
+	public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative) {
 
 		SmartDashboard.putNumber("SpeedX", speeds.vxMetersPerSecond);
 		SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
 		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
-		SmartDashboard.putBoolean("Field Relative", fieldRelative);
 
-		if (fieldRelative) {
-			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds,
-					getHeading().plus(frontOffset));
-		}
+		if (fieldRelative) speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
+		speeds = ChassisSpeeds.discretize(speeds, TimedRobot.kDefaultPeriod);
 
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
 
-		if (powerDriveMode) {
-			SwerveDriveKinematics.desaturateWheelSpeeds(states, 1.0);
-		}
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveDrivetrainConstants.MAX_OBTAINABLE_SPEED);
 
 		for (int i = 0; i < modules.length; i++) {
-			modules[i].setDesiredState(states[i], powerDriveMode);
+			modules[i].setDesiredState(states[i]);
 		}
 	}
 
@@ -412,7 +392,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @see https://ibb.co/dJrL259 NWU Axis Convention
 	 */
 	public Rotation2d getHeading() {
-		return gyro.getRotation2d();
+		return gyro.getRotation2d().plus(frontOffset);
 	}
 
 	/**
@@ -457,7 +437,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 		final double metersPerSecondToMilesPerHourConversion = 2.237;
 		SmartDashboard.putNumber("Robot MPH", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
-		SmartDashboard.putNumber("Heading Degrees", getHeading().plus(frontOffset).getDegrees());
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 
 		// final boolean hasTargetPose = desiredPose != null;
 		// final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();

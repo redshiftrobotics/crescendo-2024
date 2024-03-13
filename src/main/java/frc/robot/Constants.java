@@ -75,7 +75,7 @@ public final class Constants {
 		public static final int RIGHT_LIMIT_SWITCH_ID = 2;
 
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
-		public static final boolean RIGHT_MOTOR_IS_INVERTED = false;
+		public static final boolean RIGHT_MOTOR_IS_INVERTED = true;
 
 		public static final double SPEED = 1;
 
@@ -85,18 +85,25 @@ public final class Constants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
 
-		public static final double DEAD_ZONE = 0.05;
+		public static final double DEAD_ZONE = 0.07;
 
-		public static final int NUMBER_OF_SPEED_OPTIONS = 2;
+		public static final int SLEW_RATE_LIMIT_UP = 3;
+		public static final int SLEW_RATE_LIMIT_DOWN = 3;
+
+		public static final int NUMBER_OF_SPEED_OPTIONS = 3;
 
 		// Names of options for displaying
 		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost" };
 
+		public static final double MAX_SPEED = SwerveDrivetrainConstants.MAX_OBTAINABLE_SPEED;
+		public static final double MAX_ROTATION_SPEED = Math.PI;
+
 		// max forward/sideways velocities for drivetrain, in meters per second
-		public static final double[] maxSpeedOptionsTranslation = { 0.1, 0.75, 1 };
+		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.75 * MAX_SPEED, MAX_SPEED };
 
 		// max angular velocity for drivetrain, in radians per second
-		public static final double[] maxSpeedOptionsRotation = { 0.25, 0.75, 1 };
+		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.5 * MAX_SPEED,
+				0.75 * MAX_SPEED, MAX_SPEED };
 	}
 
 	public static class ArmConstants {
@@ -115,7 +122,6 @@ public final class Constants {
 
 		public static final boolean HAS_ARM;
 
-		// TODO: figure out positions
 		public static final double MAXIMUM_ARM_DEGREES = 50;
 		public static final double MINIMUM_ARM_DEGREES = -120;
 
@@ -135,7 +141,7 @@ public final class Constants {
 
 		public static final double DEGREES_PER_SECOND = 1;
 
-		public static final double ELEVATION_PID_P = 10;
+		public static final double ELEVATION_PID_P = 6.5;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
 	}
@@ -162,7 +168,7 @@ public final class Constants {
 		public static final int FLYWHEEL_MOTOR_2_ID = 7;
 
 		public static final int INTAKE_MOTOR_ID = 12;
-		public static final int INTAKE_LIMIT_SWITCH_ID = -1; // TODO get value
+		public static final int INTAKE_LIMIT_SWITCH_ID = -1;
 
 		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = 0.5;
 		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = 1;
@@ -205,7 +211,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FR = 4;
 					ANGULAR_MOTOR_ID_FR = 5;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.8828125;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.8828125 + 0.5;
 
 					// Back left
 					VELOCITY_MOTOR_ID_BL = 2;
@@ -221,30 +227,30 @@ public final class Constants {
 					break;
 
 				case COMP_BOT:
-				default: // Temporary default to practice bot
+				default:
 					// Front Left
 					VELOCITY_MOTOR_ID_FL = 2;
 					ANGULAR_MOTOR_ID_FL = 3;
 					ANGULAR_MOTOR_ENCODER_ID_FL = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.88134765625 + 0.5;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.881591796875 + 0.5;
 
 					// Front right
-					VELOCITY_MOTOR_ID_FR = 16;
+					VELOCITY_MOTOR_ID_FR = 14; // Was 16
 					ANGULAR_MOTOR_ID_FR = 17;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.920166015625 + 0.5;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.881591796875;
 
 					// Back left
 					VELOCITY_MOTOR_ID_BL = 8;
 					ANGULAR_MOTOR_ID_BL = 9;
 					ANGULAR_MOTOR_ENCODER_ID_BL = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.637939453125;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BL = -0.641357421875;
 
 					// Back right
 					VELOCITY_MOTOR_ID_BR = 10;
 					ANGULAR_MOTOR_ID_BR = 11;
 					ANGULAR_MOTOR_ENCODER_ID_BR = 1;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.54833984375;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.549072265625;
 					break;
 			}
 		}
@@ -252,7 +258,7 @@ public final class Constants {
 		// Values from
 		// https://www.swervedrivespecialties.com/products/mk4-swerve-module. We have L1
 		// Modules.
-		public static final double DRIVE_MOTOR_GEAR_RATIO = 1 / 8.4;
+		public static final double DRIVE_MOTOR_GEAR_RATIO = 1.0 / 8.4;
 		public static final double STEERING_MOTOR_GEAR_RATIO = 12.8;
 
 		public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
@@ -266,7 +272,7 @@ public final class Constants {
 		public static final double DRIVE_PID_P = 0.000006;
 		public static final double DRIVE_PID_I = 0.000001;
 		public static final double DRIVE_PID_D = 0;
-		public static final double DRIVE_PID_FF = 0.000015;
+		public static final double DRIVE_PID_FF = 0.15;
 		public static final double DRIVE_PID_MAX_I = 0.001;
 
 		// Steering PID values
@@ -318,12 +324,8 @@ public final class Constants {
 		// distance of swerve modules from center of robot, in meters
 		public static final double MODULE_LOCATION_Y;
 		public static final double MODULE_LOCATION_X;
-	}
 
-	public static class AutoConstants {
-		// preffered distance to tag, specifically for autopositioning the robot to in
-		// front of the tag
-		public static final double PREFERRED_TAG_DISTANCE = 2;
+		public static final double MAX_OBTAINABLE_SPEED = 2; // 3 Meters per Second
 	}
 
 	public static class VisionConstants {

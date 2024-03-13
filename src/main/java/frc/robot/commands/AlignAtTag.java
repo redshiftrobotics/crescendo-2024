@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.RobotMovementConstants;
-import frc.robot.inputs.ChassisDriveInputs;
+import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
@@ -43,7 +43,7 @@ public class AlignAtTag extends Command {
 		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		yController.setSetpoint(0);
 
-		addRequirements(drivetrain);
+		addRequirements(drivetrain, chassisDriveInputs);
 	}
 
 	/**
@@ -74,14 +74,18 @@ public class AlignAtTag extends Command {
 
 		double xSpeed = 0;
 		double rotationSpeed = 0;
+		boolean fieldRelative = false;
 		if (chassisDriveInputs != null) {
 			xSpeed = chassisDriveInputs.getX();
-			// rotationSpeed = chassisDriveInputs.getRotation();
+			// rotationSpeed = chassisDriveInputs.getRotation()
+			fieldRelative = chassisDriveInputs.isFieldRelative();
 		}
 
-		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed);
+		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, 0, rotationSpeed);
+		if (fieldRelative) desiredSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(desiredSpeeds, drivetrain.getHeading());
+		desiredSpeeds.vyMetersPerSecond = ySpeed;
 
-		drivetrain.setDesiredState(desiredSpeeds, false, true);
+		drivetrain.setDesiredState(desiredSpeeds, false);
 
 		drivetrain.updateSmartDashboard();
 	}

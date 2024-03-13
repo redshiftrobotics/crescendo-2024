@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.RobotMovementConstants;
-import frc.robot.inputs.ChassisDriveInputs;
+import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
@@ -44,7 +44,7 @@ public class AimAtTag extends Command {
 		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 		rotatePID.setSetpoint(0);
 
-		addRequirements(drivetrain);
+		addRequirements(drivetrain, chassisDriveInputs);
 	}
 
 	/**
@@ -68,23 +68,26 @@ public class AimAtTag extends Command {
 	public void execute() {
 		Transform3d transform = vision.getTransformToTag(tagID);
 
-		double tagYawRadians = 0;
+		double rotationSpeed = 0;
 		if (transform != null) {
 			Rotation2d angleToTag = new Rotation2d(transform.getX(), transform.getY());
-			tagYawRadians = angleToTag.getRadians();
+			rotationSpeed = -rotatePID.calculate(angleToTag.getRadians());
 		}
 
 		double xSpeed = 0;
 		double ySpeed = 0;
+		boolean fieldRelative = false;
 		if (chassisDriveInputs != null) {
 			xSpeed = chassisDriveInputs.getX();
 			ySpeed = chassisDriveInputs.getY();
+			fieldRelative = chassisDriveInputs.isFieldRelative();
 		}
-		double rotateSpeed = rotatePID.calculate(tagYawRadians);
 
-		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, -rotateSpeed);
+		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, 0);
+		if (fieldRelative) desiredSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(desiredSpeeds, drivetrain.getHeading());
+		desiredSpeeds.omegaRadiansPerSecond = rotationSpeed;
 
-		drivetrain.setDesiredState(desiredSpeeds, false, true);
+		drivetrain.setDesiredState(desiredSpeeds, false);
 
 		drivetrain.updateSmartDashboard();
 	}

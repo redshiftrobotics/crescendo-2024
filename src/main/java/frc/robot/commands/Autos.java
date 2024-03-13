@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.Arm;
@@ -18,7 +19,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
-import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.subsystems.hang.Hang;
 
 /**
@@ -39,6 +39,7 @@ public final class Autos {
 				Commands.sequence(
 						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
 						new AutoDriveTo(drivetrain, new Translation2d(7, 0))),
+
 				new PullHangerDown(rightHang, HangConstants.SPEED),
 				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
@@ -49,6 +50,7 @@ public final class Autos {
 				shootInSpeaker(drivetrain, arm, shooter, null, null),
 
 				startingAuto(drivetrain, arm, leftHang, rightHang),
+
 				new SpinIntakeGrabbers(shooter, 0),
 				new SpinFlywheelShooter(shooter, 0));
 	}
