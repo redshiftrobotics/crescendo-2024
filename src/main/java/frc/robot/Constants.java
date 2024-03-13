@@ -85,7 +85,7 @@ public final class Constants {
 		public static final int DRIVER_JOYSTICK_PORT = 0;
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
 
-		public static final double DEAD_ZONE = 0.02;
+		public static final double DEAD_ZONE = 0.07;
 
 		public static final int SLEW_RATE_LIMIT_UP = 3;
 		public static final int SLEW_RATE_LIMIT_DOWN = 3;
@@ -99,11 +99,11 @@ public final class Constants {
 		public static final double MAX_ROTATION_SPEED = Math.PI;
 
 		// max forward/sideways velocities for drivetrain, in meters per second
-		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.75 * MAX_SPEED, 1 * MAX_SPEED };
+		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.75 * MAX_SPEED, MAX_SPEED };
 
 		// max angular velocity for drivetrain, in radians per second
-		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.75 * MAX_SPEED,
-				1 * MAX_SPEED };
+		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.5 * MAX_SPEED,
+				0.75 * MAX_SPEED, MAX_SPEED };
 	}
 
 	public static class ArmConstants {
@@ -141,7 +141,7 @@ public final class Constants {
 
 		public static final double DEGREES_PER_SECOND = 1;
 
-		public static final double ELEVATION_PID_P = 10;
+		public static final double ELEVATION_PID_P = 6.5;
 		public static final double ELEVATION_PID_I = 0;
 		public static final double ELEVATION_PID_D = 0;
 	}
@@ -211,7 +211,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FR = 4;
 					ANGULAR_MOTOR_ID_FR = 5;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 2;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.8828125;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.8828125 + 0.5;
 
 					// Back left
 					VELOCITY_MOTOR_ID_BL = 2;
@@ -238,7 +238,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FR = 14; // Was 16
 					ANGULAR_MOTOR_ID_FR = 17;
 					ANGULAR_MOTOR_ENCODER_ID_FR = 4;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.881591796875 + 0.5;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FR = -0.881591796875;
 
 					// Back left
 					VELOCITY_MOTOR_ID_BL = 8;
