@@ -132,7 +132,10 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
-		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("1+Forward",
+				Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("2 note auto Speaker middle",
+				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -181,7 +184,8 @@ public class RobotContainer {
 					joystick::getX, -1,
 					joystick::getY, -1,
 					joystick::getTwist, -1,
-					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
+					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP,
+					DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
 			joystick.button(1).whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
 			joystick.button(2).whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
@@ -204,7 +208,8 @@ public class RobotContainer {
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
-					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
+					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP,
+					DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
 			xbox.rightTrigger().whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
 			xbox.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));

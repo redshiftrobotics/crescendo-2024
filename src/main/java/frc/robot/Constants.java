@@ -99,7 +99,8 @@ public final class Constants {
 		public static final double MAX_ROTATION_SPEED = Math.PI;
 
 		// max forward/sideways velocities for drivetrain, in meters per second
-		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.75 * MAX_SPEED, MAX_SPEED };
+		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.75 * MAX_SPEED,
+				MAX_SPEED };
 
 		// max angular velocity for drivetrain, in radians per second
 		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.5 * MAX_SPEED,
@@ -186,9 +187,9 @@ public final class Constants {
 		public static final double ROTATION_PID_I = 0;
 		public static final double ROTATION_PID_D = 0;
 
-		public static final double TRANSLATION_PID_P = 50;
-		public static final double TRANSLATION_PID_I = 0.5;
-		public static final double TRANSLATION_PID_D = 15;
+		public static final double TRANSLATION_PID_P = .1;
+		public static final double TRANSLATION_PID_I = 0;
+		public static final double TRANSLATION_PID_D = 0.01;
 		public static final double MAX_TRANSLATION_SPEED = 1;
 	}
 
