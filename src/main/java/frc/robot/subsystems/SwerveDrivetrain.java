@@ -43,7 +43,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private final SwerveDriveKinematics kinematics;
 
 	/**
-	 * The SwerveDriveOdometry class can be used to track the position of a swerve drive robot on the field
+	 * The SwerveDriveOdometry class can be used to track the position of a swerve
+	 * drive robot on the field
 	 *
 	 * @see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-odometry.html
 	 */
@@ -63,7 +64,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 	private final AHRS gyro;
 
 	/**
-	 * Amount to add to gyro position for field relative drive and SmartDashboard display
+	 * Amount to add to gyro position for field relative drive and SmartDashboard
+	 * display
 	 */
 	private Rotation2d frontOffset = new Rotation2d();
 
@@ -157,11 +159,12 @@ public class SwerveDrivetrain extends SubsystemBase {
 				getWheelPositions());
 
 		// if (visionSystem != null) {
-		// 	Optional<EstimatedRobotPose> estimatedPose =visionSystem.getEstimatedGlobalPose();
-		// 	if (estimatedPose.isPresent()) {
-		// 		poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(),
-		// 		estimatedPose.get().timestampSeconds);
-		// 	}
+		// Optional<EstimatedRobotPose> estimatedPose
+		// =visionSystem.getEstimatedGlobalPose();
+		// if (estimatedPose.isPresent()) {
+		// poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(),
+		// estimatedPose.get().timestampSeconds);
+		// }
 		// }
 
 		if (desiredPose != null) {
@@ -322,10 +325,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * rotation of the robot.
 	 * If robot relative, forward will be whatever direction the robot is facing in.
 	 * 
-	 * @param speeds         Desired speeds of drivetrain (using swerve modules)
-	 * @param fieldRelative  True if the robot is using a field relative coordinate
-	 *                       system,
-	 *                       false if using a robot relive coordinate system
+	 * @param speeds        Desired speeds of drivetrain (using swerve modules)
+	 * @param fieldRelative True if the robot is using a field relative coordinate
+	 *                      system,
+	 *                      false if using a robot relive coordinate system
 	 */
 	public void setDesiredState(ChassisSpeeds speeds, boolean fieldRelative) {
 
@@ -333,12 +336,14 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("SpeedY", speeds.vyMetersPerSecond);
 		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
 
-		if (fieldRelative) speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
+		if (fieldRelative)
+			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
 		speeds = ChassisSpeeds.discretize(speeds, TimedRobot.kDefaultPeriod);
 
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
 
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveDrivetrainConstants.MAX_OBTAINABLE_SPEED);
+		// SwerveDriveKinematics.desaturateWheelSpeeds(states,
+		// SwerveDrivetrainConstants.MAX_OBTAINABLE_SPEED);
 
 		for (int i = 0; i < modules.length; i++) {
 			modules[i].setDesiredState(states[i]);
@@ -409,9 +414,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 		return gyro.getRotation3d();
 	}
 
-	
 	/**
-	 * Set amount to add to gyro position for field relative drive and SmartDashboard display
+	 * Set amount to add to gyro position for field relative drive and
+	 * SmartDashboard display
 	 * 
 	 * @param frontOffset rotation2d to add
 	 */
@@ -461,8 +466,10 @@ public class SwerveDrivetrain extends SubsystemBase {
 	}
 
 	/**
-	 * Utility method. Function to easily run a function on each swerve module and collect results to array.
-	 * Insures that we don't mix up order of swerve modules, as this could lead to hard-to-spot bugs.
+	 * Utility method. Function to easily run a function on each swerve module and
+	 * collect results to array.
+	 * Insures that we don't mix up order of swerve modules, as this could lead to
+	 * hard-to-spot bugs.
 	 * 
 	 * @param <T>              type that is returned by function and should be
 	 *                         collected

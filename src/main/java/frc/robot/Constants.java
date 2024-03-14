@@ -77,7 +77,7 @@ public final class Constants {
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
 		public static final boolean RIGHT_MOTOR_IS_INVERTED = true;
 
-		public static final double SPEED = 1;
+		public static final double SPEED = 1.0;
 
 	}
 
@@ -87,19 +87,20 @@ public final class Constants {
 
 		public static final double DEAD_ZONE = 0.07;
 
-		public static final int SLEW_RATE_LIMIT_UP = 3;
-		public static final int SLEW_RATE_LIMIT_DOWN = 3;
+		public static final double SLEW_RATE_LIMIT_UP = 3.0;
+		public static final double SLEW_RATE_LIMIT_DOWN = 3.0;
 
-		public static final int NUMBER_OF_SPEED_OPTIONS = 3;
+		public static final int NUMBER_OF_SPEED_OPTIONS = 4;
 
 		// Names of options for displaying
-		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost" };
+		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost", "Boost++" };
 
 		public static final double MAX_SPEED = SwerveDrivetrainConstants.MAX_OBTAINABLE_SPEED;
 		public static final double MAX_ROTATION_SPEED = Math.PI;
 
 		// max forward/sideways velocities for drivetrain, in meters per second
-		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.75 * MAX_SPEED, MAX_SPEED };
+		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.75 * MAX_SPEED,
+				MAX_SPEED };
 
 		// max angular velocity for drivetrain, in radians per second
 		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.5 * MAX_SPEED,
@@ -122,18 +123,20 @@ public final class Constants {
 
 		public static final boolean HAS_ARM;
 
-		public static final double MAXIMUM_ARM_DEGREES = 50;
-		public static final double MINIMUM_ARM_DEGREES = -120;
+		public static final double MAXIMUM_ARM_DEGREES = 50.0;
+		public static final double MINIMUM_ARM_DEGREES = -120.0;
+
+		public static final double ARM_TOLERANCE_DEGREES = 2.0;
 
 		public static final double ARM_TOLERANCE_DEGREES = 2;
 
 		// Degrees
-		public static final double ARM_START_DEGREES = -38;
-		public static final double ARM_STOW_DEGREES = -83;
-		public static final double ARM_STOW_2_DEGREES = -100;
+		public static final double ARM_START_DEGREES = -38.0;
+		public static final double ARM_STOW_DEGREES = -83.0;
+		public static final double ARM_STOW_2_DEGREES = -100.0;
 		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5 + 4;
-		public static final double ARM_INTAKE_DEGREES = -109;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5 + 4 - 6;
+		public static final double ARM_INTAKE_DEGREES = -109 - 1.5;
 
 		public static final int LEFT_MOTOR_ID = 5;
 		public static final int RIGHT_MOTOR_ID = 19;
@@ -142,8 +145,8 @@ public final class Constants {
 		public static final boolean ARE_MOTORS_REVERSED = false;
 
 		public static final double ELEVATION_PID_P = 6.5;
-		public static final double ELEVATION_PID_I = 0;
-		public static final double ELEVATION_PID_D = 0;
+		public static final double ELEVATION_PID_I = 0.0;
+		public static final double ELEVATION_PID_D = 0.0;
 	}
 
 	public static class IntakeShooterConstants {
@@ -171,25 +174,25 @@ public final class Constants {
 		public static final int INTAKE_LIMIT_SWITCH_ID = -1;
 
 		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = 0.5;
-		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = 1;
+		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = 1.0;
 
-		public static final double INTAKE_GRABBER_SPEED_AMP = 1;
-		public static final double INTAKE_GRABBER_SPEED_SPEAKER = 1;
-		public static final double INTAKE_GRABBER_SPEED_INTAKE = -1;
+		public static final double INTAKE_GRABBER_SPEED_AMP = 1.0;
+		public static final double INTAKE_GRABBER_SPEED_SPEAKER = 1.0;
+		public static final double INTAKE_GRABBER_SPEED_INTAKE = -1.0;
 	}
 
 	public static class RobotMovementConstants {
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(6);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(3);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 
-		public static final double ROTATION_PID_P = 5;
-		public static final double ROTATION_PID_I = 0;
-		public static final double ROTATION_PID_D = 0;
+		public static final double ROTATION_PID_P = 5.0;
+		public static final double ROTATION_PID_I = 0.0;
+		public static final double ROTATION_PID_D = 0.0;
 
-		public static final double TRANSLATION_PID_P = 50;
-		public static final double TRANSLATION_PID_I = 0.5;
-		public static final double TRANSLATION_PID_D = 15;
-		public static final double MAX_TRANSLATION_SPEED = 1;
+		public static final double TRANSLATION_PID_P = 0.5;
+		public static final double TRANSLATION_PID_I = 0;
+		public static final double TRANSLATION_PID_D = 0.01;
+		public static final double MAX_TRANSLATION_SPEED = 1.0;
 	}
 
 	public static class OperatorConstants {
@@ -265,20 +268,20 @@ public final class Constants {
 		public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_METERS * Math.PI;
 
 		// Other settings
-		public static final double MAX_SPEED_LIMIT = 1;
-		public static final double SWERVE_MODULE_DRIVE_COSIGN_SCALE = 1;
+		public static final double MAX_SPEED_LIMIT = 1.0;
+		public static final double SWERVE_MODULE_DRIVE_COSIGN_SCALE = 1.0;
 
 		// Drive PID values
 		public static final double DRIVE_PID_P = 0.000006;
-		public static final double DRIVE_PID_I = 0.000001;
-		public static final double DRIVE_PID_D = 0;
+		public static final double DRIVE_PID_I = 0.000000;
+		public static final double DRIVE_PID_D = 0.0;
 		public static final double DRIVE_PID_FF = 0.15;
 		public static final double DRIVE_PID_MAX_I = 0.001;
 
 		// Steering PID values
 		public static final double STEERING_PID_P = 1.5;
-		public static final double STEERING_PID_I = 0;
-		public static final double STEERING_PID_D = 0;
+		public static final double STEERING_PID_I = 0.0;
+		public static final double STEERING_PID_D = 0.0;
 
 		// Front left
 		public static final int VELOCITY_MOTOR_ID_FL;
@@ -315,8 +318,8 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					MODULE_LOCATION_X = 54.0 / 100;
-					MODULE_LOCATION_Y = 54.0 / 100;
+					MODULE_LOCATION_X = 54.0 / 100.0;
+					MODULE_LOCATION_Y = 54.0 / 100.0;
 					break;
 			}
 		}
@@ -325,7 +328,7 @@ public final class Constants {
 		public static final double MODULE_LOCATION_Y;
 		public static final double MODULE_LOCATION_X;
 
-		public static final double MAX_OBTAINABLE_SPEED = 2; // 3 Meters per Second
+		public static final double MAX_OBTAINABLE_SPEED = 2.0; // 3 Meters per Second
 	}
 
 	public static class VisionConstants {

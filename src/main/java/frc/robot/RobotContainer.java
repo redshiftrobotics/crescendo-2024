@@ -133,6 +133,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
 		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("2+Forward", Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -181,17 +182,19 @@ public class RobotContainer {
 					joystick::getX, -1,
 					joystick::getY, -1,
 					joystick::getTwist, -1,
-					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
+					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP,
+					DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
 			joystick.button(1).whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
 			joystick.button(2).whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
-			joystick.button(3).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
+			joystick.button(3).whileTrue(Commands.startEnd(inputs::enableMaxSpeedMode, inputs::disableMaxSpeedMode));
+			joystick.button(4).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			joystick.button(4).onTrue(coopLightSignal);
-			joystick.button(5).onTrue(amplifyLightSignal);
+			joystick.button(5).onTrue(coopLightSignal);
+			joystick.button(6).onTrue(amplifyLightSignal);
 
 			if (vision != null)
-				joystick.button(6).onTrue(Commands.runOnce(vision::toggleUsing, vision));
+				joystick.button(7).onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
 			joystick.button(10).onTrue(cancelCommand);
 
@@ -204,10 +207,13 @@ public class RobotContainer {
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
-					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
+					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP,
+					DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
 			xbox.rightTrigger().whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
 			xbox.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
+
+			xbox.leftStick().whileTrue(Commands.startEnd(inputs::enableMaxSpeedMode, inputs::disableMaxSpeedMode));
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
