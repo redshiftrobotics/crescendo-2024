@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriverConstants;
 
-
 /** Class that stores supplies for main controls of ChassisSpeeds */
 public class ChassisDriveInputs extends SubsystemBase {
 
@@ -48,7 +47,7 @@ public class ChassisDriveInputs extends SubsystemBase {
 			Supplier<Double> getForward, double forwardCoefficient,
 			Supplier<Double> getLeft, double leftCoefficient,
 			Supplier<Double> getRotation, double rotationCoefficient,
-			double deadzone, int rateLimitUp, double rateLimitDown) {
+			double deadzone, double rateLimitUp, double rateLimitDown) {
 
 		this.ySupplier = getForward;
 		this.xSupplier = getLeft;
@@ -72,31 +71,28 @@ public class ChassisDriveInputs extends SubsystemBase {
 	/** @return Joystick X with the deadzone applied */
 	public double getX() {
 		return xSlewRateLimiter.calculate(
-			xCoefficient * MathUtil.applyDeadband(xSupplier.get(), deadzone)
-			* DriverConstants.maxSpeedOptionsTranslation[getSpeedLevel()]
-		);
+				xCoefficient * MathUtil.applyDeadband(xSupplier.get(), deadzone)
+						* DriverConstants.maxSpeedOptionsTranslation[getSpeedLevel()]);
 	}
 
 	/** @return Joystick Y with the deadzone applied */
 	public double getY() {
 		return ySlewRateLimiter.calculate(
-			yCoefficient * MathUtil.applyDeadband(ySupplier.get(), deadzone)
-			* DriverConstants.maxSpeedOptionsTranslation[getSpeedLevel()]
-		);
+				yCoefficient * MathUtil.applyDeadband(ySupplier.get(), deadzone)
+						* DriverConstants.maxSpeedOptionsTranslation[getSpeedLevel()]);
 	}
 
 	/** @return Joystick rotation with deadzone applied */
 	public double getRotation() {
 		return rotationSlewRateLimiter.calculate(
-			rotationCoefficient * MathUtil.applyDeadband(rotationSupplier.get(), deadzone)
-			* DriverConstants.maxSpeedOptionsRotation[getSpeedLevel()]
-		);
+				rotationCoefficient * MathUtil.applyDeadband(rotationSupplier.get(), deadzone)
+						* DriverConstants.maxSpeedOptionsRotation[getSpeedLevel()]);
 	}
 
 	public void slowMode() {
 		speedLevel = 0;
 	}
-	
+
 	public void normalMode() {
 		speedLevel = 1;
 	}

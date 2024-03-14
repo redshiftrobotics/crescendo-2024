@@ -26,7 +26,7 @@ import frc.robot.subsystems.hang.Hang;
  * itself.
  */
 public final class Autos {
-	final static double driveDistanceForNote1 = 1.59;
+	final static double driveDistanceForNote1 = 1.1;
 
 	/** Example static factory for an autonomous command. */
 	public static Command driveAuto(SwerveDrivetrain drivetrain, Translation2d translation) {
@@ -53,7 +53,7 @@ public final class Autos {
 
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
 				new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
-				
+
 				new SpinIntakeGrabbers(shooter, 0),
 				new SpinFlywheelShooter(shooter, 0));
 	}
@@ -78,11 +78,12 @@ public final class Autos {
 		return Commands.parallel(
 				Commands.sequence(
 						shootInSpeaker(drivetrain, arm, shooter, null, null),
+						new SpinFlywheelShooter(shooter, -0.1),
 						Commands.parallel(
-								new ArmRotateTo(arm, ArmConstants.ARM_INTAKE_DEGREES),
-								new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+								intakeFromFloorStart(arm, shooter),
 								new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0))),
-						new SpinIntakeGrabbers(shooter, 0),
+						new WaitCommand(0.1),
+						intakeFromFloorEnd(arm, shooter),
 						Commands.race(
 								Commands.waitSeconds(3),
 								new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0))),
@@ -144,11 +145,13 @@ public final class Autos {
 		}
 
 		return Commands.sequence(
-				Commands.parallel(
-						Commands.sequence(
-								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-								new WaitCommand(0.5)),
-						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)),
+				// Commands.parallel(
+				Commands.sequence(
+						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
+						new WaitCommand(0.5)),
+				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)
+				// )
+				,
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
@@ -157,12 +160,14 @@ public final class Autos {
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
+				new SpinFlywheelShooter(shooter, -0.1),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
 	}
 
 	public static Command intakeFromFloorEnd(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
+				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, -1),
 				new WaitCommand(0.04),
 				new SpinIntakeGrabbers(shooter, 0));
