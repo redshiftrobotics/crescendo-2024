@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotMovementConstants;
-import frc.robot.Constants.SwerveDrivetrainConstants;
 
 /**
  * Subsystem for full drive train of robot. Contains 4 {@link SwerveModule}

@@ -128,8 +128,6 @@ public final class Constants {
 
 		public static final double ARM_TOLERANCE_DEGREES = 2.0;
 
-		public static final double ARM_TOLERANCE_DEGREES = 2;
-
 		// Degrees
 		public static final double ARM_START_DEGREES = -38.0;
 		public static final double ARM_STOW_DEGREES = -83.0;
