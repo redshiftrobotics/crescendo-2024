@@ -82,7 +82,7 @@ public final class Autos {
 						Commands.parallel(
 								intakeFromFloorStart(arm, shooter),
 								new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0))),
-						new WaitCommand(0.1),
+						new WaitCommand(0.25),
 						intakeFromFloorEnd(arm, shooter),
 						Commands.race(
 								Commands.waitSeconds(3),
