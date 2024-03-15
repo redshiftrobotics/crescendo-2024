@@ -132,8 +132,12 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
-		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("2+Forward", Autos.shoot2FrontStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("1+Forward",
+				Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("2+Forward",
+				Autos.shoot2FrontStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("3+Up",
+				Autos.shoot3UpSideStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -262,7 +266,7 @@ public class RobotContainer {
 			joystick.button(1).onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			joystick.button(1).onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			joystick.button(2).onTrue(Autos.shootSpeakerFromFront(drivetrain, arm, intakeShooter, vision, inputs)); //assumes shooting from front
+			joystick.button(2).onTrue(Autos.shootSpeakerFromFront(drivetrain, arm, intakeShooter, vision, inputs));
 
 			joystick.button(3).onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
 
@@ -278,7 +282,7 @@ public class RobotContainer {
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightTrigger().onTrue(Autos.shootSpeakerFromFront(drivetrain, arm, intakeShooter, vision, inputs)); //assumes shooting from front
+			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs));
 
 			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
 

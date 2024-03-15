@@ -37,9 +37,9 @@
               "_showGlyph": true
             }
           },
-          "8,2": {
+          "7,2": {
             "size": [
-              2,
+              3,
               1
             ],
             "content": {
@@ -328,6 +328,58 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/RightHang",
               "_title": "RightHang",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ArmUp",
+              "_title": "ArmUp",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ZeroYaw",
+              "_title": "ZeroYaw",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Basic Subsystem",
+              "_source0": "network_table:///SmartDashboard/SwerveDrivetrain",
+              "_title": "SwerveDrivetrain",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Basic Subsystem",
+              "_source0": "network_table:///SmartDashboard/RealArm",
+              "_title": "RealArm",
               "_glyph": 148,
               "_showGlyph": false
             }

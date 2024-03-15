@@ -79,20 +79,15 @@ public final class Autos {
 		int team =1;
 		if (ally.isPresent() && ally.get()==Alliance.Red) team=-1;
 		drivetrain.setFrontOffset(new Rotation2d(team * Math.PI/3));
-		return Commands.parallel(
+		return Commands.sequence(
 			Commands.sequence(
 				shootSpeakerFromSide(drivetrain, arm, shooter, null, null),
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
-				Commands.parallel(
-					new AutoDriveTo(drivetrain, new Translation2d(274.8,25.7*team)), //get to note, translation values are incorrect
-					new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
-					Commands.sequence(
-						new WaitCommand(1),
-						new AutoRotateTo(drivetrain, new Rotation2d(-team*Math.PI/3)),
-						new WaitCommand(1),
-						new SpinIntakeGrabbers(shooter, 0)
-					)
-				),
+				new AutoDriveTo(drivetrain, new Translation2d(2.748,0.257*team)), //get to note, translation values are incorrect
+				new AutoRotateTo(drivetrain, new Rotation2d(-team*Math.PI/3)),
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new WaitCommand(0.5),
+				new SpinIntakeGrabbers(shooter, 0),
 				new AutoDriveTo(drivetrain, new Translation2d(-(2.15-0.876/2),-1.45*team)),
 				shoot2FrontStartingAuto(drivetrain, arm, shooter, leftHang, rightHang)
 			),
