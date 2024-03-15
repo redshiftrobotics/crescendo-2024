@@ -12,7 +12,7 @@ import frc.robot.Constants.RobotMovementConstants;
 public class AutoDriveTo extends Command {
 	private final SwerveDrivetrain drivetrain;
 
-	private final PIDController xMovePID, yMovePID;
+	private final PIDController xMovePID, yMovePID, rotatePID;
 	private double initX, initY, goalX, goalY;
 
 	/***
@@ -39,6 +39,13 @@ public class AutoDriveTo extends Command {
 				RobotMovementConstants.TRANSLATION_PID_D);
 		yMovePID.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 
+		rotatePID = new PIDController(
+				RobotMovementConstants.ROTATION_PID_P,
+				RobotMovementConstants.ROTATION_PID_I,
+				RobotMovementConstants.ROTATION_PID_D);
+		rotatePID.enableContinuousInput(-Math.PI, Math.PI);
+		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
+
 		addRequirements(this.drivetrain);
 	}
 
@@ -48,6 +55,8 @@ public class AutoDriveTo extends Command {
 		drivetrain.resetPosition();
 
 		final Pose2d position = drivetrain.getPosition();
+
+		rotatePID.setSetpoint(drivetrain.getHeading().getRadians());
 
 		initX = position.getX();
 		initY = position.getY();
@@ -59,6 +68,7 @@ public class AutoDriveTo extends Command {
 
 		double targetX = position.getX() - initX;
 		double targetY = position.getY() - initY;
+		double targetRadians = drivetrain.getHeading().getRadians();
 
 		double xSpeed = xMovePID.calculate(targetX, goalX);
 		double ySpeed = yMovePID.calculate(targetY, goalY);
@@ -76,7 +86,7 @@ public class AutoDriveTo extends Command {
 			ySpeed = (ySpeed / maxSpeed) * speedLimit;
 		}
 
-		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, 0));
+		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotatePID.calculate(targetRadians)));
 		drivetrain.updateSmartDashboard();
 	}
 
