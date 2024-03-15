@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -138,7 +139,9 @@ public class RobotContainer {
 		autoChooser.addOption("1+Forward",
 				Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		autoChooser.addOption("2+Forward",
-				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+				Autos.shoot2FrontStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("3+UpSide",
+				Autos.shoot3UpSideStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
