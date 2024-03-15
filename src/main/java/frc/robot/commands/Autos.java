@@ -110,8 +110,8 @@ public final class Autos {
 		// If on red, and going for stage side note (left side) mirror translation y
 		// If on blue, and going for amp side note (left side) mirror translation y
 		// If on blue, and going for stage side note (right side) keep translation
-		if (!vision.isEnabled())
-			throw new UnsupportedOperationException("This auto requires vision!");
+		// if (!vision.isEnabled())
+		// throw new UnsupportedOperationException("This auto requires vision!");
 
 		final int speakerTagId = (alliance == Alliance.Red) ? 4 : 7;
 		final Translation2d sideNoteTranslation = new Translation2d(rightNotePickup.getX(),
@@ -133,8 +133,8 @@ public final class Autos {
 			Hang leftHanger, Hang rightHanger, ChassisDriveInputs inputs) throws Exception {
 		final Optional<Alliance> ally = DriverStation.getAlliance();
 
-		if (!vision.isEnabled())
-			throw new UnsupportedOperationException("This auto requires vision!");
+		// if (!vision.isEnabled())
+		// throw new UnsupportedOperationException("This auto requires vision!");
 		if (ally.isEmpty())
 			throw new Exception("DriverStation.getAlliance is not present. Set the alliance in the driver station.");
 
@@ -150,8 +150,8 @@ public final class Autos {
 			Hang leftHanger, Hang rightHanger, ChassisDriveInputs inputs) throws Exception {
 		final Optional<Alliance> ally = DriverStation.getAlliance();
 
-		if (!vision.isEnabled())
-			throw new UnsupportedOperationException("This auto requires vision!");
+		// if (!vision.isEnabled())
+		// throw new UnsupportedOperationException("This auto requires vision!");
 		if (ally.isEmpty())
 			throw new Exception("DriverStation.getAlliance is not present. Set the alliance in the driver station.");
 
