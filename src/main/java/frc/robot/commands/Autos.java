@@ -20,6 +20,7 @@ import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.subsystems.hang.Hang;
+import edu.wpi.first.math.MathUtil;
 
 /**
  * This class just contains a bunch of auto-modes. Do not call this class
@@ -32,7 +33,6 @@ public final class Autos {
 				new AutoDriveTo(drivetrain, translation));
 	}
 
-	/** Linden did this */
 	public static Command startingAuto(SwerveDrivetrain drivetrain, Arm arm, Hang leftHang, Hang rightHang) {
 
 		return Commands.parallel(
@@ -68,10 +68,34 @@ public final class Autos {
 	 * @return Command schedule instructions
 	 */
 
-	public static Command shoot2SideStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
+	public static Command shoot3UpSideStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
+			Hang rightHang, int team) { //team=1 for blue, -1 for red
+		drivetrain.setFrontOffset(new Rotation2d(team * Math.PI/3));
+		return Commands.parallel(
+			Commands.sequence(
+				shootSpeakerFromSide(drivetrain, arm, shooter, null, null),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+				Commands.parallel(
+					new AutoDriveTo(drivetrain, new Translation2d(3.07-0.876/2,0)), //get to note, translation values are incorrect
+					new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+					Commands.sequence(
+						new WaitCommand(1),
+						new AutoRotateTo(drivetrain, new Rotation2d(-team*Math.PI/3)),
+						new WaitCommand(1),
+						new SpinIntakeGrabbers(shooter, 0)
+					)
+				),
+				new AutoDriveTo(drivetrain, new Translation2d(-(2.15-0.876/2),-1.45*team)),
+				shoot2FrontStartingAuto(drivetrain, arm, shooter, leftHang, rightHang)
+			),
+			new PullHangerDown(rightHang, HangConstants.SPEED),
+			new PullHangerDown(leftHang, HangConstants.SPEED)
+		);
+	}
+
+	public static Command shoot2DownSideStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
 			Hang rightHang) {
 		return Commands.parallel(
-			Commands.sequence()
 		);
 	}
 
@@ -124,10 +148,24 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 
-	public static Command shootSpeakerFromFront(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
-			Vision vision,
+	public static Command shootInSpeaker(SwerveDrivetrain drivetrain,Arm arm, IntakeShooter shooter, Vision vision,
 			ChassisDriveInputs inputs) {
+		if (Math.abs(MathUtil.angleModulus(drivetrain.getHeading().getRadians()))<Math.PI/6){
+			return shootSpeakerFromFront(drivetrain,arm,shooter,vision,inputs);
+		} else{
+			return shootSpeakerFromSide(drivetrain,arm,shooter,vision,inputs);
+		}
+	}
+	
+	public static Command shootSpeakerFromFront(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			Vision vision, ChassisDriveInputs inputs) {
 		return shootInSpeaker(drivetrain, arm, shooter, ArmConstants.ARM_SPEAKER_FRONT_SHOOTING_DEGREES, vision,
+				inputs);
+	}
+
+	public static Command shootSpeakerFromSide(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			Vision vision, ChassisDriveInputs inputs) {
+		return shootInSpeaker(drivetrain, arm, shooter, ArmConstants.ARM_SPEAKER_SIDE_SHOOTING_DEGREES, vision,
 				inputs);
 	}
 
