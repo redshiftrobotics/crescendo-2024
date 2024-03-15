@@ -84,7 +84,6 @@ public final class Autos {
 								new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0))),
 						new WaitCommand(0.25),
 						intakeFromFloorEnd(arm, shooter),
-						new AutoRotateTo(drivetrain, new Rotation2d(0)),
 						Commands.race(
 								Commands.waitSeconds(3),
 								new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0))),
@@ -146,14 +145,14 @@ public final class Autos {
 		}
 
 		return Commands.sequence(
-			Commands.parallel(
-				new SpinFlywheelShooterForTime(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER, 0.4),
-				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)
-			),
-			new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
-			new WaitCommand(0.2),
-			new SpinFlywheelShooter(shooter, 0),
-			new SpinIntakeGrabbers(shooter, 0));
+				Commands.parallel(
+						new SpinFlywheelShooterForTime(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER,
+								1.5),
+						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)),
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new WaitCommand(0.2),
+				new SpinFlywheelShooter(shooter, 0),
+				new SpinIntakeGrabbers(shooter, 0));
 	}
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {

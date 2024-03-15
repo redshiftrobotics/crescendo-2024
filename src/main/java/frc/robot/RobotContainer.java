@@ -11,8 +11,8 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
+import frc.robot.commands.AimAtAngle;
 import frc.robot.commands.ArmRotateTo;
-import frc.robot.commands.AutoRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
 import frc.robot.commands.SpinFlywheelShooter;
 import frc.robot.subsystems.ChassisDriveInputs;
@@ -40,6 +40,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -142,6 +143,11 @@ public class RobotContainer {
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
+		SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
+
+		SmartDashboard.putData(drivetrain);
+		SmartDashboard.putData(arm);
+		SmartDashboard.putData(intakeShooter);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
@@ -224,8 +230,10 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0), true));
-			xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
+			// xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0), true));
+			// xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
+			xbox.rightBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
+			xbox.leftBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90)));
 
 			if (vision != null)
 				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));

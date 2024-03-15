@@ -414,6 +414,13 @@ public class SwerveDrivetrain extends SubsystemBase {
 	}
 
 	/**
+	 * Reset gyro yaw
+	 */
+	public void zeroYaw() {
+		gyro.zeroYaw();
+	}
+
+	/**
 	 * Set amount to add to gyro position for field relative drive and
 	 * SmartDashboard display
 	 * 
