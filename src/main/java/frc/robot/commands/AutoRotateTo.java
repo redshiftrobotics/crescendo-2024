@@ -57,7 +57,7 @@ public class AutoRotateTo extends Command {
 		double turnsSeed = rotatePID.calculate(currentAngle, this.currentAngleGoal);
 		// SmartDashboard.putNumber("Turn Speed Auto", turnsSeed);
 
-		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, turnsSeed));
+		drivetrain.setDesiredState(new ChassisSpeeds(0, 0, (turnsSeed)));
 
 		drivetrain.updateSmartDashboard();
 	}

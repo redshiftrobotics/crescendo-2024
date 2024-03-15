@@ -3,37 +3,28 @@ package frc.robot.commands;
 import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
-import frc.robot.subsystems.Vision;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** Command to automatically aim at a tag, ends once facing the tag */
-public class AimAtTag extends Command {
+/** Command to automatically aim at a angle */
+public class AimAtAngle extends Command {
 	private final SwerveDrivetrain drivetrain;
 	private final ChassisDriveInputs chassisDriveInputs;
-
-	private final Vision vision;
-	private final int tagID;
 
 	private final PIDController rotatePID;
 
 	/**
-	 * Create a new AimAtTag command. Tries to constants aim at a tag while still
+	 * Create a new AimAtAngle command. Tries to constants face in angle while still
 	 * allowing driver to control robot.
 	 * 
 	 * @param drivetrain          the drivetrain of the robot
-	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the tag to turn to, -1 for best tag
 	 */
-	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, ChassisDriveInputs chassisDriveInputs) {
+	public AimAtAngle(SwerveDrivetrain drivetrain, ChassisDriveInputs chassisDriveInputs, Rotation2d direction) {
 		this.drivetrain = drivetrain;
 
-		this.vision = vision;
-		this.tagID = tagID;
 		this.chassisDriveInputs = chassisDriveInputs;
 
 		rotatePID = new PIDController(
@@ -42,22 +33,11 @@ public class AimAtTag extends Command {
 				RobotMovementConstants.ROTATION_PID_D);
 		rotatePID.enableContinuousInput(-Math.PI, Math.PI);
 		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
-		rotatePID.setSetpoint(0);
+		rotatePID.setSetpoint(direction.getRadians());
 
 		addRequirements(drivetrain, chassisDriveInputs);
 	}
 
-	/**
-	 * Create a new AimAtTag command. Tries to aim at a tag.
-	 * 
-	 * @param drivetrain the drivetrain of the robot
-	 * @param vision     the vision subsystem of the robot
-	 * @param tagID      the numerical ID of the tag to turn to, null for best
-	 *                   tag
-	 */
-	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, Integer tagID) {
-		this(drivetrain, vision, tagID, null);
-	}
 
 	@Override
 	public void initialize() {
@@ -66,12 +46,10 @@ public class AimAtTag extends Command {
 
 	@Override
 	public void execute() {
-		Transform3d transform = vision.getTransformToTag(tagID);
 
 		double rotationSpeed = 0;
-		if (transform != null) {
-			Rotation2d angleToTag = new Rotation2d(transform.getX(), transform.getY());
-			rotationSpeed = -rotatePID.calculate(angleToTag.getRadians());
+		if (!rotatePID.atSetpoint()) {
+			rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
 		}
 
 		double xSpeed = 0;

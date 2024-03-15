@@ -11,8 +11,10 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
+import frc.robot.commands.AimAtAngle;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
+import frc.robot.commands.SpinFlywheelShooter;
 import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -37,6 +39,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -135,10 +138,15 @@ public class RobotContainer {
 		autoChooser.addOption("1+Forward",
 				Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		autoChooser.addOption("2+Forward",
-				Autos.shoot2FrontStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("3+Up",
-				Autos.shoot3UpSideStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
+
+		SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
+		SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
+
+		SmartDashboard.putData(drivetrain);
+		SmartDashboard.putData(arm);
+		SmartDashboard.putData(intakeShooter);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
@@ -221,8 +229,10 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.leftBumper().onTrue(coopLightSignal);
-			xbox.rightBumper().onTrue(amplifyLightSignal);
+			// xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0), true));
+			// xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
+			xbox.rightBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
+			xbox.leftBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90)));
 
 			if (vision != null)
 				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
@@ -282,9 +292,13 @@ public class RobotContainer {
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
+			xbox.leftBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
+
 			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs));
 
-			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
+			xbox.rightBumper().onTrue(
+					new SpinFlywheelShooter(intakeShooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER));
+			xbox.rightBumper().onFalse(new SpinFlywheelShooter(intakeShooter, 0));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);
