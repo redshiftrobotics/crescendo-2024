@@ -140,6 +140,12 @@ public class RobotContainer {
 				Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		autoChooser.addOption("2+Forward",
 				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		try {
+			autoChooser.addOption("3 note",
+					Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision, leftHang, rightHang, inputs));
+		} catch (Exception e) {
+		}
+
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
@@ -230,8 +236,10 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			// xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0), true));
-			// xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
+			// xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain,
+			// Rotation2d.fromDegrees(0), true));
+			// xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain,
+			// Rotation2d.fromDegrees(-90), true));
 			xbox.rightBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
 			xbox.leftBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90)));
 
