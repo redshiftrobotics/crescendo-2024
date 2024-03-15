@@ -125,7 +125,7 @@ public final class Constants {
 		public static final double ARM_STOW_2_DEGREES = -100;
 		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
 		public static final double ARM_SPEAKER_FRONT_SHOOTING_DEGREES = -97.822 - 5 + 4;
-		public static final double ARM_SPEAKER_SIDE_SHOOTING_DEGREES = -110; //not calibrated
+		public static final double ARM_SPEAKER_SIDE_SHOOTING_DEGREES = -105; //not calibrated
 		public static final double ARM_INTAKE_DEGREES = -109;
 
 		public static final int LEFT_MOTOR_ID = 5;
