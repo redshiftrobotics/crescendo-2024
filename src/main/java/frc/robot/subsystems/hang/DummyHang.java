@@ -8,7 +8,7 @@ public class DummyHang extends Hang {
 
 	@Override
 	public boolean isAtBottom() {
-		return false;
+		return true;
 	}
 
 }

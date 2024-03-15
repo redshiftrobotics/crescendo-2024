@@ -20,19 +20,8 @@ public class DummyArm extends Arm {
 	}
 
 	@Override
-	public void setSetpoint(double rotation, double toleranceAngle) {
-		setSetpoint(rotation);
-	}
-
-	
-	@Override
 	public void setSetpoint(Rotation2d rotation) {
 		setSetpoint(rotation.getDegrees());
-	}
-
-	@Override
-	public void setSetpoint(Rotation2d rotation, double toleranceAngle) {
-		setSetpoint(rotation);
 	}
 
 	@Override

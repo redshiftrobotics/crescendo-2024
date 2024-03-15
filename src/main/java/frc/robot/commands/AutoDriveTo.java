@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.RobotMovementConstants;
 
 public class AutoDriveTo extends Command {
@@ -17,7 +18,8 @@ public class AutoDriveTo extends Command {
 
 	/***
 	 * Command to autonomously drive somewhere
-	 * @param subsystem The drivetrain
+	 * 
+	 * @param subsystem   The drivetrain
 	 * @param translation The translation to execute
 	 */
 	public AutoDriveTo(SwerveDrivetrain subsystem, Translation2d translation) {
@@ -62,6 +64,11 @@ public class AutoDriveTo extends Command {
 		double xSpeed = xMovePID.calculate(targetX, goalX);
 		double ySpeed = yMovePID.calculate(targetY, goalY);
 
+		SmartDashboard.putNumber("Current X", targetX);
+		SmartDashboard.putNumber("Current Y", targetY);
+		SmartDashboard.putNumber("X Goal", goalX);
+		SmartDashboard.putNumber("Y Goal", goalY);
+
 		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
 		double maxSpeed = Math.max(Math.abs(xSpeed), Math.abs(ySpeed));
 
@@ -76,7 +83,10 @@ public class AutoDriveTo extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return xMovePID.atSetpoint() && yMovePID.atSetpoint();
+		boolean isEnded = xMovePID.atSetpoint() && yMovePID.atSetpoint();
+		SmartDashboard.putBoolean("xEndpoint", xMovePID.atSetpoint());
+		SmartDashboard.putBoolean("yEndpoint", yMovePID.atSetpoint());
+		return isEnded;
 	}
 
 	@Override

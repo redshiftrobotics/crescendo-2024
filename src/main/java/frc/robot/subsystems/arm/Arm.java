@@ -11,12 +11,7 @@ import frc.robot.Constants.ArmConstants;
 public abstract class Arm extends SubsystemBase {
 
 	public abstract void setSetpoint(double degrees);
-
-	public abstract void setSetpoint(double degrees, double toleranceAngle);
-
 	public abstract void setSetpoint(Rotation2d rotation);
-
-	public abstract void setSetpoint(Rotation2d rotation, double toleranceAngle);
 
 	public abstract boolean isAtDesiredPosition();
 
@@ -27,7 +22,7 @@ public abstract class Arm extends SubsystemBase {
 	}
 
 	public void setArmToSpeakerPosition() {
-		setSetpoint(ArmConstants.ARM_SPEAKER_FRONT_SHOOTING_DEGREES);
+		setSetpoint(ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
 	}
 
 	public void setArmToIntakePosition() {

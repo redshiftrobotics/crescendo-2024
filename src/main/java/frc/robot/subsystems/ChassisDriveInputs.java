@@ -1,21 +1,30 @@
-package frc.robot.inputs;
+package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriverConstants;
 
 /** Class that stores supplies for main controls of ChassisSpeeds */
-public class ChassisDriveInputs {
+public class ChassisDriveInputs extends SubsystemBase {
 
 	private final Supplier<Double> xSupplier, ySupplier, rotationSupplier;
 
 	private final double xCoefficient, yCoefficient, rotationCoefficient;
 
+	private final SlewRateLimiter xSlewRateLimiter, ySlewRateLimiter, rotationSlewRateLimiter;
+
 	private final double deadzone;
 
-	private int speedLevel = DriverConstants.NUMBER_OF_SPEED_OPTIONS / 2;
+	private final int maxSpeedLevel = DriverConstants.NUMBER_OF_SPEED_OPTIONS - 1;
+
+	private int speedLevel = maxSpeedLevel / 2;
 	private boolean isFieldRelative = false;
+
+	private boolean maxSpeedMode = false;
 
 	/**
 	 * Create a new ChassisDriveInputs
@@ -38,7 +47,7 @@ public class ChassisDriveInputs {
 			Supplier<Double> getForward, double forwardCoefficient,
 			Supplier<Double> getLeft, double leftCoefficient,
 			Supplier<Double> getRotation, double rotationCoefficient,
-			double deadzone) {
+			double deadzone, double rateLimitUp, double rateLimitDown) {
 
 		this.ySupplier = getForward;
 		this.xSupplier = getLeft;
@@ -48,49 +57,56 @@ public class ChassisDriveInputs {
 		this.xCoefficient = leftCoefficient;
 		this.rotationCoefficient = rotationCoefficient;
 
-		this.deadzone = deadzone;
+		this.xSlewRateLimiter = new SlewRateLimiter(rateLimitUp, -rateLimitDown, 0);
+		this.ySlewRateLimiter = new SlewRateLimiter(rateLimitUp, -rateLimitDown, 0);
+		this.rotationSlewRateLimiter = new SlewRateLimiter(rateLimitUp, -rateLimitDown, 0);
 
-		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
+		this.deadzone = deadzone;
+	}
+
+	public int getSpeedLevel() {
+		return maxSpeedMode ? maxSpeedLevel : speedLevel;
 	}
 
 	/** @return Joystick X with the deadzone applied */
 	public double getX() {
-		return applyJoystickDeadzone(xSupplier.get(), deadzone) * xCoefficient * DriverConstants.maxSpeedOptionsTranslation[speedLevel];
+		return xSlewRateLimiter.calculate(
+				xCoefficient * MathUtil.applyDeadband(xSupplier.get(), deadzone)
+						* DriverConstants.maxSpeedOptionsTranslation[getSpeedLevel()]);
 	}
 
 	/** @return Joystick Y with the deadzone applied */
 	public double getY() {
-		return applyJoystickDeadzone(ySupplier.get(), deadzone) * yCoefficient * DriverConstants.maxSpeedOptionsTranslation[speedLevel];
+		return ySlewRateLimiter.calculate(
+				yCoefficient * MathUtil.applyDeadband(ySupplier.get(), deadzone)
+						* DriverConstants.maxSpeedOptionsTranslation[getSpeedLevel()]);
 	}
 
 	/** @return Joystick rotation with deadzone applied */
 	public double getRotation() {
-		return applyJoystickDeadzone(rotationSupplier.get(), deadzone) * rotationCoefficient * DriverConstants.maxSpeedOptionsRotation[speedLevel];
-	}
-
-	public void increaseSpeedLevel() {
-		speedLevel = Math.min(speedLevel + 1, DriverConstants.NUMBER_OF_SPEED_OPTIONS);
-		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
-	}
-
-	public void decreaseSpeedLevel() {
-		speedLevel = Math.max(speedLevel - 1, 0);
-		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
+		return rotationSlewRateLimiter.calculate(
+				rotationCoefficient * MathUtil.applyDeadband(rotationSupplier.get(), deadzone)
+						* DriverConstants.maxSpeedOptionsRotation[getSpeedLevel()]);
 	}
 
 	public void slowMode() {
 		speedLevel = 0;
-		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
 	}
-	
+
 	public void normalMode() {
 		speedLevel = 1;
-		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
 	}
 
 	public void fastMode() {
 		speedLevel = 2;
-		SmartDashboard.putString("Speed Mode", getSpeedLevelName());
+	}
+
+	public void enableMaxSpeedMode() {
+		maxSpeedMode = true;
+	}
+
+	public void disableMaxSpeedMode() {
+		maxSpeedMode = false;
 	}
 
 	public void enableFieldRelative() {
@@ -109,25 +125,9 @@ public class ChassisDriveInputs {
 		return isFieldRelative;
 	}
 
-	public String getSpeedLevelName() {
-		return DriverConstants.maxSpeedOptionsNames[speedLevel];
-	}
-
-	/**
-	 * Utility method. Apply a deadzone to the joystick output to account for stick
-	 * drift and small bumps.
-	 * 
-	 * @param joystickValue Value in [-1, 1] from joystick axis
-	 * @return {@code 0} if {@code |joystickValue| <= deadzone}, else the
-	 *         {@code joystickValue} scaled to the new control area
-	 */
-	private static double applyJoystickDeadzone(double joystickValue, double deadzone) {
-		if (Math.abs(joystickValue) <= deadzone) {
-			// If the joystick |value| is in the deadzone than zero it out
-			return 0;
-		}
-
-		// scale value from the range [0, 1] to (deadzone, 1]
-		return joystickValue * (1 + deadzone) - Math.signum(joystickValue) * deadzone;
+	@Override
+	public void periodic() {
+		SmartDashboard.putString("Speed Mode", DriverConstants.maxSpeedOptionsNames[getSpeedLevel()]);
+		SmartDashboard.putBoolean("Field Relative", isFieldRelative);
 	}
 }
