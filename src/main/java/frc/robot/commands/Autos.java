@@ -69,14 +69,17 @@ public final class Autos {
 	 */
 
 	public static Command shoot3UpSideStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
-			Hang rightHang, int team) { //team=1 for blue, -1 for red
+			Hang rightHang) {
+		Optional<Alliance> ally = DriverStation.getAlliance();
+		int team =1;
+		if (ally.isPresent() && ally.get()==Alliance.Red) team=-1;
 		drivetrain.setFrontOffset(new Rotation2d(team * Math.PI/3));
 		return Commands.parallel(
 			Commands.sequence(
 				shootSpeakerFromSide(drivetrain, arm, shooter, null, null),
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
 				Commands.parallel(
-					new AutoDriveTo(drivetrain, new Translation2d(3.07-0.876/2,0)), //get to note, translation values are incorrect
+					new AutoDriveTo(drivetrain, new Translation2d(274.8,25.7*team)), //get to note, translation values are incorrect
 					new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 					Commands.sequence(
 						new WaitCommand(1),
