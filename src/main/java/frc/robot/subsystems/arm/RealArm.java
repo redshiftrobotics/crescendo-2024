@@ -1,5 +1,6 @@
 package frc.robot.subsystems.arm;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -36,7 +37,8 @@ public class RealArm extends Arm {
 				ArmConstants.ELEVATION_PID_P,
 				ArmConstants.ELEVATION_PID_I,
 				ArmConstants.ELEVATION_PID_D);
-		
+		armRaisePIDController.setTolerance(Units.degreesToRotations(ArmConstants.ARM_TOLERANCE_DEGREES));
+
 		armPosition = rightArmEncoder.getAbsolutePosition();
 
 		leftArmMotor.setIdleMode(IdleMode.kBrake);
@@ -48,34 +50,23 @@ public class RealArm extends Arm {
 
 	@Override
 	public void setSetpoint(double degrees) {
-		setSetpoint(degrees, 2);
-	}
-	
-	@Override
-	public void setSetpoint(double degrees, double toleranceAngle) {
-		degrees = Math.max(degrees, ArmConstants.MINIMUM_ARM_DEGREES);
-		degrees = Math.min(degrees, ArmConstants.MAXIMUM_ARM_DEGREES);
-		
+		degrees = MathUtil.clamp(degrees, ArmConstants.MINIMUM_ARM_DEGREES, ArmConstants.MAXIMUM_ARM_DEGREES);
+
 		SmartDashboard.putNumber("Arm SP Deg", degrees);
-		
+
 		armRaisePIDController.setSetpoint(Units.degreesToRotations(degrees));
 	}
 
 	@Override
 	public void setSetpoint(Rotation2d rotation) {
-		setSetpoint(rotation, Units.degreesToRotations(2));
-	}
-	
-	@Override
-	public void setSetpoint(Rotation2d rotation, double toleranceAngle) {
 		setSetpoint(rotation.getDegrees());
 	}
-	
+
 	@Override
 	public Rotation2d getArmPosition() {
 		return Rotation2d.fromRotations(armPosition.refresh().getValueAsDouble());
 	}
-	
+
 	@Override
 	public boolean isAtDesiredPosition() {
 		return armRaisePIDController.atSetpoint();

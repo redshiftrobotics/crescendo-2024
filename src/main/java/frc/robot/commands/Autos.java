@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.Arm;
@@ -19,7 +20,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
-import frc.robot.inputs.ChassisDriveInputs;
 import frc.robot.subsystems.hang.Hang;
 
 /**
@@ -38,6 +38,7 @@ public final class Autos {
 			Units.inchesToMeters((114 - speakerDepth) / 2) - (Constants.BOT_WIDTH / 2),
 			/* lateral dist to note */
 			Units.inchesToMeters(39));
+	final static double driveDistanceForNote1 = 1.1;
 
 	/** Example static factory for an autonomous command. */
 	public static Command driveAuto(SwerveDrivetrain drivetrain, Translation2d translation) {
@@ -51,7 +52,8 @@ public final class Autos {
 		return Commands.parallel(
 				Commands.sequence(
 						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
-						new AutoDriveTo(drivetrain, new Translation2d(7, 0))),
+						new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0))),
+
 				new PullHangerDown(rightHang, HangConstants.SPEED),
 				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
@@ -61,7 +63,9 @@ public final class Autos {
 		return Commands.sequence(
 				shootInSpeaker(drivetrain, arm, shooter, null, null),
 
-				startingAuto(drivetrain, arm, leftHang, rightHang),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+				new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
+
 				new SpinIntakeGrabbers(shooter, 0),
 				new SpinFlywheelShooter(shooter, 0));
 	}
@@ -82,17 +86,19 @@ public final class Autos {
 	 */
 	public static Command shoot2StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
 			Hang rightHang) {
-		final double driveDistanceForNote1 = -1.59;
 
 		return Commands.parallel(
 				Commands.sequence(
 						shootInSpeaker(drivetrain, arm, shooter, null, null),
-						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+						new SpinFlywheelShooter(shooter, -0.1),
 						Commands.parallel(
-								new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
-								new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER)),
-						new SpinIntakeGrabbers(shooter, 0),
-						new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0)),
+								intakeFromFloorStart(arm, shooter),
+								new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0))),
+						new WaitCommand(0.25),
+						intakeFromFloorEnd(arm, shooter),
+						Commands.race(
+								Commands.waitSeconds(3),
+								new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0))),
 						shootInSpeaker(drivetrain, arm, shooter, null, null)),
 				new PullHangerDown(rightHang, HangConstants.SPEED),
 				new PullHangerDown(leftHang, HangConstants.SPEED));
@@ -207,11 +213,10 @@ public final class Autos {
 		}
 
 		return Commands.sequence(
-				Commands.parallel(
-						Commands.sequence(
-								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-								new WaitCommand(0.5)),
-						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES, 1)),
+				Commands.sequence(
+						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
+						new WaitCommand(0.5)),
+				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
@@ -220,12 +225,14 @@ public final class Autos {
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
+				new SpinFlywheelShooter(shooter, -0.1),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
 	}
 
 	public static Command intakeFromFloorEnd(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
+				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, -1),
 				new WaitCommand(0.04),
 				new SpinIntakeGrabbers(shooter, 0));
