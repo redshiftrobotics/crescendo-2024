@@ -184,7 +184,7 @@ public final class Autos {
 		return Commands.sequence(
 				new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES).alongWith(
 						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP),
-						new WaitCommand(1)),
+						new WaitCommand(0.5)),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_AMP),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
@@ -213,10 +213,10 @@ public final class Autos {
 		}
 
 		return Commands.sequence(
-				Commands.sequence(
-						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-						new WaitCommand(0.5)),
-				new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
+				Commands.parallel(
+						new SpinFlywheelShooterForTime(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER,
+								1.7),
+						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),

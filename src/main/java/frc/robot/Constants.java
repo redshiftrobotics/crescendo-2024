@@ -135,7 +135,7 @@ public final class Constants {
 		public static final double ARM_STOW_DEGREES = -83.0;
 		public static final double ARM_STOW_2_DEGREES = -100.0;
 		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5 + 4 - 6;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5 + 4 - 6 -1;
 		public static final double ARM_INTAKE_DEGREES = -109 - 1.5;
 
 		public static final int LEFT_MOTOR_ID = 5;
@@ -182,16 +182,16 @@ public final class Constants {
 	}
 
 	public static class RobotMovementConstants {
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(3);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(5);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(1);
 
-		public static final double ROTATION_PID_P = 5.0;
-		public static final double ROTATION_PID_I = 0.0;
-		public static final double ROTATION_PID_D = 0.0;
+		public static final double ROTATION_PID_P = 0.21;
+		public static final double ROTATION_PID_I = 0.001;
+		public static final double ROTATION_PID_D = 0;
 
-		public static final double TRANSLATION_PID_P = 0.5;
+		public static final double TRANSLATION_PID_P = 0.25;
 		public static final double TRANSLATION_PID_I = 0;
-		public static final double TRANSLATION_PID_D = 0.01;
+		public static final double TRANSLATION_PID_D = 0;
 		public static final double MAX_TRANSLATION_SPEED = 1.0;
 	}
 
