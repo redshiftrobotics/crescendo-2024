@@ -121,9 +121,11 @@ public final class Autos {
 				new AutoDriveTo(drivetrain, sideNoteTranslation),
 				new AutoDriveTo(drivetrain, new Translation2d(0, sideNoteTranslation.getY())),
 				intakeFromFloorEnd(arm, shooter),
-				new AutoDriveTo(drivetrain, sideNoteTranslation.times(-1)),
-				new FollowTag(drivetrain, vision, speakerTagId,
-						new Translation2d(-speakerDepth - Constants.BOT_WIDTH / 2, 0)),
+				// new AutoDriveTo(drivetrain, sideNoteTranslation.times(-1)),
+				new AutoDriveTo(drivetrain,
+						new Translation2d(-sideNoteTranslation.getX() * 2, -sideNoteTranslation.getY())),
+				// new FollowTag(drivetrain, vision, speakerTagId,
+				// new Translation2d(-speakerDepth - Constants.BOT_WIDTH / 2, 0)),
 				shootInSpeaker(drivetrain, arm, shooter, null, inputs));
 	}
 
