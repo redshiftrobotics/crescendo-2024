@@ -133,7 +133,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		autoChooser.setDefaultOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
 		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("2+Forward", Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("2+Forward", Autos.shoot2FrontStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);

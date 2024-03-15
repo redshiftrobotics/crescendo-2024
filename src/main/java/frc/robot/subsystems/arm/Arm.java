@@ -22,7 +22,7 @@ public abstract class Arm extends SubsystemBase {
 	}
 
 	public void setArmToSpeakerPosition() {
-		setSetpoint(ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES);
+		setSetpoint(ArmConstants.ARM_SPEAKER_FRONT_SHOOTING_DEGREES);
 	}
 
 	public void setArmToIntakePosition() {
