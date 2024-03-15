@@ -64,12 +64,12 @@ public class AutoDriveTo extends Command {
 		double xSpeed = xMovePID.calculate(targetX, goalX);
 		double ySpeed = yMovePID.calculate(targetY, goalY);
 
-		SmartDashboard.putNumber("Current X", targetX);
-		SmartDashboard.putNumber("Current Y", targetY);
-		SmartDashboard.putNumber("X Goal", goalX);
-		SmartDashboard.putNumber("Y Goal", goalY);
+		// SmartDashboard.putNumber("Current X", targetX);
+		// SmartDashboard.putNumber("Current Y", targetY);
+		// SmartDashboard.putNumber("X Goal", goalX);
+		// SmartDashboard.putNumber("Y Goal", goalY);
 
-		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
+		double speedLimit = 0.5;
 		double maxSpeed = Math.max(Math.abs(xSpeed), Math.abs(ySpeed));
 
 		if (maxSpeed > speedLimit) {

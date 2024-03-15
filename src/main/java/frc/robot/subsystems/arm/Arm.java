@@ -30,7 +30,7 @@ public abstract class Arm extends SubsystemBase {
 	}
 
 	public void setArmToStartPosition() {
-		setSetpoint(ArmConstants.ARM_START_DEGREES);
+		setSetpoint(ArmConstants.ARM_STOW_2_DEGREES);
 	}
 
 	public void setArmToDrivePosition() {

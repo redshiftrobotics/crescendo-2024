@@ -32,6 +32,9 @@ public class RealShooter extends IntakeShooter {
 
 	// private final DigitalInput intakeSwitch;
 
+	private double timeFlywheelSet;
+	private double flywheelSpeed;
+
 	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
@@ -45,6 +48,8 @@ public class RealShooter extends IntakeShooter {
 	@Override
 	public void setFlyWheelShooterSpeed(double speed) {
 		SmartDashboard.putNumber("FlywheelShooter", speed);
+		flywheelSpeed = speed;
+		timeFlywheelSet = System.currentTimeMillis();
 
 		flywheel1.set(-speed);
 		flywheel2.set(-speed);
@@ -77,5 +82,12 @@ public class RealShooter extends IntakeShooter {
 		flywheel1.stopMotor();
 		flywheel2.stopMotor();
 		intake.stopMotor();
+	}
+
+	@Override
+	public double howLongAtSpeedMillis(double speed) {
+		if (flywheelSpeed != speed)
+			return -1;
+		return System.currentTimeMillis() - timeFlywheelSet;
 	}
 }
