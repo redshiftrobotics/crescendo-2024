@@ -30,8 +30,9 @@ public class FollowTag extends Command {
 	 * @param vision              the vision subsystem of the robot
 	 * @param tagID               the numerical ID of the tag to follow, -1 for best
 	 *                            tag
-	 * @param targetDistanceToTag the target distance away from the tag to be in
-	 *                            meters
+	 * @param targetDistanceToTag the desired distance between the tag and the
+	 *                            CENTER OF THE ROBOT in meters facing backwards
+	 *                            (direction of camera)
 	 */
 	public FollowTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, Transform2d targetDistanceToTag) {
 		this.drivetrain = drivetrain;
@@ -77,14 +78,12 @@ public class FollowTag extends Command {
 	@Override
 	public void execute() {
 		double forwardSpeed = 0;
-		double rotationSpeed = 0;
 		double leftSpeed = 0;
+		double rotationSpeed = 0;
 
 		Transform3d transform = vision.getTransformToTag(tagID);
 
 		if (transform != null) {
-			transform = transform.plus(VisionConstants.ROBOT_TO_FRONT);
-
 			double forward = transform.getX();
 			double left = transform.getY();
 			Rotation2d rotation = new Rotation2d(forward, left);
@@ -94,15 +93,14 @@ public class FollowTag extends Command {
 			rotationSpeed = -rotationController.calculate(rotation.getRadians());
 		}
 
+		// If FollowTag maxSpeed
 		double speedLimit = RobotMovementConstants.MAX_TRANSLATION_SPEED;
-		double maxSpeed = Math.max(Math.abs(forwardSpeed), Math.abs(leftSpeed));
-		if (maxSpeed > speedLimit) {
-			forwardSpeed = (forwardSpeed / maxSpeed) * speedLimit;
-			leftSpeed = (leftSpeed / maxSpeed) * speedLimit;
+		double normSpeed = Math.sqrt(forwardSpeed * forwardSpeed + leftSpeed * leftSpeed);
+		if (normSpeed > speedLimit) {
+			forwardSpeed = (forwardSpeed / normSpeed) * speedLimit;
+			leftSpeed = (leftSpeed / normSpeed) * speedLimit;
 		}
 
-		rotationSpeed = 0;
-		forwardSpeed = 0;
 		drivetrain.setDesiredState(new ChassisSpeeds(forwardSpeed, leftSpeed, rotationSpeed), false);
 		drivetrain.updateSmartDashboard();
 	}

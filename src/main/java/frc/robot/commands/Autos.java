@@ -37,7 +37,7 @@ public final class Autos {
 			/* (dist from note to speaker front) / 2 - (bot offset from front of speaker) */
 			Units.inchesToMeters((114 - speakerDepth) / 2) - (Constants.BOT_WIDTH / 2),
 			/* lateral dist to note */
-			Units.inchesToMeters(39));
+			Units.inchesToMeters(57));
 	final static double driveDistanceForNote1 = 1.1;
 
 	/** Example static factory for an autonomous command. */
