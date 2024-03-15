@@ -147,7 +147,7 @@ public final class Autos {
 		return Commands.sequence(
 				Commands.parallel(
 						new SpinFlywheelShooterForTime(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER,
-								1.5),
+								1.7),
 						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.2),
