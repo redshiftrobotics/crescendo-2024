@@ -68,7 +68,7 @@ public class AutoDriveTo extends Command {
 
 		double targetX = position.getX() - initX;
 		double targetY = position.getY() - initY;
-		double targetRadians = drivetrain.getHeading().getRadians();
+		// double targetRadians = drivetrain.getHeading().getRadians();
 
 		double xSpeed = xMovePID.calculate(targetX, goalX);
 		double ySpeed = yMovePID.calculate(targetY, goalY);

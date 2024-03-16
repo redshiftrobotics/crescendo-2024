@@ -113,8 +113,6 @@ public final class Autos {
 			flipped = !flipped;
 		}
 
-		drivetrain.setFrontOffset(Rotation2d.fromDegrees(flipped ? -60 : 60));
-
 		return Commands.parallel(
 				Commands.sequence(
 						// First note
