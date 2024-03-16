@@ -24,7 +24,7 @@
               "_showGlyph": true
             }
           },
-          "8,3": {
+          "8,2": {
             "size": [
               2,
               1
@@ -37,9 +37,9 @@
               "_showGlyph": true
             }
           },
-          "8,2": {
+          "0,3": {
             "size": [
-              2,
+              4,
               1
             ],
             "content": {
@@ -80,7 +80,7 @@
               "_showGlyph": true
             }
           },
-          "5,3": {
+          "6,2": {
             "size": [
               1,
               1
@@ -306,7 +306,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "5,2": {
+          "5,3": {
             "size": [
               1,
               1
@@ -319,7 +319,7 @@
               "_showGlyph": false
             }
           },
-          "6,2": {
+          "6,3": {
             "size": [
               1,
               1
@@ -328,6 +328,45 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/RightHang",
               "_title": "RightHang",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ZeroYaw",
+              "_title": "ZeroYaw",
+              "_glyph": 139,
+              "_showGlyph": true
+            }
+          },
+          "8,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ArmUp",
+              "_title": "ArmUp",
+              "_glyph": 484,
+              "_showGlyph": true
+            }
+          },
+          "5,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/FlywheelTime",
+              "_title": "FlywheelTime",
               "_glyph": 148,
               "_showGlyph": false
             }

@@ -30,9 +30,13 @@ import frc.robot.subsystems.intake.DummyShooter;
 import frc.robot.subsystems.intake.IntakeShooter;
 import frc.robot.subsystems.intake.RealShooter;
 
+import java.util.Optional;
+
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,10 +44,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -135,19 +139,18 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		autoChooser.setDefaultOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
-		autoChooser.addOption("1+Forward",
-				Autos.shootStartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("2+Forward",
+		autoChooser.addOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
+		autoChooser.setDefaultOption("2+Forward",
 				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("2+AmpSide",
+				Autos.shootFromAmpSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		autoChooser.addOption("2+SourceSide",
+				Autos.shootFromFarSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
 		SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
-
-		SmartDashboard.putData(drivetrain);
-		SmartDashboard.putData(arm);
-		SmartDashboard.putData(intakeShooter);
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
@@ -183,6 +186,11 @@ public class RobotContainer {
 				new CancelCommands(drivetrain, lightStrip),
 				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
 		new InstantCommand(lightStrip::toDefaultPattern, lightStrip);
+
+		double flip = 1;
+		Optional<Alliance> ally = DriverStation.getAlliance();
+		if (ally.isPresent() && ally.get() == Alliance.Red)
+			flip = -1;
 
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Drive Ctrl", onPortMsg + "None");
@@ -230,10 +238,12 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			// xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0), true));
-			// xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(-90), true));
+			// xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain,
+			// Rotation2d.fromDegrees(0), true));
+			// xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain,
+			// Rotation2d.fromDegrees(-90), true));
 			xbox.rightBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
-			xbox.leftBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90)));
+			xbox.leftBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90 * flip)));
 
 			if (vision != null)
 				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
@@ -277,12 +287,19 @@ public class RobotContainer {
 			joystick.button(1).onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			joystick.button(1).onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			joystick.button(2).onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs));
+			joystick.button(2).onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+			joystick.button(3).onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-			joystick.button(3).onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
+			joystick.button(4).onTrue(new SpinFlywheelShooter(intakeShooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER));
+			joystick.button(4).onFalse(new SpinFlywheelShooter(intakeShooter, 0));
 
-			joystick.button(4).onTrue(stowArm);
-			joystick.button(6).onTrue(stowArm);
+			joystick.button(5).onTrue(stowArm);
+			joystick.button(6).onTrue(stowArm2);
+
+			joystick.button(7).whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
+
+			leftHang.setDefaultCommand(new HangControl(leftHang, joystick::getX));
+			rightHang.setDefaultCommand(new HangControl(rightHang, joystick::getY));
 
 			joystick.button(10).onTrue(cancelCommand);
 
@@ -299,7 +316,8 @@ public class RobotContainer {
 
 			xbox.rightBumper().onTrue(
 					new SpinFlywheelShooter(intakeShooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER));
-			xbox.rightBumper().onFalse(new SpinFlywheelShooter(intakeShooter, 0));
+			xbox.rightBumper().onFalse(
+					new SpinFlywheelShooter(intakeShooter, 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);

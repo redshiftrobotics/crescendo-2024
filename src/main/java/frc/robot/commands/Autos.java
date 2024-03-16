@@ -92,6 +92,55 @@ public final class Autos {
 				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
 
+	public static Command shootFromSideAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
+			Hang rightHang, boolean flipped) {
+
+		Optional<Alliance> ally = DriverStation.getAlliance();
+		if (ally.isPresent() && ally.get() == Alliance.Red) {
+			flipped = !flipped;
+		}
+
+		drivetrain.setFrontOffset(Rotation2d.fromDegrees(flipped ? -60 : 60));
+
+		return Commands.parallel(
+				Commands.sequence(
+						// First note
+						shootInSpeaker(drivetrain, arm, shooter, null, null),
+
+						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+						// Line up X to second note
+						new AutoDriveTo(drivetrain, new Translation2d(0.25, 0)),
+						new AutoRotateTo(drivetrain, new Rotation2d(0), true), 
+						
+						// Pick up First note
+						intakeFromFloorStart(arm, shooter), 
+						new AutoDriveTo(drivetrain, new Translation2d(2.15, 0)),
+						intakeFromFloorEnd(arm, shooter),
+
+						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+						// Get Back 
+						new AutoDriveTo(drivetrain, new Translation2d(-2.15, 0)),
+						new AutoRotateTo(drivetrain, new Rotation2d(flipped ? 60 : -60), true),
+						new AutoDriveTo(drivetrain, new Translation2d(0.25, 0)),
+
+						// Shoot Second
+						shootInSpeaker(drivetrain, arm, shooter, null, null)
+				),
+
+				new PullHangerDown(rightHang, HangConstants.SPEED),
+				new PullHangerDown(leftHang, HangConstants.SPEED));
+	}
+
+	public static Command shootFromAmpSideAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			Hang leftHang, Hang rightHang) {
+		return shootFromSideAuto(drivetrain, arm, shooter, leftHang, rightHang, false);
+	}
+
+	public static Command shootFromFarSideAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			Hang leftHang, Hang rightHang) {
+		return shootFromSideAuto(drivetrain, arm, shooter, leftHang, rightHang, true);
+	}
+
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
 			ChassisDriveInputs inputs) {
 
@@ -114,9 +163,10 @@ public final class Autos {
 		}
 
 		return Commands.sequence(
-				new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES).alongWith(
-						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP),
-						new WaitCommand(0.5)),
+				Commands.parallel(
+					new SpinFlywheelShooterForTime(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP,
+							0.5),
+					new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES)),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_AMP),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
