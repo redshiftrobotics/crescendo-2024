@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -33,9 +32,6 @@ public class RealShooter extends IntakeShooter {
 
 	// private final DigitalInput intakeSwitch;
 
-	private double timeFlywheelSet;
-	private double flywheelSpeed;
-
 	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
@@ -49,11 +45,6 @@ public class RealShooter extends IntakeShooter {
 	@Override
 	public void setFlyWheelShooterSpeed(double speed) {
 		SmartDashboard.putNumber("FlywheelShooter", speed);
-
-		if (flywheelSpeed != speed) {
-			flywheelSpeed = speed;
-			timeFlywheelSet = System.currentTimeMillis();
-		}
 
 		flywheel1.set(-speed);
 		flywheel2.set(-speed);
@@ -85,17 +76,5 @@ public class RealShooter extends IntakeShooter {
 		flywheel1.stopMotor();
 		flywheel2.stopMotor();
 		intake.stopMotor();
-	}
-
-	@Override
-	public double howLongAtSpeedMillis(double speed) {
-		if (flywheelSpeed != speed)
-			return -1;
-		return System.currentTimeMillis() - timeFlywheelSet;
-	}
-
-	@Override
-	public void periodic() {
-		SmartDashboard.putString("FlywheelTime", flywheelSpeed + " for " + Units.millisecondsToSeconds(System.currentTimeMillis() - timeFlywheelSet));
 	}
 }

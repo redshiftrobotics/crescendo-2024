@@ -13,8 +13,8 @@ import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
 import frc.robot.commands.AimAtAngle;
 import frc.robot.commands.ArmRotateTo;
+import frc.robot.commands.AutoRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
-import frc.robot.commands.SpinFlywheelShooter;
 import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -47,7 +47,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -142,20 +141,18 @@ public class RobotContainer {
 		autoChooser.addOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
 		autoChooser.setDefaultOption("2+Forward",
 				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("2+AmpSide",
+		autoChooser.addOption("*1+AmpSide",
 				Autos.shootFromAmpSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("2+SourceSide",
+		autoChooser.addOption("*1+SourceSide",
 				Autos.shootFromFarSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		try {
-			autoChooser.addOption("3 note",
-					Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision, leftHang, rightHang, inputs));
-		} catch (Exception e) {
-		}
+
+		autoChooser.addOption("*3+Forward+AmpNote+RED", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision, leftHang, rightHang, inputs, Alliance.Red));
+		autoChooser.addOption("*3+Forward+AmpNote+BLUE", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision, leftHang, rightHang, inputs, Alliance.Blue));
 
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
-		SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
-		SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
+		// SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
+		// SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 
@@ -190,7 +187,6 @@ public class RobotContainer {
 		final Command cancelCommand = new SequentialCommandGroup(
 				new CancelCommands(drivetrain, lightStrip),
 				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
-		new InstantCommand(lightStrip::toDefaultPattern, lightStrip);
 
 		double flip = 1;
 		Optional<Alliance> ally = DriverStation.getAlliance();
@@ -233,8 +229,8 @@ public class RobotContainer {
 					xbox::getLeftX, -1,
 					xbox::getLeftY, -1,
 					xbox::getRightX, -1,
-					DriverConstants.DEAD_ZONE, DriverConstants.SLEW_RATE_LIMIT_UP,
-					DriverConstants.SLEW_RATE_LIMIT_DOWN);
+					DriverConstants.DEAD_ZONE,
+					DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
 			xbox.rightTrigger().whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
 			xbox.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
@@ -243,12 +239,10 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			// xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain,
-			// Rotation2d.fromDegrees(0), true));
-			// xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain,
-			// Rotation2d.fromDegrees(-90), true));
-			xbox.rightBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
-			xbox.leftBumper().whileFalse(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90 * flip)));
+			xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain,
+			Rotation2d.fromDegrees(0), true));
+			xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain,
+			Rotation2d.fromDegrees(-90 * flip), true));
 
 			if (vision != null)
 				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
@@ -289,23 +283,6 @@ public class RobotContainer {
 			SmartDashboard.putString("Operator Ctrl", onPortMsg + "Joystick");
 			final CommandJoystick joystick = new CommandJoystick(genericHID.getPort());
 
-			joystick.button(1).onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
-			joystick.button(1).onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
-
-			joystick.button(2).onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-			joystick.button(3).onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-
-			joystick.button(4).onTrue(new SpinFlywheelShooter(intakeShooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER));
-			joystick.button(4).onFalse(new SpinFlywheelShooter(intakeShooter, 0));
-
-			joystick.button(5).onTrue(stowArm);
-			joystick.button(6).onTrue(stowArm2);
-
-			joystick.button(7).whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
-
-			leftHang.setDefaultCommand(new HangControl(leftHang, joystick::getX));
-			rightHang.setDefaultCommand(new HangControl(rightHang, joystick::getY));
-
 			joystick.button(10).onTrue(cancelCommand);
 
 		} else {
@@ -315,14 +292,9 @@ public class RobotContainer {
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.leftBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
+			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
 
 			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs));
-
-			xbox.rightBumper().onTrue(
-					new SpinFlywheelShooter(intakeShooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER));
-			xbox.rightBumper().onFalse(
-					new SpinFlywheelShooter(intakeShooter, 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);

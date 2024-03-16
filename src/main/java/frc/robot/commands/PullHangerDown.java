@@ -16,16 +16,17 @@ public class PullHangerDown extends Command {
 
 	@Override
 	public void initialize() {
-		hanger.setSpeed(speed);
+		// hanger.setSpeed(speed);
 	}
 
 	@Override
 	public boolean isFinished() {
-		return hanger.isAtBottom();
+		return true;
+		// return hanger.isAtBottom();
 	}
 
 	@Override
 	public void end(boolean interrupted) {
-		hanger.setSpeed(0);
+		// hanger.setSpeed(0);
 	}
 }

@@ -86,7 +86,7 @@ public class AutoDriveTo extends Command {
 			ySpeed = (ySpeed / maxSpeed) * speedLimit;
 		}
 
-		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotatePID.calculate(targetRadians)));
+		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, 0));
 		drivetrain.updateSmartDashboard();
 	}
 

@@ -14,11 +14,6 @@ public class DummyShooter extends IntakeShooter {
 	}
 
 	@Override
-	public double howLongAtSpeedMillis(double speed) {
-		return 0;
-	}
-
-	@Override
 	public boolean hasNoteInIntake() {
 		return false;
 	}

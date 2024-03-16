@@ -9,8 +9,6 @@ public abstract class IntakeShooter extends SubsystemBase {
 
 	public abstract boolean hasNoteInIntake();
 
-	public abstract double howLongAtSpeedMillis(double speed);
-
 	public abstract void eject();
 
 	public abstract void stop();
