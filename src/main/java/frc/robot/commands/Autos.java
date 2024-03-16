@@ -105,7 +105,7 @@ public final class Autos {
 				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
 
-	public static Command shootSideAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+	public static Command shootSideNoteAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
 			Vision vision, Alliance alliance, boolean isAmpSide, ChassisDriveInputs inputs) {
 		// If on red, and going for amp side note (right side) keep translation
 		// If on red, and going for stage side note (left side) mirror translation y
@@ -143,7 +143,7 @@ public final class Autos {
 
 		return Commands.sequence(
 				shoot2StartingAuto(drivetrain, arm, shooter, leftHanger, rightHanger),
-				shootSideAuto(drivetrain, arm, shooter, vision, ally.get(), true, inputs));
+				shootSideNoteAuto(drivetrain, arm, shooter, vision, ally.get(), true, inputs));
 
 	}
 
@@ -158,8 +158,8 @@ public final class Autos {
 
 		return Commands.sequence(
 				shoot2StartingAuto(drivetrain, arm, shooter, leftHanger, rightHanger),
-				shootSideAuto(drivetrain, arm, shooter, vision, ally.get(), true, inputs),
-				shootSideAuto(drivetrain, arm, shooter, vision, ally.get(), false, inputs));
+				shootSideNoteAuto(drivetrain, arm, shooter, vision, ally.get(), true, inputs),
+				shootSideNoteAuto(drivetrain, arm, shooter, vision, ally.get(), false, inputs));
 
 	}
 
