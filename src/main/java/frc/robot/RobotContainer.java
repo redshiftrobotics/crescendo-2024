@@ -146,6 +146,11 @@ public class RobotContainer {
 				Autos.shootFromAmpSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 		autoChooser.addOption("2+SourceSide",
 				Autos.shootFromFarSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
+		try {
+			autoChooser.addOption("3 note",
+					Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision, leftHang, rightHang, inputs));
+		} catch (Exception e) {
+		}
 
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 

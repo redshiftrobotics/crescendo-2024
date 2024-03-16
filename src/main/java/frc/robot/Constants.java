@@ -23,6 +23,8 @@ public final class Constants {
 	public static final Bot currentBot;
 	public static final String serialNumber;
 
+	public static final double BOT_WIDTH = 0.885; // metres
+
 	/**
 	 * This code determines what bot is being deployed and sets constants
 	 * accordingly.
@@ -133,7 +135,7 @@ public final class Constants {
 		public static final double ARM_STOW_DEGREES = -83.0;
 		public static final double ARM_STOW_2_DEGREES = -100.0;
 		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
-		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5 + 4 - 6 -1;
+		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -97.822 - 5 + 4 - 6 - 1;
 		public static final double ARM_INTAKE_DEGREES = -109 - 1.5;
 
 		public static final int LEFT_MOTOR_ID = 5;
