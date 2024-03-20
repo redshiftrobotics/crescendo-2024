@@ -32,25 +32,21 @@ public class AimAtAngle extends Command {
 				RobotMovementConstants.ROTATION_PID_I,
 				RobotMovementConstants.ROTATION_PID_D);
 		rotatePID.enableContinuousInput(-Math.PI, Math.PI);
-		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 		rotatePID.setSetpoint(direction.getRadians());
 
-		addRequirements(drivetrain, chassisDriveInputs);
+		addRequirements(drivetrain);
 	}
-
 
 	@Override
 	public void initialize() {
+		rotatePID.reset();
 		drivetrain.toDefaultStates();
 	}
 
 	@Override
 	public void execute() {
 
-		double rotationSpeed = 0;
-		if (!rotatePID.atSetpoint()) {
-			rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
-		}
+		double rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
 
 		double xSpeed = 0;
 		double ySpeed = 0;
@@ -61,22 +57,17 @@ public class AimAtAngle extends Command {
 			fieldRelative = chassisDriveInputs.isFieldRelative();
 		}
 
-		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, 0);
-		if (fieldRelative) desiredSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(desiredSpeeds, drivetrain.getHeading());
-		desiredSpeeds.omegaRadiansPerSecond = rotationSpeed;
-
-		drivetrain.setDesiredState(desiredSpeeds, false);
-
+		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), fieldRelative);
 		drivetrain.updateSmartDashboard();
 	}
 
 	@Override
 	public boolean isFinished() {
-		return (chassisDriveInputs == null) && (rotatePID.atSetpoint());
+		return false;
 	}
 
 	@Override
 	public void end(boolean interrupted) {
-		drivetrain.stop();
+		drivetrain.setDesiredState(new ChassisSpeeds());
 	}
 }

@@ -44,8 +44,8 @@ public final class Constants {
 				currentBot = Bot.SIM_BOT;
 				break;
 
-			case "03282B00": // Wood Bot Serial Number
-				currentBot = Bot.WOOD_BOT;
+			case "03282B00": // Wood Bot Serial Number (switched rios during comp)
+				currentBot = Bot.COMP_BOT;
 				break;
 
 			case "03238024": // Practice (Now comp) Bot Serial Number
@@ -226,7 +226,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_BR = 42;
 					ANGULAR_MOTOR_ID_BR = 6;
 					ANGULAR_MOTOR_ENCODER_ID_BR = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.046142578125  + 0.5;
+					ANGULAR_MOTOR_ENCODER_OFFSET_BR = -0.046142578125 + 0.5;
 					break;
 
 				case COMP_BOT:

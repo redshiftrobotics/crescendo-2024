@@ -22,7 +22,7 @@ public class ChassisDriveInputs extends SubsystemBase {
 	private final int maxSpeedLevel = DriverConstants.NUMBER_OF_SPEED_OPTIONS - 1;
 
 	private int speedLevel = maxSpeedLevel / 2;
-	private boolean isFieldRelative = false;
+	private boolean isFieldRelative = true;
 
 	private boolean maxSpeedMode = false;
 

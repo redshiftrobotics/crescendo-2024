@@ -13,7 +13,6 @@ import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
 import frc.robot.commands.AimAtAngle;
 import frc.robot.commands.ArmRotateTo;
-import frc.robot.commands.AutoRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
 import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.LightStrip;
@@ -239,10 +238,9 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.rightBumper().onTrue(new AutoRotateTo(drivetrain,
-			Rotation2d.fromDegrees(0), true));
-			xbox.leftBumper().onTrue(new AutoRotateTo(drivetrain,
-			Rotation2d.fromDegrees(-90 * flip), true));
+			xbox.rightBumper().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
+			xbox.leftBumper().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90 * flip)));
+			xbox.a().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-180)));
 
 			if (vision != null)
 				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
