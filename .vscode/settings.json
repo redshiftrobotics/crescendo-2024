@@ -34,6 +34,13 @@
 	"editor.detectIndentation": false, // Prevent above from being overridden
 	"editor.insertSpaces": false, // use tab character instead of spaces
 	"editor.codeActionsOnSave": {
-		"source.fixAll": "always"
-	}
+		"source.organizeImports": "always",
+		"source.fixAll": "always",
+	},
+	"java.settings.url": ".vscode/settings.prefs",
+	"cSpell.words": [
+		"AHRS",
+		"photonvision",
+		"Ramsete"
+	]
 }
