@@ -3,9 +3,13 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 /**
  * The intake & shooter system (mounted to the end of the arm)
@@ -32,11 +36,20 @@ public class RealShooter extends IntakeShooter {
 
 	// private final DigitalInput intakeSwitch;
 
-	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId) {
+	// https://www.chiefdelphi.com/t/pwf-time-of-flight-help/454813
+	// https://www.playingwithfusion.com/frc/2022/javadoc/com/playingwithfusion/TimeOfFlight.html
+	private final TimeOfFlight intakeSensor;
+	// private final Debouncer sensorDebouncer = new Debouncer(0.02, DebounceType.kRising);
+	private final MedianFilter sensorMedianFilter = new MedianFilter(25);
+
+	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeSensorId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
 
-		// this.intakeSwitch = new DigitalInput(intakeLimitSwitchId);
+		intakeSensor = new TimeOfFlight(intakeSensorId);
+		intakeSensor.setRangingMode(RangingMode.Short, 25);
+
+		// this.intakeSwitch = new DigitalInput(intakeSensorId);
 
 		this.intake = new CANSparkMax(intakeID, CANSparkLowLevel.MotorType.kBrushless);
 		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
@@ -59,8 +72,13 @@ public class RealShooter extends IntakeShooter {
 
 	@Override
 	public boolean hasNoteInIntake() {
-		return false;
 		// return intakeSwitch.get();
+
+		final double distanceMeters = sensorMedianFilter.calculate(
+			intakeSensor.getRange() / 1000
+		);
+
+		return distanceMeters < Units.inchesToMeters(3);
 	}
 
 	@Override

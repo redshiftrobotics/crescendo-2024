@@ -47,7 +47,11 @@ public class LightStrip extends SubsystemBase {
 	}
 
 	public void toDefaultPattern() {
-		setPattern(LightConstants.LED_COLOR_DEFAULT);
+		setPattern(LightConstants.LED_COLOR_RAINBOW);
+	}
+
+	public void off() {
+		setPattern(LightConstants.LED_COLOR_OFF);
 	}
 
 	@Override

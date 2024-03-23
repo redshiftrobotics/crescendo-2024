@@ -355,6 +355,7 @@ public final class Constants {
 		public static final int LED_CONTROLLER_PWM_SLOT = 0; // TODO find real value for this
 		public static final int LED_QUANTITY = 60;
 
+		// https://www.revrobotics.com/content/docs/REV-11-1105-UM.pdf
 		public static final double LED_COLOR_RED = 0.61;
 		public static final double LED_COLOR_ORANGE = 0.65;
 		public static final double LED_COLOR_YELLOW = 0.69;
@@ -364,6 +365,6 @@ public final class Constants {
 		public static final double LED_COLOR_WHITE = 0.93;
 		public static final double LED_COLOR_RAINBOW = -0.99;
 
-		public static final double LED_COLOR_DEFAULT = 0.99;
+		public static final double LED_COLOR_OFF = 0.99;
 	}
 }

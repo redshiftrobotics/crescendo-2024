@@ -11,6 +11,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
+import frc.robot.commands.IntakeLEDSignal;
 import frc.robot.commands.AimAtAngle;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.SetLightstripColorFor;
@@ -160,13 +161,19 @@ public class RobotContainer {
 		if (vision != null) {
 			PortForwarder.add(5800, "photonvision.local", 5800);
 		}
+
+		lightStrip.off();
 	}
 
+	public void autoStart() {
+		lightStrip.toDefaultPattern();
+	}
+	
 	public void toDefaultPositions() {
 		drivetrain.toDefaultStates();
 		arm.setArmToStartPosition();
 		intakeShooter.stop();
-		lightStrip.toDefaultPattern();
+		lightStrip.off();
 	}
 
 	public void setUpDriveController() {
@@ -248,8 +255,12 @@ public class RobotContainer {
 			xbox.b().onTrue(cancelCommand);
 		}
 
-		if (inputs != null)
+		if (inputs != null) {
 			drivetrain.setDefaultCommand(new ChassisRemoteControl(drivetrain, inputs));
+		}
+		
+		// https://www.revrobotics.com/content/docs/REV-11-1105-UM.pdf
+		lightStrip.setDefaultCommand(new IntakeLEDSignal(lightStrip, intakeShooter::hasNoteInIntake, 0.63));
 	}
 
 	public void setUpOperatorController() {
