@@ -15,7 +15,7 @@ public class RealHang extends Hang {
 	public RealHang(int motorID, boolean motorIsInverted, int rightLimitSwitchId, String name) {
 		motor = new CANSparkMax(motorID, MotorType.kBrushless);
 		motor.setInverted(motorIsInverted);
-		motor.setIdleMode(IdleMode.kBrake);
+		// motor.setIdleMode(IdleMode.kBrake);
 
 		leftLimitSwitch = new DigitalInput(rightLimitSwitchId);
 

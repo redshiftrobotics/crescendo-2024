@@ -6,21 +6,19 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.RobotMovementConstants;
-import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
 /** Command to automatically align at a tag, ends once facing the tag */
-public class AlignAtTag extends Command {
+public class AlignAtTagWithX extends Command {
 	private final SwerveDrivetrain drivetrain;
-	private final ChassisDriveInputs inputs;
 
 	private final Vision vision;
 	private final int[] tagID;
 
 	private boolean done = false;
 
-	private final PIDController yController, rotatePID;
+	private final PIDController xController, yController, rotatePID;
 
 	/**
 	 * Create a new AlignAtTag command. Tries to constants Align at a tag while
@@ -31,21 +29,26 @@ public class AlignAtTag extends Command {
 	 * @param vision     the vision subsystem of the robot
 	 * @param tagID      the numerical ID of the tag to turn to, -1 for best tag
 	 */
-	public AlignAtTag(SwerveDrivetrain drivetrain, Vision vision, int[] tagID, ChassisDriveInputs chassisDriveInputs,
-			Rotation2d rotation) {
+	public AlignAtTagWithX(SwerveDrivetrain drivetrain, Vision vision, int[] tagID,
+			Rotation2d rotation, double xDistance) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
 		this.tagID = tagID;
-		this.inputs = chassisDriveInputs;
 
 		yController = new PIDController(
 				RobotMovementConstants.TRANSLATION_PID_P,
 				RobotMovementConstants.TRANSLATION_PID_I,
 				RobotMovementConstants.TRANSLATION_PID_D);
-
 		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		yController.setSetpoint(0);
+		
+		xController = new PIDController(
+				RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_I,
+				RobotMovementConstants.TRANSLATION_PID_D);
+		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
+		xController.setSetpoint(xDistance);
 
 		rotatePID = new PIDController(
 				RobotMovementConstants.ROTATION_PID_P,
@@ -55,19 +58,7 @@ public class AlignAtTag extends Command {
 		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 		rotatePID.setSetpoint(rotation.getRadians());
 
-		addRequirements(drivetrain, chassisDriveInputs);
-	}
-
-	/**
-	 * Create a new AlignAtTag command. Tries to Align at a tag.
-	 * 
-	 * @param drivetrain the drivetrain of the robot
-	 * @param vision     the vision subsystem of the robot
-	 * @param tagID      the numerical ID of the tag to turn to, null for best
-	 *                   tag
-	 */
-	public AlignAtTag(SwerveDrivetrain drivetrain, Vision vision, int[] tagID, Rotation2d rotation) {
-		this(drivetrain, vision, tagID, null, rotation);
+		addRequirements(drivetrain);
 	}
 
 	@Override
@@ -86,34 +77,16 @@ public class AlignAtTag extends Command {
 			transform = vision.getTransformToTag(tagID[1]);
 		}
 
-		// if (transform != null) {
-		// SmartDashboard.putNumber("X", transform.getX());
-		// SmartDashboard.putNumber("Y", transform.getY());
-		// } else {
-		// SmartDashboard.putNumber("X", -1);
-		// SmartDashboard.putNumber("Y", -1);
-		// }
-
+		double xSpeed = 0;
 		double ySpeed = 0;
 		double rotationSpeed = 0;
 		if (transform != null) {
+			xSpeed = yController.calculate(transform.getX());
 			ySpeed = yController.calculate(transform.getY());
 			rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
 		}
 
-		double xSpeed = 0;
-		boolean fieldRelative = false;
-		if (inputs != null) {
-			xSpeed = inputs.getX();
-			fieldRelative = inputs.isFieldRelative();
-		}
-
-		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, 0, rotationSpeed);
-		if (fieldRelative)
-			desiredSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(desiredSpeeds, drivetrain.getHeading());
-		desiredSpeeds.vyMetersPerSecond = ySpeed;
-
-		drivetrain.setDesiredState(desiredSpeeds, false);
+		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), false);
 
 		drivetrain.updateSmartDashboard();
 	}
@@ -125,10 +98,6 @@ public class AlignAtTag extends Command {
 
 	@Override
 	public void end(boolean interrupted) {
-		if (inputs == null) {
-			drivetrain.stop();
-		} else {
-			drivetrain.setDesiredState(new ChassisSpeeds(inputs.getX(), 0, 0), inputs.isFieldRelative());
-		}
+		drivetrain.stop();
 	}
 }

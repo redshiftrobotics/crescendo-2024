@@ -26,6 +26,7 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AimAtAngle;
+import frc.robot.commands.AlignAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
@@ -301,7 +302,8 @@ public class RobotContainer {
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs, team));
+			xbox.rightBumper().onTrue(new AlignAtTag(drivetrain, vision, new int[] { 5, 6 }, inputs, Rotation2d.fromDegrees((team == Alliance.Blue) ? -90 : 90)));
+			xbox.leftBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter));
 
 			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs, team));
 

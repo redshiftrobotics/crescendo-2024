@@ -165,10 +165,13 @@ public final class Autos {
 		if (vision != null && vision.isEnabled()) {
 
 			Rotation2d rotation = Rotation2d.fromDegrees(90);
+			if (team == Alliance.Blue) {
+				rotation = Rotation2d.fromDegrees(-90);
+			}
 
 			return Commands.sequence(
 					new AlignAtTag(drivetrain, vision, new int[] { 5, 6 }, inputs, rotation),
-					shootInSpeaker(drivetrain, arm, shooter, null, inputs, team));
+					dropInAmp(drivetrain, arm, shooter, null, inputs, team));
 		}
 
 		return Commands.sequence(
@@ -178,7 +181,8 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_AMP),
 				new WaitCommand(0.2),
 				new SpinFlywheelShooter(shooter, 0),
-				new SpinIntakeGrabbers(shooter, 0));
+				new SpinIntakeGrabbers(shooter, 0),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
 
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
@@ -193,7 +197,7 @@ public final class Autos {
 			Rotation2d rotation = Rotation2d.fromDegrees(0);
 
 			return Commands.sequence(
-					new AlignAtTag(drivetrain, vision, new int[] { 7, 4 }, inputs, rotation),
+					new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, rotation, 1.1),
 					shootInSpeaker(drivetrain, arm, shooter, null, inputs, team));
 		}
 
@@ -207,7 +211,8 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.3),
 				new SpinFlywheelShooter(shooter, 0),
-				new SpinIntakeGrabbers(shooter, 0));
+				new SpinIntakeGrabbers(shooter, 0),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
@@ -222,7 +227,8 @@ public final class Autos {
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, -1),
 				new WaitCommand(0.04),
-				new SpinIntakeGrabbers(shooter, 0));
+				new SpinIntakeGrabbers(shooter, 0),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
 
 	private Autos() {
