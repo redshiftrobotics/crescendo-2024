@@ -9,15 +9,15 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Vision subsystem */
 public class Vision extends SubsystemBase {
 
 	private final static boolean DEBUG_INFO = false;
 
-	private boolean visionEnabled = false;
+	private boolean visionEnabled = true;
 
 	final PhotonCamera camera;
 	final Transform3d robotToCamera;
@@ -36,16 +36,16 @@ public class Vision extends SubsystemBase {
 
 		SmartDashboard.putBoolean("Use Vision", visionEnabled);
 	}
-	
+
 	public boolean isEnabled() {
 		return visionEnabled;
 	}
-	
+
 	public void enableUsing() {
 		visionEnabled = true;
 		SmartDashboard.putBoolean("Use Vision", visionEnabled);
 	}
-	
+
 	public void disableUsing() {
 		visionEnabled = false;
 		SmartDashboard.putBoolean("Use Vision", visionEnabled);
@@ -79,15 +79,12 @@ public class Vision extends SubsystemBase {
 	 *         center of the robot. Returns null if no tag found
 	 */
 	public Transform3d getTransformToTag(int tagID) {
-		if (tagID == -1) return getTransformToTag();
+		if (tagID == -1)
+			return getTransformToTag();
 
 		var results = camera.getLatestResult();
 
-		if (!results.hasTargets()) {
-			return null;
-		}
-		
-		for (PhotonTrackedTarget target :results.getTargets()) {
+		for (PhotonTrackedTarget target : results.getTargets()) {
 			if (target.getFiducialId() == tagID)
 				return target.getBestCameraToTarget().plus(cameraToRobot);
 		}
@@ -100,26 +97,26 @@ public class Vision extends SubsystemBase {
 		if (visionEnabled && DEBUG_INFO) {
 			PhotonPipelineResult result = camera.getLatestResult();
 			PhotonTrackedTarget bestTag = result.getBestTarget();
-	
+
 			if (bestTag == null) {
 				bestTag = new PhotonTrackedTarget(-1, -1, -1, -1, -1,
 						new Transform3d(new Translation3d(-1, -1, -1), new Rotation3d(-1, -1, -1)), null, 0,
 						new ArrayList<>(), new ArrayList<>());
 			}
-	
+
 			SmartDashboard.putNumber("Tag ID", bestTag.getFiducialId());
 			SmartDashboard.putNumber("Tag Yaw", bestTag.getYaw());
 			SmartDashboard.putNumber("Tag Pitch", bestTag.getPitch());
 			SmartDashboard.putNumber("Tag Skew", bestTag.getSkew());
-	
+
 			Transform3d tagPose = bestTag.getBestCameraToTarget();
-	
+
 			SmartDashboard.putNumber("Tag Pose X", tagPose.getX());
 			SmartDashboard.putNumber("Tag Pose Y", tagPose.getY());
 			SmartDashboard.putNumber("Tag Pose Z", tagPose.getZ());
-	
+
 			Rotation3d tagPoseRotation = tagPose.getRotation();
-	
+
 			SmartDashboard.putNumber("Tag Pose Yaw", tagPoseRotation.getZ());
 			SmartDashboard.putNumber("Tag Pose Pitch", tagPoseRotation.getY());
 			SmartDashboard.putNumber("Tag Pose Roll", tagPoseRotation.getX());

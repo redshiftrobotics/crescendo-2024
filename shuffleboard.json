@@ -24,9 +24,9 @@
               "_showGlyph": true
             }
           },
-          "8,2": {
+          "8,3": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
@@ -157,20 +157,7 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "1,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/LED Signal",
-              "_title": "LED Signal",
-              "_glyph": 308,
-              "_showGlyph": true
-            }
-          },
-          "8,0": {
+          "9,0": {
             "size": [
               1,
               2
@@ -206,7 +193,7 @@
               ]
             }
           },
-          "9,0": {
+          "9,2": {
             "size": [
               1,
               2
@@ -332,32 +319,6 @@
               "_showGlyph": false
             }
           },
-          "9,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/ZeroYaw",
-              "_title": "ZeroYaw",
-              "_glyph": 139,
-              "_showGlyph": true
-            }
-          },
-          "8,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/ArmUp",
-              "_title": "ArmUp",
-              "_glyph": 484,
-              "_showGlyph": true
-            }
-          },
           "5,2": {
             "size": [
               1,
@@ -367,6 +328,32 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/FlywheelTime",
               "_title": "FlywheelTime",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/shootOffset",
+              "_title": "shootOffset",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "1,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Ally",
+              "_title": "Ally",
               "_glyph": 148,
               "_showGlyph": false
             }

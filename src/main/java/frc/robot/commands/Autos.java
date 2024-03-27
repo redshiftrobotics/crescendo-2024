@@ -1,18 +1,10 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.ChassisDriveInputs;
-import frc.robot.subsystems.SwerveDrivetrain;
-import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.intake.IntakeShooter;
-
-import java.util.Optional;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -20,7 +12,12 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
+import frc.robot.subsystems.ChassisDriveInputs;
+import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.hang.Hang;
+import frc.robot.subsystems.intake.IntakeShooter;
 
 /**
  * This class just contains a bunch of auto-modes. Do not call this class
@@ -62,7 +59,7 @@ public final class Autos {
 	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
 			Hang rightHang) {
 		return Commands.sequence(
-				shootInSpeaker(drivetrain, arm, shooter, null, null),
+				shootInSpeaker(drivetrain, arm, shooter),
 
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
 				new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
@@ -90,7 +87,7 @@ public final class Autos {
 
 		return Commands.parallel(
 				Commands.sequence(
-						shootInSpeaker(drivetrain, arm, shooter, null, null),
+						shootInSpeaker(drivetrain, arm, shooter),
 						new SpinFlywheelShooter(shooter, -0.1),
 						Commands.parallel(
 								intakeFromFloorStart(arm, shooter),
@@ -100,7 +97,7 @@ public final class Autos {
 						Commands.race(
 								Commands.waitSeconds(3),
 								new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0))),
-						shootInSpeaker(drivetrain, arm, shooter, null, null)),
+						shootInSpeaker(drivetrain, arm, shooter)),
 				new PullHangerDown(rightHang, HangConstants.SPEED),
 				new PullHangerDown(leftHang, HangConstants.SPEED));
 	}
@@ -108,15 +105,10 @@ public final class Autos {
 	public static Command shootFromSideAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Hang leftHang,
 			Hang rightHang, boolean flipped) {
 
-		Optional<Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent() && ally.get() == Alliance.Red) {
-			flipped = !flipped;
-		}
-
 		return Commands.parallel(
 				Commands.sequence(
 						// First note
-						shootInSpeaker(drivetrain, arm, shooter, null, null),
+						shootInSpeaker(drivetrain, arm, shooter),
 
 						new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
 						new AutoDriveTo(drivetrain, new Translation2d(3, 0))),
@@ -152,7 +144,7 @@ public final class Autos {
 				intakeFromFloorEnd(arm, shooter),
 				new AutoDriveTo(drivetrain,
 						new Translation2d(-sideNoteTranslation.getX() * 2, -sideNoteTranslation.getY())),
-				shootInSpeaker(drivetrain, arm, shooter, null, inputs));
+				shootInSpeaker(drivetrain, arm, shooter, null, inputs, alliance));
 	}
 
 	public static Command shoot3StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
@@ -163,25 +155,20 @@ public final class Autos {
 				shootSideNoteAuto(drivetrain, arm, shooter, vision, ally, true, inputs));
 	}
 
+	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
+		return dropInAmp(drivetrain, arm, shooter, null, null, null);
+	}
+
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
-			ChassisDriveInputs inputs) {
+			ChassisDriveInputs inputs, Alliance team) {
 
-		Optional<Alliance> ally = DriverStation.getAlliance();
-		if (vision != null && vision.isEnabled() && ally.isPresent()) {
+		if (vision != null && vision.isEnabled()) {
 
-			int tagId = -1;
 			Rotation2d rotation = Rotation2d.fromDegrees(90);
-			if (ally.get() == Alliance.Red) {
-				tagId = 5;
-			}
-			if (ally.get() == Alliance.Blue) {
-				tagId = 6;
-			}
 
 			return Commands.sequence(
-					new AutoRotateTo(drivetrain, rotation, true),
-					new AlignAtTag(drivetrain, vision, tagId, inputs),
-					shootInSpeaker(drivetrain, arm, shooter, null, inputs));
+					new AlignAtTag(drivetrain, vision, new int[] { 5, 6 }, inputs, rotation),
+					shootInSpeaker(drivetrain, arm, shooter, null, inputs, team));
 		}
 
 		return Commands.sequence(
@@ -194,32 +181,29 @@ public final class Autos {
 				new SpinIntakeGrabbers(shooter, 0));
 	}
 
+	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
+		return shootInSpeaker(drivetrain, arm, shooter, null, null, null);
+	}
+
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
-			ChassisDriveInputs inputs) {
+			ChassisDriveInputs inputs, Alliance team) {
 
-		Optional<Alliance> ally = DriverStation.getAlliance();
-		if (vision != null && vision.isEnabled() && ally.isPresent()) {
+		if (vision != null && vision.isEnabled() && team != null) {
 
-			int tagId = -1;
 			Rotation2d rotation = Rotation2d.fromDegrees(0);
-			if (ally.get() == Alliance.Red) {
-				tagId = 4;
-			}
-			if (ally.get() == Alliance.Blue) {
-				tagId = 7;
-			}
 
 			return Commands.sequence(
-					new AutoRotateTo(drivetrain, rotation, true),
-					new AlignAtTag(drivetrain, vision, tagId, inputs),
-					shootInSpeaker(drivetrain, arm, shooter, null, inputs));
+					new AlignAtTag(drivetrain, vision, new int[] { 7, 4 }, inputs, rotation),
+					shootInSpeaker(drivetrain, arm, shooter, null, inputs, team));
 		}
 
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 				Commands.parallel(
 						new WaitCommand(1.7),
-						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)),
+						new ArmRotateTo(arm,
+								ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
+										+ SmartDashboard.getNumber("shootOffset", 0))),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.3),
 				new SpinFlywheelShooter(shooter, 0),

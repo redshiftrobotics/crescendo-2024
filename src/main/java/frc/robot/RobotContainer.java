@@ -1,21 +1,37 @@
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.HIDType;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
-import frc.robot.Constants.LightConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.AimAtAngle;
+import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
-import frc.robot.commands.AimAtAngle;
-import frc.robot.commands.ArmRotateTo;
-import frc.robot.commands.SetLightstripColorFor;
 import frc.robot.subsystems.ChassisDriveInputs;
-import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
@@ -28,26 +44,6 @@ import frc.robot.subsystems.hang.RealHang;
 import frc.robot.subsystems.intake.DummyShooter;
 import frc.robot.subsystems.intake.IntakeShooter;
 import frc.robot.subsystems.intake.RealShooter;
-
-import java.util.Optional;
-
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.HIDType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared.
@@ -125,11 +121,14 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	// private final Vision vision = new Vision(VisionConstants.CAMERA_NAME,
-	// VisionConstants.CAMERA_POSE);
-	private final Vision vision = null;
+	private Alliance team;
+	private final SendableChooser<Alliance> teamChooser = new SendableChooser<Alliance>();
 
-	private final LightStrip lightStrip = new LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
+	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
+	// private final Vision vision = null;
+
+	// private final LightStrip lightStrip = new
+	// LightStrip(LightConstants.LED_CONTROLLER_PWM_SLOT);
 
 	private ChassisDriveInputs inputs = null;
 
@@ -145,12 +144,21 @@ public class RobotContainer {
 		autoChooser.addOption("*1+SourceSide",
 				Autos.shootFromFarSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
 
-		autoChooser.addOption("*3+Forward+AmpNote+RED", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision, leftHang, rightHang, inputs, Alliance.Red));
-		autoChooser.addOption("*3+Forward+AmpNote+BLUE", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision, leftHang, rightHang, inputs, Alliance.Blue));
+		autoChooser.addOption("*3+Forward+AmpNote+RED", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision,
+				leftHang, rightHang, inputs, Alliance.Red));
+		autoChooser.addOption("*3+Forward+AmpNote+BLUE", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter,
+				vision, leftHang, rightHang, inputs, Alliance.Blue));
 
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
-		// SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
+		teamChooser.setDefaultOption("Blue", Alliance.Blue);
+		teamChooser.addOption("Red", Alliance.Red);
+		SmartDashboard.putData("Ally", teamChooser);
+
+		SmartDashboard.putNumber("shootOffset", 0);
+
+		// SmartDashboard.putData("ArmUp", new ArmRotateTo(arm,
+		// ArmConstants.ARM_START_DEGREES));
 		// SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
@@ -166,7 +174,7 @@ public class RobotContainer {
 		drivetrain.toDefaultStates();
 		arm.setArmToStartPosition();
 		intakeShooter.stop();
-		lightStrip.toDefaultPattern();
+		// lightStrip.toDefaultPattern();
 	}
 
 	public void setUpDriveController() {
@@ -178,19 +186,16 @@ public class RobotContainer {
 
 		drivetrain.removeDefaultCommand();
 
-		final Command coopLightSignal = new SetLightstripColorFor(lightStrip, LightConstants.LED_COLOR_YELLOW, 10,
-				"Coop");
-		final Command amplifyLightSignal = new SetLightstripColorFor(lightStrip, LightConstants.LED_COLOR_PURPLE, 10,
-				"Amplify");
-
 		final Command cancelCommand = new SequentialCommandGroup(
-				new CancelCommands(drivetrain, lightStrip),
+				// new CancelCommands(drivetrain, lightStrip),
 				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
 
-		double flip = 1;
-		Optional<Alliance> ally = DriverStation.getAlliance();
-		if (ally.isPresent() && ally.get() == Alliance.Red)
-			flip = -1;
+		// final Command coopLightSignal = new SetLightstripColorFor(lightStrip,
+		// LightConstants.LED_COLOR_YELLOW, 10,
+		// "Coop");
+		// final Command amplifyLightSignal = new SetLightstripColorFor(lightStrip,
+		// LightConstants.LED_COLOR_PURPLE, 10,
+		// "Amplify");
 
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Drive Ctrl", onPortMsg + "None");
@@ -211,9 +216,6 @@ public class RobotContainer {
 			joystick.button(3).whileTrue(Commands.startEnd(inputs::enableMaxSpeedMode, inputs::disableMaxSpeedMode));
 			joystick.button(4).onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			joystick.button(5).onTrue(coopLightSignal);
-			joystick.button(6).onTrue(amplifyLightSignal);
-
 			if (vision != null)
 				joystick.button(7).onTrue(Commands.runOnce(vision::toggleUsing, vision));
 
@@ -223,6 +225,7 @@ public class RobotContainer {
 			SmartDashboard.putString("Drive Ctrl", onPortMsg + "GamePad");
 
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+			final XboxController xboxRaw = xbox.getHID();
 
 			inputs = new ChassisDriveInputs(
 					xbox::getLeftX, -1,
@@ -238,12 +241,19 @@ public class RobotContainer {
 
 			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.rightBumper().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
-			xbox.leftBumper().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-90 * flip)));
 			xbox.a().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-180)));
 
 			if (vision != null)
 				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
+
+			new Trigger(() -> xboxRaw.getPOV() == 0)
+					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
+			new Trigger(() -> xboxRaw.getPOV() == 90)
+					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(90)));
+			new Trigger(() -> xboxRaw.getPOV() == 180)
+					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(180)));
+			new Trigger(() -> xboxRaw.getPOV() == 270)
+					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(270)));
 
 			xbox.b().onTrue(cancelCommand);
 		}
@@ -286,13 +296,14 @@ public class RobotContainer {
 		} else {
 			SmartDashboard.putString("Operator Ctrl", onPortMsg + "GamePad");
 			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
+			final XboxController xboxRaw = xbox.getHID();
 
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs));
+			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs, team));
 
-			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs));
+			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs, team));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);
@@ -302,6 +313,13 @@ public class RobotContainer {
 			leftHang.setDefaultCommand(new HangControl(leftHang, xbox::getLeftY));
 			rightHang.setDefaultCommand(new HangControl(rightHang, xbox::getRightY));
 
+			new Trigger(() -> xboxRaw.getPOV() == 0)
+					.onTrue(new InstantCommand(() -> SmartDashboard.putNumber("shootOffset",
+							SmartDashboard.getNumber("shootOffset", 0) + 1)));
+			new Trigger(() -> xboxRaw.getPOV() == 180)
+					.onTrue(new InstantCommand(() -> SmartDashboard.putNumber("shootOffset",
+							SmartDashboard.getNumber("shootOffset", 0) - 1)));
+
 			xbox.b().onTrue(cancelCommand);
 		}
 	}
@@ -310,6 +328,7 @@ public class RobotContainer {
 	public void configureBindings() {
 		setUpDriveController();
 		setUpOperatorController();
+		team = teamChooser.getSelected();
 	}
 
 	/**
