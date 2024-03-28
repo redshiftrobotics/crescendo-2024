@@ -8,6 +8,7 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,7 +27,6 @@ import frc.robot.Constants.SwerveDrivetrainConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AimAtAngle;
-import frc.robot.commands.AlignAtTag;
 import frc.robot.commands.ArmRotateTo;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
@@ -302,10 +302,11 @@ public class RobotContainer {
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightBumper().onTrue(new AlignAtTag(drivetrain, vision, new int[] { 5, 6 }, inputs, Rotation2d.fromDegrees((team == Alliance.Blue) ? -90 : 90)));
+			xbox.rightBumper().onTrue(Autos.alignWithAmp(drivetrain, vision, teamChooser));
 			xbox.leftBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter));
 
 			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs, team));
+			xbox.rightTrigger().and(xbox.a()).onTrue(Autos.shootInSpeakerFar(drivetrain, arm, intakeShooter, vision));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);

@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -16,9 +17,13 @@ public class AlignAtTagWithX extends Command {
 	private final Vision vision;
 	private final int[] tagID;
 
-	private boolean done = false;
+	private boolean noTagAtStart = false;
 
 	private final PIDController xController, yController, rotatePID;
+
+	private double tagTTL = (0.2 / TimedRobot.kDefaultPeriod);
+	private double tagLast = 0;
+	private Transform3d last;
 
 	/**
 	 * Create a new AlignAtTag command. Tries to constants Align at a tag while
@@ -42,7 +47,7 @@ public class AlignAtTagWithX extends Command {
 				RobotMovementConstants.TRANSLATION_PID_D);
 		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		yController.setSetpoint(0);
-		
+
 		xController = new PIDController(
 				RobotMovementConstants.TRANSLATION_PID_P,
 				RobotMovementConstants.TRANSLATION_PID_I,
@@ -67,23 +72,39 @@ public class AlignAtTagWithX extends Command {
 		yController.reset();
 		drivetrain.toDefaultStates();
 
-		done = (vision.getTransformToTag(tagID[0]) == null) && (vision.getTransformToTag(tagID[1]) == null);
+		noTagAtStart = true;
+		for (int tag : tagID) {
+			if (vision.getTransformToTag(tag) != null) {
+				noTagAtStart = false;
+				break;
+			}
+		}
 	}
 
 	@Override
 	public void execute() {
-		Transform3d transform = vision.getTransformToTag(tagID[0]);
-		if (transform == null) {
-			transform = vision.getTransformToTag(tagID[1]);
+		Transform3d transform = null;
+		for (int tag : tagID) {
+			transform = vision.getTransformToTag(tag);
+			if (transform != null)
+				break;
 		}
+
+		// tagLast++;
+		// if (transform == null && tagLast < tagTTL) {
+		// 	transform = last;
+		// }
 
 		double xSpeed = 0;
 		double ySpeed = 0;
 		double rotationSpeed = 0;
 		if (transform != null) {
-			xSpeed = yController.calculate(transform.getX());
+			xSpeed = xController.calculate(transform.getX());
 			ySpeed = yController.calculate(transform.getY());
 			rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
+
+			last = transform;
+			tagLast = 0;
 		}
 
 		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), false);
@@ -93,7 +114,7 @@ public class AlignAtTagWithX extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return done || (yController.atSetpoint() && rotatePID.atSetpoint());
+		return noTagAtStart || (yController.atSetpoint() && rotatePID.atSetpoint() && xController.atSetpoint());
 	}
 
 	@Override

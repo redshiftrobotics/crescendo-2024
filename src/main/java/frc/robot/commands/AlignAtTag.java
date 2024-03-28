@@ -18,7 +18,7 @@ public class AlignAtTag extends Command {
 	private final Vision vision;
 	private final int[] tagID;
 
-	private boolean done = false;
+	private boolean noTagAtStart = false;
 
 	private final PIDController yController, rotatePID;
 
@@ -55,7 +55,8 @@ public class AlignAtTag extends Command {
 		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
 		rotatePID.setSetpoint(rotation.getRadians());
 
-		addRequirements(drivetrain, chassisDriveInputs);
+		addRequirements(drivetrain);
+
 	}
 
 	/**
@@ -76,23 +77,23 @@ public class AlignAtTag extends Command {
 		yController.reset();
 		drivetrain.toDefaultStates();
 
-		done = (vision.getTransformToTag(tagID[0]) == null) && (vision.getTransformToTag(tagID[1]) == null);
+		noTagAtStart = true;
+		for (int tag : tagID) {
+			if (vision.getTransformToTag(tag) != null) {
+				noTagAtStart = false;
+				break;
+			}
+		}
 	}
 
 	@Override
 	public void execute() {
-		Transform3d transform = vision.getTransformToTag(tagID[0]);
-		if (transform == null) {
-			transform = vision.getTransformToTag(tagID[1]);
+		Transform3d transform = null;
+		for (int tag : tagID) {
+			transform = vision.getTransformToTag(tag);
+			if (transform != null)
+				break;
 		}
-
-		// if (transform != null) {
-		// SmartDashboard.putNumber("X", transform.getX());
-		// SmartDashboard.putNumber("Y", transform.getY());
-		// } else {
-		// SmartDashboard.putNumber("X", -1);
-		// SmartDashboard.putNumber("Y", -1);
-		// }
 
 		double ySpeed = 0;
 		double rotationSpeed = 0;
@@ -120,7 +121,7 @@ public class AlignAtTag extends Command {
 
 	@Override
 	public boolean isFinished() {
-		return done || (yController.atSetpoint() && rotatePID.atSetpoint());
+		return noTagAtStart || (yController.atSetpoint() && rotatePID.atSetpoint());
 	}
 
 	@Override

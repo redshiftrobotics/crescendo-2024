@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -185,10 +186,17 @@ public final class Autos {
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
 
+	public static Command alignWithAmp(SwerveDrivetrain drivetrain, Vision vision,
+			SendableChooser<Alliance> teamChooser) {
+		return new AlignAtTag(drivetrain, vision, new int[] { 5, 6 }, null,
+				Rotation2d.fromDegrees((teamChooser.getSelected() == Alliance.Blue) ? -90 : 90));
+	}
+
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
 		return shootInSpeaker(drivetrain, arm, shooter, null, null, null);
 	}
 
+	// Code quality really going down hill here, but ehhh
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
 			ChassisDriveInputs inputs, Alliance team) {
 
@@ -197,14 +205,47 @@ public final class Autos {
 			Rotation2d rotation = Rotation2d.fromDegrees(0);
 
 			return Commands.sequence(
-					new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, rotation, 1.1),
-					shootInSpeaker(drivetrain, arm, shooter, null, inputs, team));
+					Commands.parallel(
+							new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
+							new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, rotation, 1.59).raceWith(
+									Commands.waitSeconds(5)),
+							new WaitCommand(1),
+							new ArmRotateTo(arm,
+									ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
+											+ SmartDashboard.getNumber("shootOffset", 0))),
+					new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+					new WaitCommand(0.3),
+					new SpinFlywheelShooter(shooter, 0),
+					new SpinIntakeGrabbers(shooter, 0),
+					new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 		}
 
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 				Commands.parallel(
 						new WaitCommand(1.7),
+						new ArmRotateTo(arm,
+								ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
+										+ SmartDashboard.getNumber("shootOffset", 0))),
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new WaitCommand(0.3),
+				new SpinFlywheelShooter(shooter, 0),
+				new SpinIntakeGrabbers(shooter, 0),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
+	}
+
+	public static Command shootInSpeakerFar(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			Vision vision) {
+
+		if (vision == null || !vision.isEnabled()) {
+			return shootInSpeaker(drivetrain, arm, shooter);
+		}
+
+		return Commands.sequence(
+				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
+				Commands.parallel(
+						new WaitCommand(1.7),
+						new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, new Rotation2d(), 7),
 						new ArmRotateTo(arm,
 								ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
 										+ SmartDashboard.getNumber("shootOffset", 0))),
