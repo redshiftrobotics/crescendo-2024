@@ -8,7 +8,8 @@ import frc.robot.subsystems.SwerveDrivetrain;
 
 /**
  * This can be the default command for the drivetrain.
- * It should allow the driver to control the robot, as well displaying relevant driver data to SmartDashboard
+ * It should allow the driver to control the robot, as well displaying relevant
+ * driver data to SmartDashboard
  */
 public class ChassisRemoteControl extends Command {
 	protected final SwerveDrivetrain drivetrain;
@@ -59,10 +60,7 @@ public class ChassisRemoteControl extends Command {
 				speedY,
 				speedRotation);
 
-
 		drivetrain.setDesiredState(speeds, isFieldRelative);
-
-		drivetrain.updateSmartDashboard();
 	}
 
 	/**

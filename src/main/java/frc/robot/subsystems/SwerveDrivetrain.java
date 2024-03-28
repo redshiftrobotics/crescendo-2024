@@ -14,8 +14,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics.SwerveDriveWheelStates;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -156,15 +156,6 @@ public class SwerveDrivetrain extends SubsystemBase {
 		pose = poseOdometry.update(
 				getHeading(),
 				getWheelPositions());
-
-		// if (visionSystem != null) {
-		// Optional<EstimatedRobotPose> estimatedPose
-		// =visionSystem.getEstimatedGlobalPose();
-		// if (estimatedPose.isPresent()) {
-		// poseEstimator.addVisionMeasurement(estimatedPose.get().estimatedPose.toPose2d(),
-		// estimatedPose.get().timestampSeconds);
-		// }
-		// }
 
 		if (desiredPose != null) {
 			// Calculate our robot speeds with the PID controllers
@@ -336,7 +327,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
 
 		if (fieldRelative)
-			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
+			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading().plus(Rotation2d.fromDegrees(180)));
 		speeds = ChassisSpeeds.discretize(speeds, TimedRobot.kDefaultPeriod);
 
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
@@ -433,7 +424,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	// --- Util ---
 
 	/** Update SmartDashboard with robot values */
-	public void updateSmartDashboard() {
+	public void updateTelemetry() {
 		// Position display
 		final Pose2d robotPosition = getPosition();
 
@@ -449,16 +440,6 @@ public class SwerveDrivetrain extends SubsystemBase {
 		final double metersPerSecondToMilesPerHourConversion = 2.237;
 		SmartDashboard.putNumber("Robot MPH", speedMetersPerSecond * metersPerSecondToMilesPerHourConversion);
 		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
-
-		// final boolean hasTargetPose = desiredPose != null;
-		// final Pose2d targetPose = hasTargetPose ? desiredPose : new Pose2d();
-		// SmartDashboard.putBoolean("tPoseActive", hasTargetPose);
-		// if (hasTargetPose) {
-		// SmartDashboard.putNumber("tPoseX", targetPose.getX());
-		// SmartDashboard.putNumber("tPoseY", targetPose.getY());
-		// SmartDashboard.putNumber("tPoseDegrees",
-		// targetPose.getRotation().getDegrees());
-		// }
 	}
 
 	/**

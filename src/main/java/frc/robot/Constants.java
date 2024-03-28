@@ -94,18 +94,18 @@ public final class Constants {
 		public static final int NUMBER_OF_SPEED_OPTIONS = 4;
 
 		// Names of options for displaying
-		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost", "Boost++" };
+		public static final String[] maxSpeedOptionsNames = { "Precise", "Normal", "Boost", "Boost+" };
 
 		public static final double MAX_SPEED = SwerveDrivetrainConstants.MAX_OBTAINABLE_SPEED;
 		public static final double MAX_ROTATION_SPEED = Math.PI;
 
 		// max forward/sideways velocities for drivetrain, in meters per second
-		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.95 * MAX_SPEED,
+		public static final double[] maxSpeedOptionsTranslation = { 0.1 * MAX_SPEED, 0.5 * MAX_SPEED, 0.99 * MAX_SPEED,
 				MAX_SPEED };
 
 		// max angular velocity for drivetrain, in radians per second
 		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.5 * MAX_SPEED,
-				0.75 * MAX_SPEED, MAX_SPEED };
+				0.85 * MAX_SPEED, MAX_SPEED };
 	}
 
 	public static class ArmConstants {

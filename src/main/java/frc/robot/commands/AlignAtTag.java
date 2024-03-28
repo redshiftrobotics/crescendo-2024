@@ -115,8 +115,6 @@ public class AlignAtTag extends Command {
 		desiredSpeeds.vyMetersPerSecond = ySpeed;
 
 		drivetrain.setDesiredState(desiredSpeeds, false);
-
-		drivetrain.updateSmartDashboard();
 	}
 
 	@Override

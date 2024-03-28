@@ -4,7 +4,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -17,13 +16,11 @@ public class AlignAtTagWithX extends Command {
 	private final Vision vision;
 	private final int[] tagID;
 
-	private boolean noTagAtStart = false;
+	private boolean shouldEndImmediately = false;
 
-	private final PIDController xController, yController, rotatePID;
+	private final PIDController xController, yController, rotatePIDtag, rotatePIDangle;
 
-	private double tagTTL = (0.2 / TimedRobot.kDefaultPeriod);
-	private double tagLast = 0;
-	private Transform3d last;
+	private double turnToTagSpeed = 0;
 
 	/**
 	 * Create a new AlignAtTag command. Tries to constants Align at a tag while
@@ -34,14 +31,15 @@ public class AlignAtTagWithX extends Command {
 	 * @param vision     the vision subsystem of the robot
 	 * @param tagID      the numerical ID of the tag to turn to, -1 for best tag
 	 */
-	public AlignAtTagWithX(SwerveDrivetrain drivetrain, Vision vision, int[] tagID, double xDistance) {
+	public AlignAtTagWithX(SwerveDrivetrain drivetrain, Vision vision, int[] tagID, double xDistance,
+			Rotation2d rotation) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
 		this.tagID = tagID;
 
 		yController = new PIDController(
-				RobotMovementConstants.TRANSLATION_PID_P,
+				RobotMovementConstants.TRANSLATION_PID_P * 1.25,
 				RobotMovementConstants.TRANSLATION_PID_I,
 				RobotMovementConstants.TRANSLATION_PID_D);
 		yController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
@@ -54,27 +52,44 @@ public class AlignAtTagWithX extends Command {
 		xController.setTolerance(RobotMovementConstants.POSITION_TOLERANCE_METERS);
 		xController.setSetpoint(xDistance);
 
-		rotatePID = new PIDController(
+		rotatePIDtag = new PIDController(
 				RobotMovementConstants.ROTATION_PID_P,
 				RobotMovementConstants.ROTATION_PID_I,
 				RobotMovementConstants.ROTATION_PID_D);
-		rotatePID.enableContinuousInput(-Math.PI, Math.PI);
-		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
-		rotatePID.setSetpoint(0);
+		rotatePIDtag.enableContinuousInput(-Math.PI, Math.PI);
+		rotatePIDtag.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
+		rotatePIDtag.setSetpoint(0);
+
+		rotatePIDangle = new PIDController(
+				RobotMovementConstants.ROTATION_PID_P,
+				RobotMovementConstants.ROTATION_PID_I,
+				RobotMovementConstants.ROTATION_PID_D);
+		rotatePIDangle.enableContinuousInput(-Math.PI, Math.PI);
+		rotatePIDangle.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
+		rotatePIDangle.setSetpoint(rotation.getRadians());
 
 		addRequirements(drivetrain);
 	}
 
+	public AlignAtTagWithX(SwerveDrivetrain drivetrain, Vision vision, int[] tagID, double xDistance) {
+		this(drivetrain, vision, tagID, xDistance, new Rotation2d());
+	}
+
 	@Override
 	public void initialize() {
-		rotatePID.reset();
-		yController.reset();
-		drivetrain.toDefaultStates();
 
-		noTagAtStart = true;
+		// Reset all PID controllers
+		rotatePIDangle.reset();
+		rotatePIDtag.reset();
+		rotatePIDtag.reset();
+		yController.reset();
+
+		shouldEndImmediately = true;
+
+		// Check if we see a tag in the tag list, if we do then cancel immediate ending
 		for (int tag : tagID) {
 			if (vision.getTransformToTag(tag) != null) {
-				noTagAtStart = false;
+				shouldEndImmediately = false;
 				break;
 			}
 		}
@@ -82,6 +97,8 @@ public class AlignAtTagWithX extends Command {
 
 	@Override
 	public void execute() {
+
+		// Loop though all tags until we see a transform to a tag
 		Transform3d transform = null;
 		for (int tag : tagID) {
 			transform = vision.getTransformToTag(tag);
@@ -89,37 +106,46 @@ public class AlignAtTagWithX extends Command {
 				break;
 		}
 
-		// tagLast++;
-		// if (transform == null && tagLast < tagTTL) {
-		// transform = last;
-		// }
-
+		// Default to not driving
 		double xSpeed = 0;
 		double ySpeed = 0;
-		double rotationSpeed = 0;
+
+		// Default rotation to whatever the last rotation to the tag is
+		// This helps incase we turn away from the tag during driving
+		double rotationSpeed = turnToTagSpeed;
+
 		if (transform != null) {
+
+			// If we see the tag update the rotation to the tag
+			turnToTagSpeed = rotatePIDtag
+					.calculate(new Rotation2d(transform.getX(), transform.getY()).unaryMinus().getRotations());
+
+			// Use X and Y controllers to drive to desired distance from tag
 			xSpeed = xController.calculate(transform.getX());
 			ySpeed = yController.calculate(transform.getY());
 
-			if (Math.abs(transform.getX()) < 2 || Math.abs(transform.getY()) < 1) {
-				rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
-			} else {
-				rotationSpeed = rotatePID
-						.calculate(new Rotation2d(transform.getX(), transform.getY()).unaryMinus().getRotations());
-			}
+			// Switch to determine when to switch to always facing given angle.
+			// If we are far enough away then drive by looking at tag so we don't lose the
+			// target
+			// If we are close enough then we just lock the angle
+			boolean driveWithGyro = Math.abs(transform.getX()) < 2 || Math.abs(transform.getY()) < 1;
 
-			last = transform;
-			tagLast = 0;
+			if (driveWithGyro) {
+				rotationSpeed = rotatePIDangle.calculate(drivetrain.getHeading().getRadians());
+			} else {
+				rotationSpeed = turnToTagSpeed;
+			}
 		}
 
 		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), false);
-
-		drivetrain.updateSmartDashboard();
 	}
 
 	@Override
 	public boolean isFinished() {
-		return noTagAtStart || (yController.atSetpoint() && rotatePID.atSetpoint() && xController.atSetpoint());
+		return shouldEndImmediately || (
+			(yController.atSetpoint() && xController.atSetpoint())
+			&& (rotatePIDtag.atSetpoint() || rotatePIDangle.atSetpoint())
+		);
 	}
 
 	@Override

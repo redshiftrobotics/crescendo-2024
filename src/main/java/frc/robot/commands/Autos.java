@@ -161,17 +161,18 @@ public final class Autos {
 	}
 
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
-			ChassisDriveInputs inputs, Alliance team) {
+			ChassisDriveInputs inputs, SendableChooser<Alliance> team) {
 
 		if (vision != null && vision.isEnabled()) {
 
 			Rotation2d rotation = Rotation2d.fromDegrees(90);
-			if (team == Alliance.Blue) {
+			if (team.getSelected() == Alliance.Blue) {
 				rotation = Rotation2d.fromDegrees(-90);
 			}
 
 			return Commands.sequence(
-					new AlignAtTag(drivetrain, vision, new int[] { 5, 6 }, inputs, rotation),
+					new AlignAtTagWithX(drivetrain, vision, new int[] { 5, 6 }, 1, rotation),
+					new AutoDriveTo(drivetrain, new Translation2d(-1, 0)),
 					dropInAmp(drivetrain, arm, shooter, null, inputs, team));
 		}
 
@@ -186,12 +187,6 @@ public final class Autos {
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
 
-	public static Command alignWithAmp(SwerveDrivetrain drivetrain, Vision vision,
-			SendableChooser<Alliance> teamChooser) {
-		return new AlignAtTag(drivetrain, vision, new int[] { 5, 6 }, null,
-				Rotation2d.fromDegrees((teamChooser.getSelected() == Alliance.Blue) ? -90 : 90));
-	}
-
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
 		return shootInSpeaker(drivetrain, arm, shooter, null, null, null);
 	}
@@ -199,7 +194,7 @@ public final class Autos {
 	// Code quality really going down hill here, but ehhh
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
 			ChassisDriveInputs inputs, Alliance team) {
-		
+
 		if (vision != null && vision.isEnabled()) {
 
 			return Commands.sequence(
@@ -215,7 +210,8 @@ public final class Autos {
 					new WaitCommand(0.3),
 					new SpinFlywheelShooter(shooter, 0),
 					new SpinIntakeGrabbers(shooter, 0),
-					new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)).onlyIf(() -> vision.getTransformToTag(7) != null || vision.getTransformToTag(4) != null);
+					new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES))
+					.onlyIf(() -> vision.getTransformToTag(7) != null || vision.getTransformToTag(4) != null);
 
 		}
 
@@ -240,13 +236,13 @@ public final class Autos {
 			return shootInSpeaker(drivetrain, arm, shooter);
 		}
 
-		var tags = new int[] {7, 4};
+		var tags = new int[] { 7, 4 };
 
-		boolean cancel  = true;
+		boolean cancel = true;
 		for (int i : tags) {
 			if (vision.getTransformToTag(i) != null) {
 				cancel = false;
-			}	
+			}
 		}
 
 		if (cancel) {
@@ -279,7 +275,7 @@ public final class Autos {
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, -1),
-				new WaitCommand(0.04),
+				new WaitCommand(0.01),
 				new SpinIntakeGrabbers(shooter, 0),
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}

@@ -111,7 +111,7 @@ public class FollowTag extends Command {
 		double rotateSpeed = 0;
 		if (transform != null) {
 			spinCounter = 0;
-			
+
 			double x = transform.getX();
 			double y = transform.getY();
 			double rotate = new Rotation2d(transform.getX(), transform.getY()).unaryMinus().getRadians();
@@ -119,7 +119,7 @@ public class FollowTag extends Command {
 			// x = xPosMeanFilter.calculate(x);
 			// y = yPosMeanFilter.calculate(y);
 			// rotate = rotatePosMeanFilter.calculate(rotate);
-			
+
 			// x = xPosSlewFilter.calculate(x);
 			// y = yPosSlewFilter.calculate(y);
 			// rotate = rotatePosSlewFilter.calculate(rotate);
@@ -127,7 +127,7 @@ public class FollowTag extends Command {
 			xSpeed = xController.calculate(x);
 			ySpeed = yController.calculate(y);
 			rotateSpeed = rotateController.calculate(rotate);
-			
+
 			xSpeed = xSpeedSlewFilter.calculate(xSpeed);
 			ySpeed = ySpeedSlewFilter.calculate(ySpeed);
 			rotateSpeed = rotateSpeedSlewFilter.calculate(rotateSpeed);
@@ -140,8 +140,6 @@ public class FollowTag extends Command {
 		}
 
 		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotateSpeed), false);
-
-		drivetrain.updateSmartDashboard();
 	}
 
 	@Override

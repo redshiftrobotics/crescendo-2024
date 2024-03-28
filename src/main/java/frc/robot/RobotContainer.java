@@ -8,7 +8,6 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.HIDType;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -178,6 +177,10 @@ public class RobotContainer {
 		// lightStrip.toDefaultPattern();
 	}
 
+	public void updateTelemetry() {
+		drivetrain.updateTelemetry();
+	}
+
 	public void setUpDriveController() {
 		// Create joysticks
 		final GenericHID genericHID = new GenericHID(DriverConstants.DRIVER_JOYSTICK_PORT);
@@ -188,7 +191,6 @@ public class RobotContainer {
 		drivetrain.removeDefaultCommand();
 
 		final Command cancelCommand = new SequentialCommandGroup(
-				// new CancelCommands(drivetrain, lightStrip),
 				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
 
 		// final Command coopLightSignal = new SetLightstripColorFor(lightStrip,
@@ -244,8 +246,9 @@ public class RobotContainer {
 
 			xbox.a().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-180)));
 
-			if (vision != null)
+			if (vision != null) {
 				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
+			}
 
 			new Trigger(() -> xboxRaw.getPOV() == 0)
 					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
@@ -302,11 +305,10 @@ public class RobotContainer {
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightBumper().onTrue(Autos.alignWithAmp(drivetrain, vision, teamChooser));
-			xbox.leftBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter));
+			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs, teamChooser).finallyDo(intakeShooter::stop));
 
-			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs, team));
-			xbox.rightTrigger().and(xbox.a()).onTrue(Autos.shootInSpeakerFar(drivetrain, arm, intakeShooter, vision));
+			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs, team).finallyDo(intakeShooter::stop));
+			xbox.rightTrigger().and(xbox.a()).onTrue(Autos.shootInSpeakerFar(drivetrain, arm, intakeShooter, vision).finallyDo(intakeShooter::stop));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);

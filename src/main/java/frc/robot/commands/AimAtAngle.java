@@ -1,13 +1,12 @@
 package frc.robot.commands;
 
-import frc.robot.Constants.RobotMovementConstants;
-import frc.robot.subsystems.ChassisDriveInputs;
-import frc.robot.subsystems.SwerveDrivetrain;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.RobotMovementConstants;
+import frc.robot.subsystems.ChassisDriveInputs;
+import frc.robot.subsystems.SwerveDrivetrain;
 
 /** Command to automatically aim at a angle */
 public class AimAtAngle extends Command {
@@ -20,7 +19,7 @@ public class AimAtAngle extends Command {
 	 * Create a new AimAtAngle command. Tries to constants face in angle while still
 	 * allowing driver to control robot.
 	 * 
-	 * @param drivetrain          the drivetrain of the robot
+	 * @param drivetrain the drivetrain of the robot
 	 */
 	public AimAtAngle(SwerveDrivetrain drivetrain, ChassisDriveInputs chassisDriveInputs, Rotation2d direction) {
 		this.drivetrain = drivetrain;
@@ -58,7 +57,6 @@ public class AimAtAngle extends Command {
 		}
 
 		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), fieldRelative);
-		drivetrain.updateSmartDashboard();
 	}
 
 	@Override

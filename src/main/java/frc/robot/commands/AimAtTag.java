@@ -1,15 +1,14 @@
 package frc.robot.commands;
 
-import frc.robot.Constants.RobotMovementConstants;
-import frc.robot.subsystems.ChassisDriveInputs;
-import frc.robot.subsystems.SwerveDrivetrain;
-import frc.robot.subsystems.Vision;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.RobotMovementConstants;
+import frc.robot.subsystems.ChassisDriveInputs;
+import frc.robot.subsystems.SwerveDrivetrain;
+import frc.robot.subsystems.Vision;
 
 /** Command to automatically aim at a tag, ends once facing the tag */
 public class AimAtTag extends Command {
@@ -25,9 +24,9 @@ public class AimAtTag extends Command {
 	 * Create a new AimAtTag command. Tries to constants aim at a tag while still
 	 * allowing driver to control robot.
 	 * 
-	 * @param drivetrain          the drivetrain of the robot
-	 * @param vision              the vision subsystem of the robot
-	 * @param tagID               the numerical ID of the tag to turn to, -1 for best tag
+	 * @param drivetrain the drivetrain of the robot
+	 * @param vision     the vision subsystem of the robot
+	 * @param tagID      the numerical ID of the tag to turn to, -1 for best tag
 	 */
 	public AimAtTag(SwerveDrivetrain drivetrain, Vision vision, int tagID, ChassisDriveInputs chassisDriveInputs) {
 		this.drivetrain = drivetrain;
@@ -84,12 +83,11 @@ public class AimAtTag extends Command {
 		}
 
 		ChassisSpeeds desiredSpeeds = new ChassisSpeeds(xSpeed, ySpeed, 0);
-		if (fieldRelative) desiredSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(desiredSpeeds, drivetrain.getHeading());
+		if (fieldRelative)
+			desiredSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(desiredSpeeds, drivetrain.getHeading());
 		desiredSpeeds.omegaRadiansPerSecond = rotationSpeed;
 
 		drivetrain.setDesiredState(desiredSpeeds, false);
-
-		drivetrain.updateSmartDashboard();
 	}
 
 	@Override
