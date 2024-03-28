@@ -34,8 +34,7 @@ public class AlignAtTagWithX extends Command {
 	 * @param vision     the vision subsystem of the robot
 	 * @param tagID      the numerical ID of the tag to turn to, -1 for best tag
 	 */
-	public AlignAtTagWithX(SwerveDrivetrain drivetrain, Vision vision, int[] tagID,
-			Rotation2d rotation, double xDistance) {
+	public AlignAtTagWithX(SwerveDrivetrain drivetrain, Vision vision, int[] tagID, double xDistance) {
 		this.drivetrain = drivetrain;
 
 		this.vision = vision;
@@ -61,7 +60,7 @@ public class AlignAtTagWithX extends Command {
 				RobotMovementConstants.ROTATION_PID_D);
 		rotatePID.enableContinuousInput(-Math.PI, Math.PI);
 		rotatePID.setTolerance(RobotMovementConstants.ANGLE_TOLERANCE_RADIANS);
-		rotatePID.setSetpoint(rotation.getRadians());
+		rotatePID.setSetpoint(0);
 
 		addRequirements(drivetrain);
 	}
@@ -92,7 +91,7 @@ public class AlignAtTagWithX extends Command {
 
 		// tagLast++;
 		// if (transform == null && tagLast < tagTTL) {
-		// 	transform = last;
+		// transform = last;
 		// }
 
 		double xSpeed = 0;
@@ -101,7 +100,13 @@ public class AlignAtTagWithX extends Command {
 		if (transform != null) {
 			xSpeed = xController.calculate(transform.getX());
 			ySpeed = yController.calculate(transform.getY());
-			rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
+
+			if (Math.abs(transform.getX()) < 2 || Math.abs(transform.getY()) < 1) {
+				rotationSpeed = rotatePID.calculate(drivetrain.getHeading().getRadians());
+			} else {
+				rotationSpeed = rotatePID
+						.calculate(new Rotation2d(transform.getX(), transform.getY()).unaryMinus().getRotations());
+			}
 
 			last = transform;
 			tagLast = 0;

@@ -199,15 +199,13 @@ public final class Autos {
 	// Code quality really going down hill here, but ehhh
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
 			ChassisDriveInputs inputs, Alliance team) {
-
-		if (vision != null && vision.isEnabled() && team != null) {
-
-			Rotation2d rotation = Rotation2d.fromDegrees(0);
+		
+		if (vision != null && vision.isEnabled()) {
 
 			return Commands.sequence(
 					Commands.parallel(
 							new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-							new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, rotation, 1.59).raceWith(
+							new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, 1.59).raceWith(
 									Commands.waitSeconds(5)),
 							new WaitCommand(1),
 							new ArmRotateTo(arm,
@@ -217,7 +215,8 @@ public final class Autos {
 					new WaitCommand(0.3),
 					new SpinFlywheelShooter(shooter, 0),
 					new SpinIntakeGrabbers(shooter, 0),
-					new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
+					new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)).onlyIf(() -> vision.getTransformToTag(7) != null || vision.getTransformToTag(4) != null);
+
 		}
 
 		return Commands.sequence(
@@ -241,11 +240,24 @@ public final class Autos {
 			return shootInSpeaker(drivetrain, arm, shooter);
 		}
 
+		var tags = new int[] {7, 4};
+
+		boolean cancel  = true;
+		for (int i : tags) {
+			if (vision.getTransformToTag(i) != null) {
+				cancel = false;
+			}	
+		}
+
+		if (cancel) {
+			return Commands.none();
+		}
+
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 				Commands.parallel(
 						new WaitCommand(1.7),
-						new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, new Rotation2d(), 7),
+						new AlignAtTagWithX(drivetrain, vision, tags, 7),
 						new ArmRotateTo(arm,
 								ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
 										+ SmartDashboard.getNumber("shootOffset", 0))),
