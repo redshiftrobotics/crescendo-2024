@@ -34,7 +34,10 @@ public class MoveToTagAndShootSpeaker extends Command {
 		if (vision != null && vision.isEnabled()) {
 			Transform3d trans = null;
 			for (int i : tags) {
-				trans = vision.getTransformToTag(i);
+				Transform3d newTrans = vision.getTransformToTag(i);
+				if (newTrans != null) {
+					trans = newTrans;
+				}
 			}
 
 			if (trans != null) {
