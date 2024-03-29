@@ -34,7 +34,10 @@ public class MoveToTagAndShootSpeaker extends Command {
 		if (vision != null && vision.isEnabled()) {
 			Transform3d trans = null;
 			for (int i : tags) {
-				trans = vision.getTransformToTag(i);
+				Transform3d newTrans = vision.getTransformToTag(i);
+				if (newTrans != null) {
+					trans = newTrans;
+				}
 			}
 
 			if (trans != null) {
@@ -45,9 +48,9 @@ public class MoveToTagAndShootSpeaker extends Command {
 						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 						Commands.parallel(Commands.sequence(new AutoRotateTo(drivetrain, rotateGoal),
 								new AutoDriveTo(drivetrain,
-										transGoal),
+										transGoal)),
 								new WaitCommand(1.0),
-								new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES)),
+								new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES),
 								new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 								new WaitCommand(0.3),
 								new SpinFlywheelShooter(shooter, 0.0),
