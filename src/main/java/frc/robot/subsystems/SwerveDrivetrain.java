@@ -327,7 +327,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 		SmartDashboard.putNumber("Spin", speeds.omegaRadiansPerSecond);
 
 		if (fieldRelative)
-			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading().plus(Rotation2d.fromDegrees(180)));
+			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
 		speeds = ChassisSpeeds.discretize(speeds, TimedRobot.kDefaultPeriod);
 
 		SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
