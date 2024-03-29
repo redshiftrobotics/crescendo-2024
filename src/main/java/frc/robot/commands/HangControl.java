@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.hang.Hang;
@@ -29,7 +30,7 @@ public class HangControl extends Command {
 
 		boolean useMagneticLimitSwitches = false;
 
-		double speed = speedSupplier.get();
+		double speed = MathUtil.applyDeadband(speedSupplier.get(), 0.1);
 
 		if (useMagneticLimitSwitches) {
 			double currentTime = System.currentTimeMillis();
