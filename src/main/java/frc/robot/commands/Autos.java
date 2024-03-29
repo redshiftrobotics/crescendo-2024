@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
+import frc.robot.commands.deprecated.DriveTransform;
 import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
@@ -200,12 +201,13 @@ public final class Autos {
 			return Commands.sequence(
 					Commands.parallel(
 							new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-							new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, 1.59).raceWith(
+							new AlignAtTagWithX(drivetrain, vision, new int[] { 7, 4 }, 1.59 + 0.25).raceWith(
 									Commands.waitSeconds(5)),
 							new WaitCommand(1),
 							new ArmRotateTo(arm,
 									ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
 											+ SmartDashboard.getNumber("shootOffset", 0))),
+					new AutoDriveTo(drivetrain, new Translation2d(-0.25, 0)),
 					new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 					new WaitCommand(0.3),
 					new SpinFlywheelShooter(shooter, 0),

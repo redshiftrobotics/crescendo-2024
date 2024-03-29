@@ -1,9 +1,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.RobotMovementConstants;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -22,6 +24,10 @@ public class AlignAtTagWithX extends Command {
 
 	private double turnToTagSpeed = 0;
 
+	private final double xDistance;
+
+	private final SlewRateLimiter rotateLimiter = new SlewRateLimiter(Units.degreesToRadians(25));
+
 	/**
 	 * Create a new AlignAtTag command. Tries to constants Align at a tag while
 	 * still
@@ -37,6 +43,7 @@ public class AlignAtTagWithX extends Command {
 
 		this.vision = vision;
 		this.tagID = tagID;
+		this.xDistance = xDistance;
 
 		yController = new PIDController(
 				RobotMovementConstants.TRANSLATION_PID_P * 1.25,
@@ -117,35 +124,33 @@ public class AlignAtTagWithX extends Command {
 		if (transform != null) {
 
 			// If we see the tag update the rotation to the tag
-			turnToTagSpeed = rotatePIDtag
-					.calculate(new Rotation2d(transform.getX(), transform.getY()).unaryMinus().getRotations());
+			turnToTagSpeed = transform.getY() > 0 ? 0.01 : -0.01;
+
+			boolean innerPhase = Math.abs(transform.getX()) < 0.5 + xDistance && Math.abs(transform.getY()) < 0.5;
 
 			// Use X and Y controllers to drive to desired distance from tag
-			xSpeed = xController.calculate(transform.getX());
+			xSpeed = xController.calculate(transform.getX()) * (innerPhase ? 1 : 0.75);
 			ySpeed = yController.calculate(transform.getY());
 
 			// Switch to determine when to switch to always facing given angle.
 			// If we are far enough away then drive by looking at tag so we don't lose the
 			// target
 			// If we are close enough then we just lock the angle
-			boolean driveWithGyro = Math.abs(transform.getX()) < 2 || Math.abs(transform.getY()) < 1;
 
-			if (driveWithGyro) {
+			if (innerPhase) {
 				rotationSpeed = rotatePIDangle.calculate(drivetrain.getHeading().getRadians());
 			} else {
-				rotationSpeed = turnToTagSpeed;
+				rotationSpeed = rotatePIDtag.calculate(new Rotation2d(transform.getX(), transform.getY()).unaryMinus().getRotations());
 			}
 		}
 
-		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, rotationSpeed), false);
+		drivetrain.setDesiredState(new ChassisSpeeds(xSpeed, ySpeed, (rotationSpeed)), false);
 	}
 
 	@Override
 	public boolean isFinished() {
-		return shouldEndImmediately || (
-			(yController.atSetpoint() && xController.atSetpoint())
-			&& (rotatePIDtag.atSetpoint() || rotatePIDangle.atSetpoint())
-		);
+		return shouldEndImmediately || ((yController.atSetpoint() && xController.atSetpoint())
+				&& (rotatePIDtag.atSetpoint() || rotatePIDangle.atSetpoint()));
 	}
 
 	@Override

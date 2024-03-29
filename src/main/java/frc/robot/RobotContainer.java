@@ -31,6 +31,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
+import frc.robot.commands.MoveToTagAndShootSpeaker;
 import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
