@@ -57,7 +57,8 @@ import frc.robot.subsystems.intake.RealShooter;
 public class RobotContainer {
 	// TODO: This is kind of gross. Next year make the controllers subsystems.
 
-	public final CommandXboxController driverXboxController = new CommandXboxController(DriverConstants.DRIVER_JOYSTICK_PORT);
+	public final CommandXboxController driverXboxController = new CommandXboxController(
+			DriverConstants.DRIVER_JOYSTICK_PORT);
 	public final XboxController driverXboxRaw = driverXboxController.getHID();
 
 	public final CommandXboxController operatorXboxController = new CommandXboxController(
@@ -302,7 +303,7 @@ public class RobotContainer {
 							.finallyDo(intakeShooter::stop));
 
 			operatorXboxController.rightTrigger()
-					.onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, teamChooser)
+					.onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, teamChooser, this)
 							.finallyDo(intakeShooter::stop));
 
 			operatorXboxController.y().onTrue(stowArm);

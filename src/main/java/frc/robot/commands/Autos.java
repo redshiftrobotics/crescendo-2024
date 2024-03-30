@@ -131,8 +131,9 @@ public final class Autos {
 				.onlyIf(shouldRunSupplier);
 	}
 
-	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
-		return shootInSpeaker(drivetrain, arm, shooter, null, null);
+	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			RobotContainer cRobotContainer) {
+		return shootInSpeaker(drivetrain, arm, shooter, null, null, cRobotContainer);
 	}
 
 	// Code quality really going down hill here, but whatever
