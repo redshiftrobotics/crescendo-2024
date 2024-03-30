@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.IntakeShooterConstants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.arm.Arm;
@@ -85,7 +86,8 @@ public final class Autos {
 		return dropInAmp(drivetrain, arm, shooter, null, null);
 	}
 
-	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision, SendableChooser<Alliance> allyChooser) {
+	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
+			SendableChooser<Alliance> allyChooser) {
 
 		final int RED_TAG_ID = 5;
 		final int BLUE_TAG_ID = 6;
@@ -99,7 +101,9 @@ public final class Autos {
 		final BooleanSupplier shouldUseVisionSupplier = () -> (vision != null && vision.isEnabled());
 
 		// Go to tag 6 if on blue or 5 if on red
-		final IntSupplier tagSupplier = () -> ((allyChooser == null || allyChooser.getSelected() == Alliance.Blue) ? BLUE_TAG_ID : RED_TAG_ID);
+		final IntSupplier tagSupplier = () -> ((allyChooser == null || allyChooser.getSelected() == Alliance.Blue)
+				? BLUE_TAG_ID
+				: RED_TAG_ID);
 
 		// Rotate to 90 if on blue or -90 if on red
 		final Supplier<Rotation2d> rotationSupplier = () -> (Rotation2d.fromDegrees(
@@ -107,12 +111,15 @@ public final class Autos {
 
 		// Always run if we are not using vision
 		// If we are using vision, then check if we can see the target tag
-		final BooleanSupplier shouldRunSupplier = () -> (!shouldUseVisionSupplier.getAsBoolean() || vision.getTransformToTag(tagSupplier.getAsInt()) != null);
+		final BooleanSupplier shouldRunSupplier = () -> (!shouldUseVisionSupplier.getAsBoolean()
+				|| vision.getTransformToTag(tagSupplier.getAsInt()) != null);
 
 		return Commands.sequence(
-				new AlignAtTagWithX(drivetrain, vision, tagSupplier, distanceToShootFrom, rotationSupplier).onlyIf(shouldUseVisionSupplier),
+				new AlignAtTagWithX(drivetrain, vision, tagSupplier, distanceToShootFrom, rotationSupplier)
+						.onlyIf(shouldUseVisionSupplier),
 				Commands.parallel(
-						new AutoDriveTo(drivetrain, new Translation2d(-distanceToAlignAt + distanceToShootFrom, 0)).onlyIf(shouldUseVisionSupplier),
+						new AutoDriveTo(drivetrain, new Translation2d(-distanceToAlignAt + distanceToShootFrom, 0))
+								.onlyIf(shouldUseVisionSupplier),
 						new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES),
 						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP),
 						new WaitCommand(minSpinUpTimeSeconds)),
@@ -129,7 +136,8 @@ public final class Autos {
 	}
 
 	// Code quality really going down hill here, but whatever
-	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision, SendableChooser<Alliance> allyChooser) {
+	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
+			SendableChooser<Alliance> allyChooser, RobotContainer robotContainer) {
 
 		final int RED_TAG_ID = 4;
 		final int BLUE_TAG_ID = 7;
@@ -143,26 +151,36 @@ public final class Autos {
 		final BooleanSupplier shouldUseVisionSupplier = () -> (vision != null && vision.isEnabled());
 
 		// Go to tag 7 if on blue or 4 if on red
-		final IntSupplier tagSupplier = () -> ((allyChooser == null || allyChooser.getSelected() == Alliance.Blue) ? BLUE_TAG_ID : RED_TAG_ID);
+		final IntSupplier tagSupplier = () -> ((allyChooser == null || allyChooser.getSelected() == Alliance.Blue)
+				? BLUE_TAG_ID
+				: RED_TAG_ID);
 
 		// Always run if we are not using vision
 		// If we are using vision, then check if we can see the target tag
-		final BooleanSupplier shouldRunSupplier = () -> (!shouldUseVisionSupplier.getAsBoolean() || vision.getTransformToTag(tagSupplier.getAsInt()) != null);
+		final BooleanSupplier shouldRunSupplier = () -> (!shouldUseVisionSupplier.getAsBoolean()
+				|| vision.getTransformToTag(tagSupplier.getAsInt()) != null);
 
 		return Commands.sequence(
+				new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1),
+				new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1),
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 				Commands.parallel(
 						Commands.sequence(
-								new AlignAtTagWithX(drivetrain, vision, tagSupplier, distanceFromTag + spacingFromPoint, () -> new Rotation2d()),
+								new AlignAtTagWithX(drivetrain, vision, tagSupplier, distanceFromTag + spacingFromPoint,
+										() -> new Rotation2d()),
 								new AutoDriveTo(drivetrain, new Translation2d(-spacingFromPoint, 0)))
 								.onlyIf(shouldUseVisionSupplier),
 						new WaitCommand(minSpinUpTimeSeconds),
-						new ArmRotateTo(arm, ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES + SmartDashboard.getNumber("shootOffset", 0))),
+						new ArmRotateTo(arm,
+								ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
+										+ SmartDashboard.getNumber("shootOffset", 0))),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new WaitCommand(0.3),
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, 0),
-				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES))
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+				new SetControllerRumbleFor(robotContainer.driverXboxRaw, 1, 1),
+				new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 1, 1))
 				.onlyIf(shouldRunSupplier);
 	}
 

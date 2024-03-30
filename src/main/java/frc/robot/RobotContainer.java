@@ -57,12 +57,12 @@ import frc.robot.subsystems.intake.RealShooter;
 public class RobotContainer {
 	// TODO: This is kind of gross. Next year make the controllers subsystems.
 
-	public CommandXboxController driverXboxController = new CommandXboxController(DriverConstants.DRIVER_JOYSTICK_PORT);
-	public XboxController driverXboxRaw = driverXboxController.getHID();
+	public final CommandXboxController driverXboxController = new CommandXboxController(DriverConstants.DRIVER_JOYSTICK_PORT);
+	public final XboxController driverXboxRaw = driverXboxController.getHID();
 
-	final CommandXboxController operatorXboxController = new CommandXboxController(
+	public final CommandXboxController operatorXboxController = new CommandXboxController(
 			DriverConstants.OPERATOR_JOYSTICK_PORT);
-	final XboxController operatorXboxRaw = operatorXboxController.getHID();
+	public final XboxController operatorXboxRaw = operatorXboxController.getHID();
 
 	// The robot's subsystems and commands are defined here...
 	private final SwerveModule swerveModuleFL = new SwerveModule(
