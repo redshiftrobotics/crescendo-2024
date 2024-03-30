@@ -18,8 +18,8 @@ public class MoveToTagAndShootSpeaker extends Command {
 	private final Vision vision;
 	private final Arm arm;
 	private final IntakeShooter shooter;
-	final int[] tags = { 7, 4 };
-	final double tagOffset = 1.5; // Meters
+	final int[] tags = { 6, 5 };
+	final double tagOffset = 0.1; // Meters
 
 	public MoveToTagAndShootSpeaker(SwerveDrivetrain drivetrain, Vision vision, Arm arm, IntakeShooter intakeShooter) {
 		this.drivetrain = drivetrain;

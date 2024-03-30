@@ -1,11 +1,12 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 /**
  * The intake & shooter system (mounted to the end of the arm)
@@ -13,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
  * Other proposed names for this class were:
  * The Relocator
  * Non-Linear Accelarator
- * I. C. E.
  * Throngler
  * 
  * @author Aceius E.
@@ -25,6 +25,8 @@ public class RealShooter extends IntakeShooter {
 	 * neo550s, 2 sim motors,
 	 */
 
+	private final TimeOfFlight lidar;
+
 	private final WPI_VictorSPX flywheel1;
 	private final WPI_VictorSPX flywheel2;
 
@@ -32,9 +34,10 @@ public class RealShooter extends IntakeShooter {
 
 	// private final DigitalInput intakeSwitch;
 
-	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId) {
+	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId, int lidarId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
+		this.lidar = new TimeOfFlight(lidarId);
 
 		// this.intakeSwitch = new DigitalInput(intakeLimitSwitchId);
 
@@ -76,5 +79,9 @@ public class RealShooter extends IntakeShooter {
 		flywheel1.stopMotor();
 		flywheel2.stopMotor();
 		intake.stopMotor();
+	}
+
+	public double getLidar() {
+		return lidar.getRange();
 	}
 }

@@ -1,8 +1,9 @@
 package frc.robot.subsystems.hang;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RealHang extends Hang {
@@ -29,7 +30,8 @@ public class RealHang extends Hang {
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putString(name + "Hang", motor.get() + "p" + (isAtBottom() ? " - Down" : ""));
+		SmartDashboard.putString(name + "Hang", motor.get() + "p" + (isAtBottom() ? "Down" : "Up"));
+		SmartDashboard.putBoolean(name + "Hang Is Down", isAtBottom());
 	}
 
 	@Override

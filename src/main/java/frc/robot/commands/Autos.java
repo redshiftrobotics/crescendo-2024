@@ -43,9 +43,10 @@ public final class Autos {
 				new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)));
 	}
 
-	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
+	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			RobotContainer cRobotContainer) {
 		return Commands.sequence(
-				shootInSpeaker(drivetrain, arm, shooter),
+				shootInSpeaker(drivetrain, arm, shooter, cRobotContainer),
 
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
 				new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)),
@@ -66,10 +67,11 @@ public final class Autos {
 	 * @param shooter    The shooter
 	 * @return Command schedule instructions
 	 */
-	public static Command shoot2StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
+	public static Command shoot2StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			RobotContainer cRobotContainer) {
 
 		return Commands.sequence(
-				shootInSpeaker(drivetrain, arm, shooter),
+				shootInSpeaker(drivetrain, arm, shooter, cRobotContainer),
 				new SpinFlywheelShooter(shooter, -0.1),
 				Commands.parallel(
 						intakeFromFloorStart(arm, shooter),
@@ -79,7 +81,7 @@ public final class Autos {
 				Commands.race(
 						Commands.waitSeconds(3),
 						new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0))),
-				shootInSpeaker(drivetrain, arm, shooter));
+				shootInSpeaker(drivetrain, arm, shooter, cRobotContainer));
 	}
 
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
@@ -161,9 +163,7 @@ public final class Autos {
 		final BooleanSupplier shouldRunSupplier = () -> (!shouldUseVisionSupplier.getAsBoolean()
 				|| vision.getTransformToTag(tagSupplier.getAsInt()) != null);
 
-		return Commands.sequence(
-				new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1),
-				new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1),
+		return Commands.parallel(Commands.sequence(
 				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 				Commands.parallel(
 						Commands.sequence(
@@ -179,9 +179,9 @@ public final class Autos {
 				new WaitCommand(0.3),
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, 0),
-				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
-				new SetControllerRumbleFor(robotContainer.driverXboxRaw, 1, 1),
-				new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 1, 1))
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)),
+				new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1),
+				new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1))
 				.onlyIf(shouldRunSupplier);
 	}
 

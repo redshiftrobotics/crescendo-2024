@@ -122,7 +122,7 @@ public class RobotContainer {
 			IntakeShooterConstants.FLYWHEEL_MOTOR_1_ID,
 			IntakeShooterConstants.FLYWHEEL_MOTOR_2_ID,
 			IntakeShooterConstants.INTAKE_MOTOR_ID,
-			IntakeShooterConstants.INTAKE_LIMIT_SWITCH_ID) : new DummyShooter();
+			IntakeShooterConstants.INTAKE_LIMIT_SWITCH_ID, IntakeShooterConstants.LIDAR_ID) : new DummyShooter();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
 			gyro,
@@ -146,9 +146,9 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		autoChooser.addOption("Forward", Autos.startingAuto(drivetrain, arm));
-		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter));
+		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, this));
 		autoChooser.setDefaultOption("2+Forward",
-				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter));
+				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, this));
 
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 

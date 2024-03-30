@@ -72,8 +72,8 @@ public final class Constants {
 
 		public static final int LEFT_MOTOR_ID = 1;
 		public static final int RIGHT_MOTOR_ID = 18;
-		public static final int LEFT_LIMIT_SWITCH_ID = 1;
-		public static final int RIGHT_LIMIT_SWITCH_ID = 2;
+		public static final int LEFT_LIMIT_SWITCH_ID = 0;
+		public static final int RIGHT_LIMIT_SWITCH_ID = 1;
 
 		public static final boolean LEFT_MOTOR_IS_INVERTED = false;
 		public static final boolean RIGHT_MOTOR_IS_INVERTED = true;
@@ -88,8 +88,8 @@ public final class Constants {
 
 		public static final double DEAD_ZONE = 0.07;
 
-		public static final double SLEW_RATE_LIMIT_UP = 3.0;
-		public static final double SLEW_RATE_LIMIT_DOWN = 3.0;
+		public static final double SLEW_RATE_LIMIT_UP = 4.0;
+		public static final double SLEW_RATE_LIMIT_DOWN = 4.0;
 
 		public static final int NUMBER_OF_SPEED_OPTIONS = 4;
 
@@ -163,13 +163,14 @@ public final class Constants {
 			}
 		}
 
+		public static final int LIDAR_ID = 28;
+
 		public static final boolean HAS_INTAKE;
 
 		public static final boolean INTAKE_REVERSE = false;
 
 		public static final int FLYWHEEL_MOTOR_1_ID = 13;
 		public static final int FLYWHEEL_MOTOR_2_ID = 7;
-
 		public static final int INTAKE_MOTOR_ID = 12;
 		public static final int INTAKE_LIMIT_SWITCH_ID = -1;
 
@@ -182,7 +183,7 @@ public final class Constants {
 	}
 
 	public static class RobotMovementConstants {
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(3);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(1.0);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(4);
 
 		public static final double ROTATION_PID_P = 0.45;
