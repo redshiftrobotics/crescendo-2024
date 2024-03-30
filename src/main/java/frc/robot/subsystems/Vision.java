@@ -43,17 +43,15 @@ public class Vision extends SubsystemBase {
 
 	public void enableUsing() {
 		visionEnabled = true;
-		SmartDashboard.putBoolean("Use Vision", visionEnabled);
 	}
 
 	public void disableUsing() {
 		visionEnabled = false;
-		SmartDashboard.putBoolean("Use Vision", visionEnabled);
 	}
 
 	public void toggleUsing() {
+		System.out.println("Run");
 		visionEnabled = !visionEnabled;
-		SmartDashboard.putBoolean("Use Vision", visionEnabled);
 	}
 
 	/**
@@ -94,6 +92,9 @@ public class Vision extends SubsystemBase {
 	@Override
 	@SuppressWarnings("unused")
 	public void periodic() {
+
+		SmartDashboard.putBoolean("Use Vision", visionEnabled);
+
 		if (visionEnabled && DEBUG_INFO) {
 			PhotonPipelineResult result = camera.getLatestResult();
 			PhotonTrackedTarget bestTag = result.getBestTarget();

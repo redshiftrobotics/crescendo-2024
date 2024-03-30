@@ -40,7 +40,13 @@
 	"java.settings.url": ".vscode/settings.prefs",
 	"cSpell.words": [
 		"AHRS",
+		"Arducam",
+		"deadband",
+		"Lightstrip",
 		"photonvision",
-		"Ramsete"
+		"Ramsete",
+		"Robo",
+		"teleop",
+		"teleoperated"
 	]
 }

@@ -11,6 +11,8 @@ public class HangControl extends Command {
 	private final Hang hanger;
 	private final Supplier<Double> speedSupplier;
 
+	private final static double deadband = 0.1;
+
 	private final double MILLIS_TILL_BLOCK = Units.secondsToMilliseconds(0.15);
 	private Double timeToBeginBlock;
 
@@ -30,7 +32,7 @@ public class HangControl extends Command {
 
 		boolean useMagneticLimitSwitches = false;
 
-		double speed = MathUtil.applyDeadband(speedSupplier.get(), 0.1);
+		double speed = MathUtil.applyDeadband(speedSupplier.get(), deadband);
 
 		if (useMagneticLimitSwitches) {
 			double currentTime = System.currentTimeMillis();

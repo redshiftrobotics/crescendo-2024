@@ -27,11 +27,11 @@ import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AimAtAngle;
 import frc.robot.commands.ArmRotateTo;
+import frc.robot.commands.AutoRotateTo;
 import frc.robot.commands.Autos;
 import frc.robot.commands.CancelCommands;
 import frc.robot.commands.ChassisRemoteControl;
 import frc.robot.commands.HangControl;
-import frc.robot.commands.MoveToTagAndShootSpeaker;
 import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
@@ -122,7 +122,6 @@ public class RobotContainer {
 
 	private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
-	private Alliance team;
 	private final SendableChooser<Alliance> teamChooser = new SendableChooser<Alliance>();
 
 	private final Vision vision = new Vision(VisionConstants.CAMERA_NAME, VisionConstants.CAMERA_POSE);
@@ -137,18 +136,10 @@ public class RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		autoChooser.addOption("Forward", Autos.startingAuto(drivetrain, arm, leftHang, rightHang));
+		autoChooser.addOption("Forward", Autos.startingAuto(drivetrain, arm));
+		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter));
 		autoChooser.setDefaultOption("2+Forward",
-				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("*1+AmpSide",
-				Autos.shootFromAmpSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-		autoChooser.addOption("*1+SourceSide",
-				Autos.shootFromFarSideAuto(drivetrain, arm, intakeShooter, leftHang, rightHang));
-
-		autoChooser.addOption("*3+Forward+AmpNote+RED", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter, vision,
-				leftHang, rightHang, inputs, Alliance.Red));
-		autoChooser.addOption("*3+Forward+AmpNote+BLUE", Autos.shoot3StartingAuto(drivetrain, arm, intakeShooter,
-				vision, leftHang, rightHang, inputs, Alliance.Blue));
+				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter));
 
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -193,13 +184,6 @@ public class RobotContainer {
 
 		final Command cancelCommand = new SequentialCommandGroup(
 				new InstantCommand(drivetrain::toDefaultStates, drivetrain));
-
-		// final Command coopLightSignal = new SetLightstripColorFor(lightStrip,
-		// LightConstants.LED_COLOR_YELLOW, 10,
-		// "Coop");
-		// final Command amplifyLightSignal = new SetLightstripColorFor(lightStrip,
-		// LightConstants.LED_COLOR_PURPLE, 10,
-		// "Amplify");
 
 		if (genericHIDType == null) {
 			SmartDashboard.putString("Drive Ctrl", onPortMsg + "None");
@@ -252,13 +236,13 @@ public class RobotContainer {
 			}
 
 			new Trigger(() -> xboxRaw.getPOV() == 0)
-					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
+					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0), true));
 			new Trigger(() -> xboxRaw.getPOV() == 90)
-					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(90)));
+					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), true));
 			new Trigger(() -> xboxRaw.getPOV() == 180)
-					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(180)));
+					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(180), true));
 			new Trigger(() -> xboxRaw.getPOV() == 270)
-					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(270)));
+					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(270), true));
 
 			xbox.b().onTrue(cancelCommand);
 		}
@@ -306,10 +290,9 @@ public class RobotContainer {
 			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
 			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, inputs, teamChooser).finallyDo(intakeShooter::stop));
+			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, teamChooser).finallyDo(intakeShooter::stop));
 
-			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, inputs, team).finallyDo(intakeShooter::stop));
-			xbox.rightTrigger().and(xbox.a()).onTrue(Autos.shootInSpeakerFar(drivetrain, arm, intakeShooter, vision).finallyDo(intakeShooter::stop));
+			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, teamChooser).finallyDo(intakeShooter::stop));
 
 			xbox.y().onTrue(stowArm);
 			xbox.a().onTrue(stowArm2);
@@ -334,7 +317,6 @@ public class RobotContainer {
 	public void configureBindings() {
 		setUpDriveController();
 		setUpOperatorController();
-		team = teamChooser.getSelected();
 	}
 
 	/**

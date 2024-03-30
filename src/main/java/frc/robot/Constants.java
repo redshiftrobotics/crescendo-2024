@@ -182,7 +182,7 @@ public final class Constants {
 	}
 
 	public static class RobotMovementConstants {
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(2);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(3);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(4);
 
 		public static final double ROTATION_PID_P = 0.45;
@@ -191,7 +191,7 @@ public final class Constants {
 
 		public static final double TRANSLATION_PID_P = 0.35;
 		public static final double TRANSLATION_PID_I = 0;
-		public static final double TRANSLATION_PID_D = 0.01;
+		public static final double TRANSLATION_PID_D = 0.07;
 		public static final double MAX_TRANSLATION_SPEED = 1.0;
 	}
 
@@ -350,7 +350,7 @@ public final class Constants {
 	}
 
 	public static class LightConstants {
-		public static final int LED_CONTROLLER_PWM_SLOT = 0; // TODO find real value for this
+		public static final int LED_CONTROLLER_PWM_SLOT = 0; // todo find real value for this
 		public static final int LED_QUANTITY = 60;
 
 		public static final double LED_COLOR_RED = 0.61;
