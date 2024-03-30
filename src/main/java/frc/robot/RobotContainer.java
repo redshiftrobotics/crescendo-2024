@@ -250,6 +250,9 @@ public class RobotContainer {
 			new Trigger(() -> driverXboxRaw.getPOV() == 270)
 					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(270), true));
 
+			driverXboxController.leftBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(300)));
+			driverXboxController.rightBumper().onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(60)));
+
 			driverXboxController.b().onTrue(cancelCommand);
 		}
 
