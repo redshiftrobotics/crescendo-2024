@@ -55,6 +55,14 @@ import frc.robot.subsystems.intake.RealShooter;
  * trigger mappings) should be declared here.
  */
 public class RobotContainer {
+	// TODO: This is kind of gross. Next year make the controllers subsystems.
+
+	public CommandXboxController driverXboxController = new CommandXboxController(DriverConstants.DRIVER_JOYSTICK_PORT);
+	public XboxController driverXboxRaw = driverXboxController.getHID();
+
+	final CommandXboxController operatorXboxController = new CommandXboxController(
+			DriverConstants.OPERATOR_JOYSTICK_PORT);
+	final XboxController operatorXboxRaw = operatorXboxController.getHID();
 
 	// The robot's subsystems and commands are defined here...
 	private final SwerveModule swerveModuleFL = new SwerveModule(
@@ -212,39 +220,37 @@ public class RobotContainer {
 		} else {
 			SmartDashboard.putString("Drive Ctrl", onPortMsg + "GamePad");
 
-			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
-			final XboxController xboxRaw = xbox.getHID();
-
 			inputs = new ChassisDriveInputs(
-					xbox::getLeftX, -1,
-					xbox::getLeftY, -1,
-					xbox::getRightX, -1,
+					driverXboxController::getLeftX, -1,
+					driverXboxController::getLeftY, -1,
+					driverXboxController::getRightX, -1,
 					DriverConstants.DEAD_ZONE,
 					DriverConstants.SLEW_RATE_LIMIT_UP, DriverConstants.SLEW_RATE_LIMIT_DOWN);
 
-			xbox.rightTrigger().whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
-			xbox.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
+			driverXboxController.rightTrigger().whileTrue(Commands.startEnd(inputs::fastMode, inputs::normalMode));
+			driverXboxController.leftTrigger().whileTrue(Commands.startEnd(inputs::slowMode, inputs::normalMode));
 
-			xbox.leftStick().whileTrue(Commands.startEnd(inputs::enableMaxSpeedMode, inputs::disableMaxSpeedMode));
+			driverXboxController.leftStick()
+					.whileTrue(Commands.startEnd(inputs::enableMaxSpeedMode, inputs::disableMaxSpeedMode));
 
-			xbox.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
+			driverXboxController.y().onTrue(Commands.runOnce(inputs::toggleFieldRelative));
 
-			xbox.a().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-180)));
+			driverXboxController.a().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(-180)));
 
 			if (vision != null) {
-				xbox.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
+				driverXboxController.x().onTrue(Commands.runOnce(vision::toggleUsing, vision));
 			}
 
-			new Trigger(() -> xboxRaw.getPOV() == 0)
+			new Trigger(() -> driverXboxRaw.getPOV() == 0)
 					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0), true));
-			new Trigger(() -> xboxRaw.getPOV() == 90)
+			new Trigger(() -> driverXboxRaw.getPOV() == 90)
 					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(90), true));
-			new Trigger(() -> xboxRaw.getPOV() == 180)
+			new Trigger(() -> driverXboxRaw.getPOV() == 180)
 					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(180), true));
-			new Trigger(() -> xboxRaw.getPOV() == 270)
+			new Trigger(() -> driverXboxRaw.getPOV() == 270)
 					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(270), true));
 
-			xbox.b().onTrue(cancelCommand);
+			driverXboxController.b().onTrue(cancelCommand);
 		}
 
 		if (inputs != null)
@@ -284,32 +290,35 @@ public class RobotContainer {
 
 		} else {
 			SmartDashboard.putString("Operator Ctrl", onPortMsg + "GamePad");
-			final CommandXboxController xbox = new CommandXboxController(genericHID.getPort());
-			final XboxController xboxRaw = xbox.getHID();
 
-			xbox.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
-			xbox.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
+			operatorXboxController.leftTrigger().onTrue(Autos.intakeFromFloorStart(arm, intakeShooter));
+			operatorXboxController.leftTrigger().onFalse(Autos.intakeFromFloorEnd(arm, intakeShooter));
 
-			xbox.rightBumper().onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, teamChooser).finallyDo(intakeShooter::stop));
+			operatorXboxController.rightBumper()
+					.onTrue(Autos.dropInAmp(drivetrain, arm, intakeShooter, vision, teamChooser)
+							.finallyDo(intakeShooter::stop));
 
-			xbox.rightTrigger().onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, teamChooser).finallyDo(intakeShooter::stop));
+			operatorXboxController.rightTrigger()
+					.onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, teamChooser)
+							.finallyDo(intakeShooter::stop));
 
-			xbox.y().onTrue(stowArm);
-			xbox.a().onTrue(stowArm2);
+			operatorXboxController.y().onTrue(stowArm);
+			operatorXboxController.a().onTrue(stowArm2);
 
-			xbox.x().whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
+			operatorXboxController.x()
+					.whileTrue(Commands.startEnd(intakeShooter::eject, intakeShooter::stop, intakeShooter));
 
-			leftHang.setDefaultCommand(new HangControl(leftHang, xbox::getLeftY));
-			rightHang.setDefaultCommand(new HangControl(rightHang, xbox::getRightY));
+			leftHang.setDefaultCommand(new HangControl(leftHang, operatorXboxController::getLeftY));
+			rightHang.setDefaultCommand(new HangControl(rightHang, operatorXboxController::getRightY));
 
-			new Trigger(() -> xboxRaw.getPOV() == 0)
+			new Trigger(() -> operatorXboxRaw.getPOV() == 0)
 					.onTrue(new InstantCommand(() -> SmartDashboard.putNumber("shootOffset",
 							SmartDashboard.getNumber("shootOffset", 0) + 1)));
-			new Trigger(() -> xboxRaw.getPOV() == 180)
+			new Trigger(() -> operatorXboxRaw.getPOV() == 180)
 					.onTrue(new InstantCommand(() -> SmartDashboard.putNumber("shootOffset",
 							SmartDashboard.getNumber("shootOffset", 0) - 1)));
 
-			xbox.b().onTrue(cancelCommand);
+			operatorXboxController.b().onTrue(cancelCommand);
 		}
 	}
 
