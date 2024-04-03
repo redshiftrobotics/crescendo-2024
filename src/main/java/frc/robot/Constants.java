@@ -106,6 +106,8 @@ public final class Constants {
 		// max angular velocity for drivetrain, in radians per second
 		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.5 * MAX_SPEED,
 				0.85 * MAX_SPEED, MAX_SPEED };
+
+		public static final boolean ENABLE_RUMBLE = false;
 	}
 
 	public static class ArmConstants {

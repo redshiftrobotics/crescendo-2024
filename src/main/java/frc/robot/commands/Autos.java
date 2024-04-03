@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -182,9 +183,12 @@ public final class Autos {
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, 0),
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)),
-				new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1),
-				new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1))
-				.onlyIf(shouldRunSupplier);
+				DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1)
+						: Commands.sequence(),
+				DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1)
+						: Commands.sequence()
+		// if rumble isn't enabled pass an empty sequence instead
+		).onlyIf(shouldRunSupplier);
 	}
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
