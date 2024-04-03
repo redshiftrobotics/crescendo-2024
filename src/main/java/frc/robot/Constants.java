@@ -174,8 +174,8 @@ public final class Constants {
 		public static final int INTAKE_MOTOR_ID = 12;
 		public static final int INTAKE_LIMIT_SWITCH_ID = -1;
 
-		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = 0.5;
-		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = 1.0;
+		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = -0.5;
+		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = -1.0;
 
 		public static final double INTAKE_GRABBER_SPEED_AMP = 1.0;
 		public static final double INTAKE_GRABBER_SPEED_SPEAKER = 1.0;
@@ -236,7 +236,7 @@ public final class Constants {
 					VELOCITY_MOTOR_ID_FL = 2;
 					ANGULAR_MOTOR_ID_FL = 3;
 					ANGULAR_MOTOR_ENCODER_ID_FL = 3;
-					ANGULAR_MOTOR_ENCODER_OFFSET_FL = -0.881591796875 + 0.5;
+					ANGULAR_MOTOR_ENCODER_OFFSET_FL = 0.881591796875 - 0.25;
 
 					// Front right
 					VELOCITY_MOTOR_ID_FR = 14; // Was 16

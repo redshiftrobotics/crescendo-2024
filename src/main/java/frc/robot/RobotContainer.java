@@ -157,6 +157,7 @@ public class RobotContainer {
 		SmartDashboard.putData("Ally", teamChooser);
 
 		SmartDashboard.putNumber("shootOffset", 0);
+		SmartDashboard.putData(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, this));
 
 		// SmartDashboard.putData("ArmUp", new ArmRotateTo(arm,
 		// ArmConstants.ARM_START_DEGREES));
@@ -251,8 +252,10 @@ public class RobotContainer {
 			new Trigger(() -> driverXboxRaw.getPOV() == 270)
 					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(270), true));
 
-			driverXboxController.leftBumper().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(300)));
-			driverXboxController.rightBumper().whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(60)));
+			driverXboxController.leftBumper()
+					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(300)));
+			driverXboxController.rightBumper()
+					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(60)));
 
 			driverXboxController.b().onTrue(cancelCommand);
 		}
