@@ -90,7 +90,11 @@ public class RealShooter extends IntakeShooter {
 
 	public double getLidar() {
 		return sensorMedianFilter.calculate(
-			lidar.getRange() / 1000
-		);
+				lidar.getRange() / 1000);
+	}
+
+	@Override
+	public void periodic() {
+		SmartDashboard.putNumber("Lidar", getLidar());
 	}
 }

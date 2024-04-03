@@ -100,7 +100,9 @@ public final class Autos {
 		final double minSpinUpTimeSeconds = 0.5;
 
 		// Say whether to use vision
-		final BooleanSupplier shouldUseVisionSupplier = () -> (vision != null && vision.isEnabled());
+		// final BooleanSupplier shouldUseVisionSupplier = () -> (vision != null &&
+		// vision.isEnabled());
+		final BooleanSupplier shouldUseVisionSupplier = () -> false;
 
 		// Go to tag 6 if on blue or 5 if on red
 		final IntSupplier tagSupplier = () -> ((allyChooser == null || allyChooser.getSelected() == Alliance.Blue)
