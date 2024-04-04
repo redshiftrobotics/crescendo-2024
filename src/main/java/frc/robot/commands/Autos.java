@@ -28,7 +28,7 @@ import frc.robot.subsystems.intake.IntakeShooter;
  */
 public final class Autos {
 
-	final static double driveDistanceForNote1 = 1.1;
+	final static double driveDistanceForNote1 = 1.68;
 
 	/** Example static factory for an autonomous command. */
 	public static Command driveAuto(SwerveDrivetrain drivetrain, Translation2d translation) {
