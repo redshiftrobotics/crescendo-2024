@@ -107,7 +107,7 @@ public final class Constants {
 		public static final double[] maxSpeedOptionsRotation = { 0.25 * MAX_ROTATION_SPEED, 0.5 * MAX_SPEED,
 				0.85 * MAX_SPEED, MAX_SPEED };
 
-		public static final boolean ENABLE_RUMBLE = false;
+		public static final boolean ENABLE_RUMBLE = true;
 	}
 
 	public static class ArmConstants {
