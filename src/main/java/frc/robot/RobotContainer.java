@@ -253,9 +253,16 @@ public class RobotContainer {
 					.onTrue(new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(270), true));
 
 			driverXboxController.leftBumper()
-					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(300)));
+					.whileTrue(new AimAtAngle(drivetrain, inputs,
+							teamChooser.getSelected() == Alliance.Blue ? Rotation2d.fromDegrees(270)
+									: Rotation2d.fromDegrees(90)));
 			driverXboxController.rightBumper()
-					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(60)));
+					.whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(0)));
+
+			// driverXboxController.leftBumper()
+			// .whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(300)));
+			// driverXboxController.rightBumper()
+			// .whileTrue(new AimAtAngle(drivetrain, inputs, Rotation2d.fromDegrees(60)));
 
 			driverXboxController.b().onTrue(cancelCommand);
 		}

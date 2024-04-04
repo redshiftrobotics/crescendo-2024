@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -120,11 +121,13 @@ public final class Autos {
 				|| vision.getTransformToTag(tagSupplier.getAsInt()) != null);
 
 		return Commands.sequence(
-				new AlignAtTagWithX(drivetrain, vision, tagSupplier, distanceToShootFrom, rotationSupplier)
-						.onlyIf(shouldUseVisionSupplier),
+				// new AlignAtTagWithX(drivetrain, vision, tagSupplier, distanceToShootFrom,
+				// rotationSupplier)
+				// .onlyIf(shouldUseVisionSupplier),
 				Commands.parallel(
-						new AutoDriveTo(drivetrain, new Translation2d(-distanceToAlignAt + distanceToShootFrom, 0))
-								.onlyIf(shouldUseVisionSupplier),
+						// new AutoDriveTo(drivetrain, new Translation2d(-distanceToAlignAt +
+						// distanceToShootFrom, 0))
+						// .onlyIf(shouldUseVisionSupplier),
 						new ArmRotateTo(arm, ArmConstants.ARM_AMP_SHOOTING_DEGREES),
 						new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_AMP),
 						new WaitCommand(minSpinUpTimeSeconds)),
@@ -166,29 +169,35 @@ public final class Autos {
 		final BooleanSupplier shouldRunSupplier = () -> (!shouldUseVisionSupplier.getAsBoolean()
 				|| vision.getTransformToTag(tagSupplier.getAsInt()) != null);
 
-		return Commands.parallel(Commands.sequence(
-				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-				Commands.parallel(
-						Commands.sequence(
-								new AlignAtTagWithX(drivetrain, vision, tagSupplier, distanceFromTag + spacingFromPoint,
-										() -> new Rotation2d()),
-								new AutoDriveTo(drivetrain, new Translation2d(-spacingFromPoint, 0)))
-								.onlyIf(shouldUseVisionSupplier),
-						new WaitCommand(minSpinUpTimeSeconds),
-						new ArmRotateTo(arm,
-								ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
-										+ SmartDashboard.getNumber("shootOffset", 0))),
-				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
-				new WaitCommand(0.3),
-				new SpinFlywheelShooter(shooter, 0),
-				new SpinIntakeGrabbers(shooter, 0),
-				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)),
-				DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1)
-						: Commands.sequence(),
-				DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1)
-						: Commands.sequence()
-		// if rumble isn't enabled pass an empty sequence instead
-		).onlyIf(shouldRunSupplier);
+		return Commands
+				.parallel(
+						new InstantCommand(() -> SmartDashboard.putBoolean("Got to Command", true)), Commands.sequence(
+								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
+								Commands.parallel(
+										Commands.sequence(
+												new AlignAtTagWithX(drivetrain, vision, tagSupplier,
+														distanceFromTag + spacingFromPoint,
+														() -> new Rotation2d()),
+												Commands.race(
+														new AutoDriveTo(drivetrain,
+																new Translation2d(-spacingFromPoint, 0)),
+														new WaitCommand(4)))
+												.onlyIf(shouldUseVisionSupplier),
+										new WaitCommand(minSpinUpTimeSeconds),
+										new ArmRotateTo(arm,
+												ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
+														+ SmartDashboard.getNumber("shootOffset", 0))),
+								new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+								new WaitCommand(0.3),
+								new SpinFlywheelShooter(shooter, 0),
+								new SpinIntakeGrabbers(shooter, 0),
+								new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)),
+						DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1)
+								: Commands.sequence(),
+						DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1)
+								: Commands.sequence()
+				// if rumble isn't enabled pass an empty sequence instead
+				).onlyIf(shouldRunSupplier);
 	}
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
@@ -201,8 +210,8 @@ public final class Autos {
 	public static Command intakeFromFloorEnd(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, 0),
-				new SpinIntakeGrabbers(shooter, -1),
-				new WaitCommand(0.01),
+				new SpinIntakeGrabbers(shooter, -0.75),
+				new WaitCommand(0.0025),
 				new SpinIntakeGrabbers(shooter, 0),
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}

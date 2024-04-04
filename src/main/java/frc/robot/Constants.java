@@ -146,7 +146,7 @@ public final class Constants {
 
 		public static final boolean ARE_MOTORS_REVERSED = false;
 
-		public static final double ELEVATION_PID_P = 6.5;
+		public static final double ELEVATION_PID_P = 13.6;
 		public static final double ELEVATION_PID_I = 0.0;
 		public static final double ELEVATION_PID_D = 0.0;
 	}
@@ -179,9 +179,9 @@ public final class Constants {
 		public static final double FLYWHEEL_SHOOTER_SPEED_AMP = -0.5;
 		public static final double FLYWHEEL_SHOOTER_SPEED_SPEAKER = -1.0;
 
-		public static final double INTAKE_GRABBER_SPEED_AMP = 1.0;
-		public static final double INTAKE_GRABBER_SPEED_SPEAKER = 1.0;
-		public static final double INTAKE_GRABBER_SPEED_INTAKE = -1.0;
+		public static final double INTAKE_GRABBER_SPEED_AMP = .75;
+		public static final double INTAKE_GRABBER_SPEED_SPEAKER = .75;
+		public static final double INTAKE_GRABBER_SPEED_INTAKE = -.75;
 	}
 
 	public static class RobotMovementConstants {

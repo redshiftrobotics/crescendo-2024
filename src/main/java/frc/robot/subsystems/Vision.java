@@ -17,7 +17,7 @@ public class Vision extends SubsystemBase {
 
 	private final static boolean DEBUG_INFO = false;
 
-	private boolean visionEnabled = true;
+	private boolean visionEnabled = false;
 
 	final PhotonCamera camera;
 	final Transform3d robotToCamera;
