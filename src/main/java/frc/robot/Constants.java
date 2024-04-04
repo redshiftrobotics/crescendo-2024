@@ -135,7 +135,7 @@ public final class Constants {
 		public static final double ARM_START_DEGREES = -38.0;
 		public static final double ARM_STOW_DEGREES = -83.0;
 		public static final double ARM_STOW_2_DEGREES = -100.0;
-		public static final double ARM_AMP_SHOOTING_DEGREES = -27.8;
+		public static final double ARM_AMP_SHOOTING_DEGREES = -24;
 		public static final double ARM_SPEAKER_SHOOTING_DEGREES = -105.822;
 		public static final double ARM_SPEAKER_SHOOTING_DEGREES_FAR = -105.822 + 10;
 		public static final double ARM_INTAKE_DEGREES = -110.5;
