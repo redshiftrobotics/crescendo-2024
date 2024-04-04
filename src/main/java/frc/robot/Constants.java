@@ -185,7 +185,7 @@ public final class Constants {
 	}
 
 	public static class RobotMovementConstants {
-		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(4);
+		public static final double POSITION_TOLERANCE_METERS = Units.inchesToMeters(6);
 		public static final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(4);
 
 		public static final double ROTATION_PID_P = 0.45;
