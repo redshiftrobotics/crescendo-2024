@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
 		// Instantiate the RobotContainer. This will perform all the button bindings,
 		// and put the autonomous chooser on the dashboard.
 		robotContainer = new RobotContainer();
+		RobotController.setBrownoutVoltage(Constants.ROBOT_BROWNOUT_LIMIT);
 	}
 
 	/**

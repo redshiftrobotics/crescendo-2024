@@ -22,6 +22,8 @@ public final class Constants {
 	public static final Bot currentBot;
 	public static final String serialNumber;
 
+	public static final double ROBOT_BROWNOUT_LIMIT = 6.0;
+
 	public static final double BOT_WIDTH = 0.885; // metres
 
 	/**
