@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -191,11 +190,13 @@ public final class Autos {
 								new WaitCommand(0.3),
 								new SpinFlywheelShooter(shooter, 0),
 								new SpinIntakeGrabbers(shooter, 0),
-								new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)),
-						DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1)
-								: Commands.sequence(),
-						DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1)
-								: Commands.sequence()
+								new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES))
+				// DriverConstants.ENABLE_RUMBLE ? new
+				// SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1)
+				// : Commands.sequence(),
+				// DriverConstants.ENABLE_RUMBLE ? new
+				// SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1)
+				// : Commands.sequence()
 				// if rumble isn't enabled pass an empty sequence instead
 				).onlyIf(shouldRunSupplier);
 	}
