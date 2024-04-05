@@ -174,15 +174,15 @@ public final class Autos {
 						new InstantCommand(() -> SmartDashboard.putBoolean("Got to Command", true)), Commands.sequence(
 								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 								Commands.parallel(
-										Commands.sequence(
-												new AlignAtTagWithX(drivetrain, vision, tagSupplier,
-														distanceFromTag + spacingFromPoint,
-														() -> new Rotation2d()),
-												Commands.race(
-														new AutoDriveTo(drivetrain,
-																new Translation2d(-spacingFromPoint, 0)),
-														new WaitCommand(4)))
-												.onlyIf(shouldUseVisionSupplier),
+										// Commands.sequence(
+										// new AlignAtTagWithX(drivetrain, vision, tagSupplier,
+										// distanceFromTag + spacingFromPoint,
+										// () -> new Rotation2d()),
+										// Commands.race(
+										// new AutoDriveTo(drivetrain,
+										// new Translation2d(-spacingFromPoint, 0)),
+										// new WaitCommand(4)))
+										// .onlyIf(shouldUseVisionSupplier),
 										new WaitCommand(minSpinUpTimeSeconds),
 										new ArmRotateTo(arm,
 												ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
@@ -202,7 +202,7 @@ public final class Autos {
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
-				new SpinFlywheelShooter(shooter, 0.2),
+				new SpinFlywheelShooter(shooter, 0.1),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
 	}
@@ -211,7 +211,7 @@ public final class Autos {
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, -0.75),
-				new WaitCommand(0.005),
+				new WaitCommand(0.0025),
 				new SpinIntakeGrabbers(shooter, 0),
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
