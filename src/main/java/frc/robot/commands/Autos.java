@@ -202,7 +202,7 @@ public final class Autos {
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
 		return Commands.sequence(
-				new SpinFlywheelShooter(shooter, 0.1),
+				new SpinFlywheelShooter(shooter, 0.2),
 				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
 				new ArmRotateTo(arm, Constants.ArmConstants.ARM_INTAKE_DEGREES));
 	}
@@ -211,7 +211,7 @@ public final class Autos {
 		return Commands.sequence(
 				new SpinFlywheelShooter(shooter, 0),
 				new SpinIntakeGrabbers(shooter, -0.75),
-				new WaitCommand(0.0025),
+				new WaitCommand(0.005),
 				new SpinIntakeGrabbers(shooter, 0),
 				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES));
 	}
