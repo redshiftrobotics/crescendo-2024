@@ -15,11 +15,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.XboxControllerRumbler;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.intake.IntakeShooter;
 
@@ -46,7 +46,7 @@ public final class Autos {
 	}
 
 	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
-			RobotContainer cRobotContainer) {
+			RobotContainer cRobotContainer, XboxControllerRumbler driveRumbler, XboxControllerRumbler operatorRumbler) {
 		return Commands.sequence(
 				shootInSpeaker(drivetrain, arm, shooter, cRobotContainer),
 
@@ -70,7 +70,7 @@ public final class Autos {
 	 * @return Command schedule instructions
 	 */
 	public static Command shoot2StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
-			RobotContainer cRobotContainer) {
+			RobotContainer cRobotContainer, XboxControllerRumbler driveRumbler, XboxControllerRumbler operatorRumbler) {
 
 		return Commands.sequence(
 				shootInSpeaker(drivetrain, arm, shooter, cRobotContainer),
@@ -141,12 +141,13 @@ public final class Autos {
 
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
 			RobotContainer cRobotContainer) {
-		return shootInSpeaker(drivetrain, arm, shooter, null, null, cRobotContainer);
+		return shootInSpeaker(drivetrain, arm, shooter, null, null, cRobotContainer, null, null);
 	}
 
 	// Code quality really going down hill here, but whatever
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
-			SendableChooser<Alliance> allyChooser, RobotContainer robotContainer) {
+			SendableChooser<Alliance> allyChooser, RobotContainer robotContainer, XboxControllerRumbler driverRumbler,
+			XboxControllerRumbler operatorRumbler) {
 
 		final int RED_TAG_ID = 4;
 		final int BLUE_TAG_ID = 7;
@@ -175,6 +176,8 @@ public final class Autos {
 								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
 								Commands.parallel(
 										Commands.sequence(
+												new RumbleDuration(operatorRumbler, 1),
+												new RumbleDuration(driverRumbler, 1),
 												new AlignAtTagWithX(drivetrain, vision, tagSupplier,
 														distanceFromTag + spacingFromPoint,
 														() -> new Rotation2d()),
@@ -191,11 +194,9 @@ public final class Autos {
 								new WaitCommand(0.3),
 								new SpinFlywheelShooter(shooter, 0),
 								new SpinIntakeGrabbers(shooter, 0),
-								new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES)),
-						DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1)
-								: Commands.sequence(),
-						DriverConstants.ENABLE_RUMBLE ? new SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1)
-								: Commands.sequence()
+								new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+								Commands.parallel(new RumbleDuration(operatorRumbler, 1),
+										new RumbleDuration(driverRumbler, 1)))
 				// if rumble isn't enabled pass an empty sequence instead
 				).onlyIf(shouldRunSupplier);
 	}

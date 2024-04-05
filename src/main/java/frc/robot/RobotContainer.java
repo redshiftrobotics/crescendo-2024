@@ -36,6 +36,7 @@ import frc.robot.subsystems.ChassisDriveInputs;
 import frc.robot.subsystems.SwerveDrivetrain;
 import frc.robot.subsystems.SwerveModule;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.XboxControllerRumbler;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.DummyArm;
 import frc.robot.subsystems.arm.RealArm;
@@ -64,6 +65,9 @@ public class RobotContainer {
 	public final CommandXboxController operatorXboxController = new CommandXboxController(
 			DriverConstants.OPERATOR_JOYSTICK_PORT);
 	public final XboxController operatorXboxRaw = operatorXboxController.getHID();
+
+	public final XboxControllerRumbler driverRumbler = new XboxControllerRumbler(driverXboxRaw);
+	public final XboxControllerRumbler operatorRumbler = new XboxControllerRumbler(operatorXboxRaw);
 
 	// The robot's subsystems and commands are defined here...
 	private final SwerveModule swerveModuleFL = new SwerveModule(
@@ -146,9 +150,10 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		autoChooser.addOption("Forward", Autos.startingAuto(drivetrain, arm));
-		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, this));
+		autoChooser.addOption("1+Forward",
+				Autos.shootStartingAuto(drivetrain, arm, intakeShooter, this, driverRumbler, operatorRumbler));
 		autoChooser.setDefaultOption("2+Forward",
-				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, this));
+				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, this, driverRumbler, operatorRumbler));
 
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -157,7 +162,8 @@ public class RobotContainer {
 		SmartDashboard.putData("Ally", teamChooser);
 
 		SmartDashboard.putNumber("shootOffset", 0);
-		SmartDashboard.putData(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, this));
+		SmartDashboard
+				.putData(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, this));
 
 		// SmartDashboard.putData("ArmUp", new ArmRotateTo(arm,
 		// ArmConstants.ARM_START_DEGREES));
@@ -313,7 +319,9 @@ public class RobotContainer {
 							.finallyDo(intakeShooter::stop));
 
 			operatorXboxController.rightTrigger()
-					.onTrue(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, vision, teamChooser, this)
+					.onTrue(Autos
+							.shootInSpeaker(drivetrain, arm, intakeShooter, vision, teamChooser, this, driverRumbler,
+									operatorRumbler)
 							.finallyDo(intakeShooter::stop));
 
 			operatorXboxController.y().onTrue(stowArm);

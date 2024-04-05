@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Vision subsystem */
 public class Vision extends SubsystemBase {
 
-	private final static boolean DEBUG_INFO = false;
+	private final static boolean DEBUG_INFO = true;
 
 	private boolean visionEnabled = false;
 

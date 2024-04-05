@@ -75,7 +75,7 @@ public class RealShooter extends IntakeShooter {
 
 	@Override
 	public void eject() {
-		setIntakeGrabberSpeed(-1);
+		setIntakeGrabberSpeed(-0.75);
 		setFlyWheelShooterSpeed(-0.1);
 	}
 
