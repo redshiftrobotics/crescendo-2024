@@ -149,7 +149,8 @@ public class RobotContainer {
 		autoChooser.addOption("1+Forward", Autos.shootStartingAuto(drivetrain, arm, intakeShooter, this));
 		autoChooser.setDefaultOption("2+Forward",
 				Autos.shoot2StartingAuto(drivetrain, arm, intakeShooter, this));
-
+		autoChooser.addOption("4 note",
+				Autos.shoot4StartingAuto(drivetrain, arm, intakeShooter, vision, teamChooser, this));
 		SmartDashboard.putData("Auto Chooser", autoChooser);
 
 		teamChooser.setDefaultOption("Blue", Alliance.Blue);
