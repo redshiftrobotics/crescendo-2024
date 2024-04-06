@@ -44,6 +44,15 @@ public final class Autos {
 				new AutoDriveTo(drivetrain, new Translation2d(driveDistanceForNote1, 0)));
 	}
 
+	public static Command diagonalShoot1(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter intakeShooter,
+			RobotContainer cRobotContainer) {
+		return Commands.sequence(
+				shootInSpeaker(drivetrain, arm, intakeShooter, cRobotContainer),
+				new AutoDriveTo(drivetrain, new Translation2d(0.5, 0)),
+				new AutoRotateTo(drivetrain, Rotation2d.fromDegrees(0)),
+				new AutoDriveTo(drivetrain, new Translation2d(0.5, 0.0)));
+	}
+
 	public static Command shootStartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
 			RobotContainer cRobotContainer) {
 		return Commands.sequence(
