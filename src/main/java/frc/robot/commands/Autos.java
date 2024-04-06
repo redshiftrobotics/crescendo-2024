@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,7 +30,10 @@ import frc.robot.subsystems.intake.IntakeShooter;
  */
 public final class Autos {
 
+	final static double speakerDepth = Units.inchesToMeters(36.125);
 	final static double driveDistanceForNote1 = 1.68;
+	final static Translation2d rightNotePickup = new Translation2d(
+			Units.inchesToMeters((144 - speakerDepth) / 2) - (Constants.BOT_WIDTH / 2), Units.inchesToMeters(57));
 
 	/** Example static factory for an autonomous command. */
 	public static Command driveAuto(SwerveDrivetrain drivetrain, Translation2d translation) {
@@ -84,6 +88,73 @@ public final class Autos {
 						Commands.waitSeconds(3),
 						new AutoDriveTo(drivetrain, new Translation2d(-driveDistanceForNote1, 0))),
 				shootInSpeaker(drivetrain, arm, shooter, cRobotContainer));
+	}
+
+	public static Command shootSideAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter,
+			Vision vision, SendableChooser<Alliance> alliance, boolean isAmpSide, RobotContainer cRobotContainer)
+			throws Exception {
+		// If on red, and going for amp side note (right side) keep translation
+		// If on red, and going for stage side note (left side) mirror translation y
+		// If on blue, and going for amp side note (left side) mirror translation y
+		// If on blue, and going for stage side note (right side) keep translation
+		// if (!vision.isEnabled())
+		// throw new UnsupportedOperationException("This auto requires vision!");
+
+		final int speakerTagId = (alliance.getSelected() == Alliance.Red) ? 4 : 7;
+		final Translation2d sideNoteTranslation = new Translation2d(rightNotePickup.getX(),
+				(alliance.getSelected() == Alliance.Red) == isAmpSide ? rightNotePickup.getY()
+						: -rightNotePickup.getY());
+		return Commands.sequence(
+				intakeFromFloorStart(arm, shooter),
+				new AutoDriveTo(drivetrain, sideNoteTranslation),
+				new AutoDriveTo(drivetrain, new Translation2d(0, sideNoteTranslation.getY())),
+				intakeFromFloorEnd(arm, shooter),
+				// new AutoDriveTo(drivetrain, sideNoteTranslation.times(-1)),
+				new AutoDriveTo(drivetrain,
+						new Translation2d(-sideNoteTranslation.getX() * 2, -sideNoteTranslation.getY())),
+				// new FollowTag(drivetrain, vision, speakerTagId,
+				// new Translation2d(-speakerDepth - Constants.BOT_WIDTH / 2, 0)),
+				shootInSpeaker(drivetrain, arm, shooter, cRobotContainer));
+	}
+
+	public static Command shoot3StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
+			SendableChooser<Alliance> alliance, RobotContainer cRobotContainer) throws Exception {
+		// final Optional<Alliance> ally = DriverStation.getAlliance();
+
+		// // if (!vision.isEnabled())
+		// // throw new UnsupportedOperationException("This auto requires vision!");
+		// if (ally.isEmpty())
+		// throw new Exception("DriverStation.getAlliance is not present. Set the
+		// alliance in the driver station.");
+
+		// boolean redAlliance = ally.get() == Alliance.Red;
+
+		return Commands.sequence(
+				shoot2StartingAuto(drivetrain, arm, shooter, cRobotContainer),
+				shootSideAuto(drivetrain, arm, shooter, vision, alliance, true, cRobotContainer));
+
+	}
+
+	public static Command shoot4StartingAuto(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
+			SendableChooser<Alliance> alliance, RobotContainer container) {
+		// final Optional<Alliance> ally = DriverStation.getAlliance();
+
+		// if (!vision.isEnabled())
+		// throw new UnsupportedOperationException("This auto requires vision!");
+		// if (ally.isEmpty())
+		// throw new Exception("DriverStation.getAlliance is not present. Set the
+		// alliance in the driver station.");
+		Command opSequence;
+		try {
+			opSequence = Commands.sequence(
+					shoot2StartingAuto(drivetrain, arm, shooter, container),
+					shootSideAuto(drivetrain, arm, shooter, vision, alliance, true, container),
+					shootSideAuto(drivetrain, arm, shooter, vision, alliance, false, container));
+		} catch (Exception e) {
+			opSequence = Commands.sequence();
+		}
+
+		return opSequence;
 	}
 
 	public static Command dropInAmp(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter) {
