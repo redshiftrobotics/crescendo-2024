@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveDrivetrain;
@@ -152,6 +153,20 @@ public final class Autos {
 		return shootInSpeaker(drivetrain, arm, shooter, null, null, cRobotContainer);
 	}
 
+	private static Command setRumble(boolean enabled, RobotContainer robotContainer) {
+		final double power = enabled ? 3 : 0;
+
+		final Command rumble1 = DriverConstants.ENABLE_RUMBLE
+				? new SetControllerRumble(robotContainer.driverXboxRaw, power)
+				: Commands.sequence();
+
+		final Command rumble2 = DriverConstants.ENABLE_RUMBLE
+				? new SetControllerRumble(robotContainer.operatorXboxRaw, power)
+				: Commands.sequence();
+
+		return Commands.parallel(rumble1, rumble2);
+	}
+
 	// Code quality really going down hill here, but whatever
 	public static Command shootInSpeaker(SwerveDrivetrain drivetrain, Arm arm, IntakeShooter shooter, Vision vision,
 			SendableChooser<Alliance> allyChooser, RobotContainer robotContainer) {
@@ -177,37 +192,35 @@ public final class Autos {
 		final BooleanSupplier shouldRunSupplier = () -> (!shouldUseVisionSupplier.getAsBoolean()
 				|| vision.getTransformToTag(tagSupplier.getAsInt()) != null);
 
+		final Command mainSequence = Commands.sequence(
+				setRumble(true, robotContainer),
+				new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
+				Commands.parallel(
+						// Commands.sequence(
+						// new AlignAtTagWithX(drivetrain, vision, tagSupplier,
+						// distanceFromTag + spacingFromPoint,
+						// () -> new Rotation2d()),
+						// Commands.race(
+						// new AutoDriveTo(drivetrain,
+						// new Translation2d(-spacingFromPoint, 0)),
+						// new WaitCommand(4)))
+						// .onlyIf(shouldUseVisionSupplier),
+						new WaitCommand(minSpinUpTimeSeconds),
+						new ArmRotateTo(arm,
+								ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
+										+ SmartDashboard.getNumber("shootOffset", 0))),
+				new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
+				new WaitCommand(0.3),
+				new SpinFlywheelShooter(shooter, 0),
+				new SpinIntakeGrabbers(shooter, 0),
+				new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES),
+				setRumble(false, robotContainer)
+
+		);
+
 		return Commands
-				.parallel(
-						new InstantCommand(() -> SmartDashboard.putBoolean("Got to Command", true)), Commands.sequence(
-								new SpinFlywheelShooter(shooter, IntakeShooterConstants.FLYWHEEL_SHOOTER_SPEED_SPEAKER),
-								Commands.parallel(
-										// Commands.sequence(
-										// new AlignAtTagWithX(drivetrain, vision, tagSupplier,
-										// distanceFromTag + spacingFromPoint,
-										// () -> new Rotation2d()),
-										// Commands.race(
-										// new AutoDriveTo(drivetrain,
-										// new Translation2d(-spacingFromPoint, 0)),
-										// new WaitCommand(4)))
-										// .onlyIf(shouldUseVisionSupplier),
-										new WaitCommand(minSpinUpTimeSeconds),
-										new ArmRotateTo(arm,
-												ArmConstants.ARM_SPEAKER_SHOOTING_DEGREES
-														+ SmartDashboard.getNumber("shootOffset", 0))),
-								new SpinIntakeGrabbers(shooter, IntakeShooterConstants.INTAKE_GRABBER_SPEED_SPEAKER),
-								new WaitCommand(0.3),
-								new SpinFlywheelShooter(shooter, 0),
-								new SpinIntakeGrabbers(shooter, 0),
-								new ArmRotateTo(arm, ArmConstants.ARM_STOW_2_DEGREES))
-				// DriverConstants.ENABLE_RUMBLE ? new
-				// SetControllerRumbleFor(robotContainer.driverXboxRaw, 3, 1)
-				// : Commands.sequence(),
-				// DriverConstants.ENABLE_RUMBLE ? new
-				// SetControllerRumbleFor(robotContainer.operatorXboxRaw, 3, 1)
-				// : Commands.sequence()
-				// if rumble isn't enabled pass an empty sequence instead
-				).onlyIf(shouldRunSupplier);
+				.parallel(new InstantCommand(() -> SmartDashboard.putBoolean("Got to Command", true)), mainSequence)
+				.onlyIf(shouldRunSupplier);
 	}
 
 	public static Command intakeFromFloorStart(Arm arm, IntakeShooter shooter) {
