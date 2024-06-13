@@ -1,13 +1,9 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.playingwithfusion.TimeOfFlight;
-import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
 
@@ -27,26 +23,14 @@ public class RealShooter extends IntakeShooter {
 	 * 2 for intake
 	 * neo550s, 2 sim motors,
 	 */
-
-	static private final double DISTANCE_OF_NOTE_METERS = Units.inchesToMeters(3);
-
-	private final TimeOfFlight lidar;
-	private final MedianFilter sensorMedianFilter = new MedianFilter(5);
-
 	private final WPI_VictorSPX flywheel1;
 	private final WPI_VictorSPX flywheel2;
 
 	private final CANSparkMax intake;
 
-	// private final DigitalInput intakeSwitch;
-
 	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId, int lidarId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
-
-		this.lidar = new TimeOfFlight(lidarId);
-		lidar.setRangingMode(RangingMode.Short, 25);
-		// this.intakeSwitch = new DigitalInput(intakeLimitSwitchId);
 
 		this.intake = new CANSparkMax(intakeID, CANSparkLowLevel.MotorType.kBrushless);
 		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
@@ -69,8 +53,7 @@ public class RealShooter extends IntakeShooter {
 
 	@Override
 	public boolean hasNoteInIntake() {
-		// return intakeSwitch.get();
-		return getLidar() < DISTANCE_OF_NOTE_METERS;
+		return false;
 	}
 
 	@Override
@@ -89,8 +72,7 @@ public class RealShooter extends IntakeShooter {
 	}
 
 	public double getLidar() {
-		return sensorMedianFilter.calculate(
-				lidar.getRange() / 1000);
+		return 0;
 	}
 
 	@Override
