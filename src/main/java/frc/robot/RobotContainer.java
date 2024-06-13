@@ -160,9 +160,8 @@ public class RobotContainer {
 		SmartDashboard.putNumber("shootOffset", 0);
 		SmartDashboard.putData(Autos.shootInSpeaker(drivetrain, arm, intakeShooter, this));
 
-		// SmartDashboard.putData("ArmUp", new ArmRotateTo(arm,
-		// ArmConstants.ARM_START_DEGREES));
-		// SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
+		SmartDashboard.putData("ArmUp", new ArmRotateTo(arm, ArmConstants.ARM_START_DEGREES));
+		SmartDashboard.putData("ZeroYaw", new InstantCommand(drivetrain::zeroYaw));
 
 		SmartDashboard.putString("Bot Name", Constants.currentBot.toString() + " - " + Constants.serialNumber);
 

@@ -225,7 +225,7 @@ public final class Autos {
 		final double distanceFromTag = 1.55;
 		final double spacingFromPoint = 0.25;
 
-		final double minSpinUpTimeSeconds = 1;
+		final double minSpinUpTimeSeconds = 2;
 
 		// Say whether to use vision
 		final BooleanSupplier shouldUseVisionSupplier = () -> (vision != null && vision.isEnabled());
