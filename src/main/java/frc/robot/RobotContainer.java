@@ -1,7 +1,5 @@
 package frc.robot;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.net.PortForwarder;
@@ -20,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.GyroConstants;
 import frc.robot.Constants.HangConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.SwerveDrivetrainConstants;
@@ -95,8 +94,6 @@ public class RobotContainer {
 			new Translation2d(-SwerveDrivetrainConstants.MODULE_LOCATION_X,
 					-SwerveDrivetrainConstants.MODULE_LOCATION_Y));
 
-	private final AHRS gyro = new AHRS();
-
 	/**
 	 * This is the robot arm. In some situations, the robot may not have an arm, so
 	 * if ArmConstants.HAS_ARM is false, a dummy class implementing the arm's API is
@@ -125,7 +122,7 @@ public class RobotContainer {
 			IntakeShooterConstants.INTAKE_LIMIT_SWITCH_ID, IntakeShooterConstants.LIDAR_ID) : new DummyShooter();
 
 	private final SwerveDrivetrain drivetrain = new SwerveDrivetrain(
-			gyro,
+			GyroConstants.IS_NAVX,
 			swerveModuleFL, swerveModuleFR,
 			swerveModuleBL, swerveModuleBR);
 

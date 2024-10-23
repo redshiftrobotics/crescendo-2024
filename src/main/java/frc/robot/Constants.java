@@ -162,7 +162,7 @@ public final class Constants {
 
 				case COMP_BOT:
 				default:
-					HAS_INTAKE = true;
+					HAS_INTAKE = false;
 					break;
 			}
 		}
@@ -204,6 +204,11 @@ public final class Constants {
 		public static final int OPERATOR_JOYSTICK_PORT = 1;
 	}
 
+	public static class GyroConstants {
+		public static final int PIGEON_2_ID = 40;
+		public static final boolean IS_NAVX = false;
+	}
+	
 	public static class SwerveModuleConstants {
 
 		static {

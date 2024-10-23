@@ -5,12 +5,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.GyroConstants;
 import frc.robot.Constants.RobotMovementConstants;
 
 /**
@@ -60,7 +62,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @see https://www.kauailabs.com/public_files/navx-mxp/apidocs/java/com/kauailabs/navx/frc/AHRS.html
 	 * @see https://ibb.co/dJrL259
 	 */
-	private final AHRS gyro;
+	private final AHRS navx;
+	private final Pigeon2 pigeon;
+	private final StatusSignal<Double> yaw;
 
 	/**
 	 * Amount to add to gyro position for field relative drive and SmartDashboard
@@ -100,12 +104,21 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @param swerveModuleBR Back right swerve module
 	 */
 	public SwerveDrivetrain(
-			AHRS gyro,
+			boolean useNavx,
 			SwerveModule swerveModuleFL, SwerveModule swerveModuleFR,
 			SwerveModule swerveModuleBL, SwerveModule swerveModuleBR) {
 
 		// save parameters
-		this.gyro = gyro;
+		if (useNavx) {
+			this.navx = new AHRS();
+			this.yaw = null;
+			this.pigeon = null;
+		}
+		else {
+			this.pigeon = new Pigeon2(GyroConstants.PIGEON_2_ID);
+			this.yaw = pigeon.getYaw();
+			this.navx = null;
+		}
 
 		moduleFL = swerveModuleFL;
 		moduleFR = swerveModuleFR;
@@ -387,28 +400,36 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 * @see https://ibb.co/dJrL259 NWU Axis Convention
 	 */
 	public Rotation2d getHeading() {
-		return gyro.getRotation2d().plus(frontOffset);
+		if (navx == null) {
+			return Rotation2d.fromDegrees(yaw.refresh().getValue()).plus(frontOffset);
+		}
+		return navx.getRotation2d().plus(frontOffset);
 	}
 
-	/**
-	 * Gyro Method
-	 * 
-	 * <p>
-	 * Return the heading of the robot in as a rotation in a 3D coordinate frame
-	 * represented by a quaternion.
-	 * </p>
-	 * 
-	 * @return the current heading of the robot as a {@link Rotation3d}.
-	 */
-	public Rotation3d getHeading3d() {
-		return gyro.getRotation3d();
-	}
+	// /**
+	//  * Gyro Method
+	//  * 
+	//  * <p>
+	//  * Return the heading of the robot in as a rotation in a 3D coordinate frame
+	//  * represented by a quaternion.
+	//  * </p>
+	//  * 
+	//  * @return the current heading of the robot as a {@link Rotation3d}.
+	//  */
+	// public Rotation3d getHeading3d() {
+	// 	return navx.getRotation3d();
+	// }
 
 	/**
 	 * Reset gyro yaw
 	 */
 	public void zeroYaw() {
-		gyro.zeroYaw();
+		if (navx == null) {
+			pigeon.reset();
+		}
+		else {
+			navx.zeroYaw();
+		}
 	}
 
 	/**
