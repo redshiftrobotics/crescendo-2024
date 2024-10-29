@@ -11,7 +11,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 /** This is the subsystem that represents the arm. */
 public class RealArm extends Arm {
@@ -40,6 +43,12 @@ public class RealArm extends Arm {
 		armRaisePIDController.setTolerance(Units.degreesToRotations(ArmConstants.ARM_TOLERANCE_DEGREES));
 
 		armPosition = rightArmEncoder.getAbsolutePosition();
+
+		MagnetSensorConfigs magnetSensorConfig = new MagnetSensorConfigs();
+		magnetSensorConfig.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+		magnetSensorConfig.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+		magnetSensorConfig.MagnetOffset = 0;
+		rightArmEncoder.getConfigurator().apply(magnetSensorConfig);
 
 		leftArmMotor.setIdleMode(IdleMode.kBrake);
 		rightArmMotor.setIdleMode(IdleMode.kBrake);
