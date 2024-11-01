@@ -50,6 +50,8 @@ public class RealArm extends Arm {
 		magnetSensorConfig.MagnetOffset = 0;
 		rightArmEncoder.getConfigurator().apply(magnetSensorConfig);
 
+		// leftArmMotor.setIdleMode(IdleMode.kCoast);
+		// rightArmMotor.setIdleMode(IdleMode.kCoast);
 		leftArmMotor.setIdleMode(IdleMode.kBrake);
 		rightArmMotor.setIdleMode(IdleMode.kBrake);
 
@@ -85,10 +87,12 @@ public class RealArm extends Arm {
 	public void periodic() {
 		Rotation2d currentOnPosition = getArmPosition();
 
+		// double armSpeed = 0;
 		double armSpeed = armRaisePIDController.calculate(currentOnPosition.getRotations());
 
 		leftArmMotor.set(armSpeed);
 		rightArmMotor.set(armSpeed);
+		SmartDashboard.putNumber("Arm Speed", armSpeed);
 
 		SmartDashboard.putNumber("Arm Deg", currentOnPosition.getDegrees());
 	}
