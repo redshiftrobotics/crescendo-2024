@@ -1,52 +1,60 @@
 {
-	"java.configuration.updateBuildConfiguration": "automatic",
-	"java.server.launchMode": "Standard",
-	"files.exclude": {
-		"**/.git": true,
-		"**/.svn": true,
-		"**/.hg": true,
-		"**/CVS": true,
-		"**/.DS_Store": true,
-		"bin/": true,
-		"**/.classpath": true,
-		"**/.project": true,
-		"**/.settings": true,
-		"**/.factorypath": true,
-		"**/*~": true
-	},
-	"java.test.config": [
-		{
-			"name": "WPIlibUnitTests",
-			"workingDirectory": "${workspaceFolder}/build/jni/release",
-			"vmargs": [
-				"-Djava.library.path=${workspaceFolder}/build/jni/release"
-			],
-			"env": {
-				"LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release",
-				"DYLD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release"
-			}
-		},
-	],
-	"java.test.defaultConfig": "WPIlibUnitTests",
-	// Auto Formatter
-	"editor.formatOnSave": true, // So you cant forget
-	"editor.tabSize": 4, // 4 char width indentation
-	"editor.detectIndentation": false, // Prevent above from being overridden
-	"editor.insertSpaces": false, // use tab character instead of spaces
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": "always",
-		"source.fixAll": "always",
-	},
-	"java.settings.url": ".vscode/settings.prefs",
-	"cSpell.words": [
-		"AHRS",
-		"Arducam",
-		"deadband",
-		"Lightstrip",
-		"photonvision",
-		"Ramsete",
-		"Robo",
-		"teleop",
-		"teleoperated"
-	]
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.server.launchMode": "Standard",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "bin/": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true,
+    "**/*~": true
+  },
+  "java.test.config": [
+    {
+      "name": "WPIlibUnitTests",
+      "workingDirectory": "${workspaceFolder}/build/jni/release",
+      "vmargs": [ "-Djava.library.path=${workspaceFolder}/build/jni/release" ],
+      "env": {
+        "LD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release" ,
+        "DYLD_LIBRARY_PATH": "${workspaceFolder}/build/jni/release"
+      }
+    },
+  ],
+  "java.test.defaultConfig": "WPIlibUnitTests",
+  "java.import.gradle.annotationProcessing.enabled": false,
+  "java.completion.favoriteStaticMembers": [
+    "org.junit.Assert.*",
+    "org.junit.Assume.*",
+    "org.junit.jupiter.api.Assertions.*",
+    "org.junit.jupiter.api.Assumptions.*",
+    "org.junit.jupiter.api.DynamicContainer.*",
+    "org.junit.jupiter.api.DynamicTest.*",
+    "org.mockito.Mockito.*",
+    "org.mockito.ArgumentMatchers.*",
+    "org.mockito.Answers.*",
+    "edu.wpi.first.units.Units.*"
+  ],
+  "java.completion.filteredTypes": [
+    "java.awt.*",
+    "com.sun.*",
+    "sun.*",
+    "jdk.*",
+    "org.graalvm.*",
+    "io.micrometer.shaded.*",
+    "java.beans.*",
+    "java.util.Base64.*",
+    "java.util.Timer",
+    "java.sql.*",
+    "javax.swing.*",
+    "javax.management.*",
+    "javax.smartcardio.*",
+    "edu.wpi.first.math.proto.*",
+    "edu.wpi.first.math.**.proto.*",
+    "edu.wpi.first.math.**.struct.*",
+  ]
 }

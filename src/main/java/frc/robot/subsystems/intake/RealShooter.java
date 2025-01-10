@@ -1,8 +1,12 @@
 package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.revrobotics.CANSparkLowLevel;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.IntakeShooterConstants;
@@ -26,14 +30,19 @@ public class RealShooter extends IntakeShooter {
 	private final WPI_VictorSPX flywheel1;
 	private final WPI_VictorSPX flywheel2;
 
-	private final CANSparkMax intake;
+	private final SparkMax intake;
 
 	public RealShooter(int flywheel1Id, int flywheel2Id, int intakeID, int intakeLimitSwitchId, int lidarId) {
 		this.flywheel1 = new WPI_VictorSPX(flywheel1Id);
 		this.flywheel2 = new WPI_VictorSPX(flywheel2Id);
 
-		this.intake = new CANSparkMax(intakeID, CANSparkLowLevel.MotorType.kBrushless);
-		intake.setInverted(IntakeShooterConstants.INTAKE_REVERSE);
+		this.intake = new SparkMax(intakeID, MotorType.kBrushless);
+		
+		SparkMaxConfig intakeConfig = new SparkMaxConfig();
+		intakeConfig.idleMode(IdleMode.kCoast);
+		intakeConfig.inverted(IntakeShooterConstants.INTAKE_REVERSE);
+
+		intake.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 	}
 
 	@Override

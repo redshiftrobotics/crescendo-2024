@@ -1,13 +1,16 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.kauailabs.navx.frc.AHRS;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,11 +18,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics.SwerveDriveWheelStates;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,6 +35,23 @@ import frc.robot.Constants.RobotMovementConstants;
  * @see <a href="https://youtu.be/X2UjzPi35gU">Swerve Drive Demo</a>
  */
 public class SwerveDrivetrain extends SubsystemBase {
+	
+	public static class SwerveDriveWheelPositions {
+		public SwerveModulePosition[] positions;
+
+		public SwerveDriveWheelPositions(SwerveModulePosition[] positions) {
+			this.positions = positions;
+		}
+	}
+
+	public static class SwerveDriveWheelStates {
+		public SwerveModuleState[] states;
+
+		public SwerveDriveWheelStates(SwerveModuleState[] states) {
+			this.states = states;
+		}
+	}
+
 	/**
 	 * The SwerveDriveKinematics class is a useful tool that converts between a
 	 * ChassisSpeeds object
@@ -64,7 +83,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 */
 	private final AHRS navx;
 	private final Pigeon2 pigeon;
-	private final StatusSignal<Double> yaw;
+	private final Supplier<Angle> yaw;
 
 	/**
 	 * Amount to add to gyro position for field relative drive and SmartDashboard
@@ -110,13 +129,13 @@ public class SwerveDrivetrain extends SubsystemBase {
 
 		// save parameters
 		if (useNavx) {
-			this.navx = new AHRS();
+			this.navx = new AHRS(NavXComType.kMXP_SPI);
 			this.yaw = null;
 			this.pigeon = null;
 		}
 		else {
 			this.pigeon = new Pigeon2(GyroConstants.PIGEON_2_ID);
-			this.yaw = pigeon.getYaw();
+			this.yaw = pigeon.getYaw().asSupplier();
 			this.navx = null;
 		}
 
@@ -168,7 +187,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	public void periodic() {
 		pose = poseOdometry.update(
 				getHeading(),
-				getWheelPositions());
+				getWheelPositions().positions);
 
 		if (desiredPose != null) {
 			// Calculate our robot speeds with the PID controllers
@@ -201,7 +220,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	public void resetPosition() {
 		poseOdometry.resetPosition(
 				getHeading(),
-				getWheelPositions(),
+				getWheelPositions().positions,
 				pose);
 	}
 
@@ -282,7 +301,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 */
 	public ChassisSpeeds getState() {
 		// get all module states and convert them into chassis speeds
-		return kinematics.toChassisSpeeds(getWheelStates());
+		return kinematics.toChassisSpeeds(getWheelStates().states);
 	}
 
 	/**
@@ -401,7 +420,7 @@ public class SwerveDrivetrain extends SubsystemBase {
 	 */
 	public Rotation2d getHeading() {
 		if (navx == null) {
-			return Rotation2d.fromDegrees(yaw.refresh().getValue()).plus(frontOffset);
+			return Rotation2d.fromRadians(yaw.get().in(Radians) + frontOffset.getRadians());
 		}
 		return navx.getRotation2d().plus(frontOffset);
 	}

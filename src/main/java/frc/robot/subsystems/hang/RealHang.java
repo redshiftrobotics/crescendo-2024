@@ -1,21 +1,28 @@
 package frc.robot.subsystems.hang;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RealHang extends Hang {
 
-	private final CANSparkMax motor;
+	private final SparkMax motor;
 	// private final DigitalInput leftLimitSwitch;
 	private final String name;
 
 	public RealHang(int motorID, boolean motorIsInverted, int rightLimitSwitchId, String name) {
-		motor = new CANSparkMax(motorID, MotorType.kBrushless);
-		motor.setInverted(motorIsInverted);
-		motor.setIdleMode(IdleMode.kBrake);
+		motor = new SparkMax(motorID, MotorType.kBrushless);
+
+		SparkMaxConfig motorCOnfig = new SparkMaxConfig();
+		motorCOnfig.idleMode(IdleMode.kBrake);
+		motorCOnfig.inverted(motorIsInverted);
+
+		motor.configure(motorCOnfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		// leftLimitSwitch = new DigitalInput(rightLimitSwitchId);
 

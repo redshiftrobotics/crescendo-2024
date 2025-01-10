@@ -3,19 +3,22 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveModuleConstants;
 
@@ -31,19 +34,19 @@ public class SwerveModule extends SubsystemBase {
 
 	// the drive motor is the motor that spins the wheel making the robot move
 	// across the ground (aka wheel or velocity motor)
-	private final CANSparkMax driveMotor;
+	private final SparkMax driveMotor;
 	private final RelativeEncoder driveEncoder;
-	private final SparkPIDController drivePIDController;
+	private final SparkClosedLoopController drivePIDController;
 
 	// the steering motor is the motor that changes the rotation of the wheel
 	// allowing the robot to drive in any direction (aka spin or angular motor)
 	// Also allows for spinning in place
-	private final CANSparkMax steeringMotor;
+	private final SparkMax steeringMotor;
 	private final CANcoder steeringEncoder;
 	private final PIDController steeringPIDController;
 
 	/** Status Signal that gives steering encoders current position in rotations */
-	private final StatusSignal<Double> steeringPosition;
+	private final StatusSignal<Angle> steeringPosition;
 
 	/** Default state, forward and still */
 	private final static SwerveModuleState defaultState = new SwerveModuleState();
@@ -71,33 +74,46 @@ public class SwerveModule extends SubsystemBase {
 	public SwerveModule(int driveMotorDeviceId, int steeringMotorDeviceId, int steeringAbsoluteEncoderId,
 			double steeringEncoderZero, Translation2d distanceFromCenter) {
 		// --- Drive Motor ---
-		driveMotor = new CANSparkMax(driveMotorDeviceId, MotorType.kBrushless);
+		driveMotor = new SparkMax(driveMotorDeviceId, MotorType.kBrushless);
 
-		// You must restore factory defaults if you want to use velocity encoder.
-		// If you do not do this, everything will break and shake itself to death
-		driveMotor.restoreFactoryDefaults();
+		// // You must restore factory defaults if you want to use velocity encoder.
+		// // If you do not do this, everything will break and shake itself to death
+		// driveMotor.restoreFactoryDefaults();
+		SparkMaxConfig driveMotorConfig = new SparkMaxConfig();
+				
+		// driveMotor.setIdleMode(IdleMode.kBrake);
+		driveMotorConfig.idleMode(IdleMode.kBrake);
 
-		driveMotor.setIdleMode(IdleMode.kBrake);
-
-		// --- Drive Encoder ---
+		// // --- Drive Encoder ---
 		driveEncoder = driveMotor.getEncoder();
 
-		driveEncoder.setVelocityConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
-		driveEncoder.setPositionConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
+		// driveEncoder.setVelocityConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
+		// driveEncoder.setPositionConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
+		driveMotorConfig.encoder
+				.velocityConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO)
+				.positionConversionFactor(SwerveModuleConstants.DRIVE_MOTOR_GEAR_RATIO);
+			
+		// // --- Drive PID ---
+		drivePIDController = driveMotor.getClosedLoopController();
+		// drivePIDController.setP(SwerveModuleConstants.DRIVE_PID_P);
+		// drivePIDController.setI(SwerveModuleConstants.DRIVE_PID_I);
+		// drivePIDController.setD(SwerveModuleConstants.DRIVE_PID_D);
+		// drivePIDController.setFF(SwerveModuleConstants.DRIVE_PID_FF);
+		// drivePIDController.setIAccum(SwerveModuleConstants.DRIVE_PID_MAX_I);
+		// drivePIDController.setOutputRange(-1, 1);
+		driveMotorConfig.closedLoop
+				.pidf(SwerveModuleConstants.DRIVE_PID_P, SwerveModuleConstants.DRIVE_PID_I, SwerveModuleConstants.DRIVE_PID_D, SwerveModuleConstants.DRIVE_PID_FF)
+				.iMaxAccum(SwerveModuleConstants.DRIVE_PID_MAX_I)
+				.outputRange(-1, +1);
 
-		// --- Drive PID ---
-		drivePIDController = driveMotor.getPIDController();
-		drivePIDController.setP(SwerveModuleConstants.DRIVE_PID_P);
-		drivePIDController.setI(SwerveModuleConstants.DRIVE_PID_I);
-		drivePIDController.setD(SwerveModuleConstants.DRIVE_PID_D);
-		drivePIDController.setFF(SwerveModuleConstants.DRIVE_PID_FF);
-		drivePIDController.setIAccum(SwerveModuleConstants.DRIVE_PID_MAX_I);
-		drivePIDController.setOutputRange(-1, 1);
+		driveMotor.configure(driveMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		// --- Steering Motor ---
-		steeringMotor = new CANSparkMax(steeringMotorDeviceId, MotorType.kBrushless);
+		steeringMotor = new SparkMax(steeringMotorDeviceId, MotorType.kBrushless);
 
-		steeringMotor.setIdleMode(IdleMode.kBrake);
+		SparkMaxConfig steeringMotorConfig = new SparkMaxConfig();
+		steeringMotorConfig.idleMode(IdleMode.kBrake);
+		steeringMotor.configure(steeringMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		// --- Steering Encoder ---
 		steeringEncoder = new CANcoder(steeringAbsoluteEncoderId);
@@ -105,7 +121,7 @@ public class SwerveModule extends SubsystemBase {
 		// Use 0-1 for rotational
 		steeringEncoder.getConfigurator().apply(
 				new MagnetSensorConfigs()
-						.withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
+						.withAbsoluteSensorDiscontinuityPoint(1)
 						.withMagnetOffset(steeringEncoderZero));
 
 		// --- Steering PID ---
@@ -202,15 +218,18 @@ public class SwerveModule extends SubsystemBase {
 
 		// --- State Improvements ---
 
+		// copy cause don't want to break things with update now that it is mutable
+		state = new SwerveModuleState(state.speedMetersPerSecond, state.angle);
+
 		// Optimize the reference state to avoid spinning further than 90 degrees
-		state = SwerveModuleState.optimize(state, getSteeringAngle());
+		state.optimize(getSteeringAngle());
 
 		// Scale speed by cosine of angle error. This scales down movement perpendicular
 		// to the desired
 		// direction of travel that can occur when modules change directions. This
 		// results in smoother
 		// driving.
-		state.speedMetersPerSecond *= state.angle.minus(getSteeringAngle()).getCos();
+		state.cosineScale(getSteeringAngle());
 
 		// --- Set steering motor ---
 		steeringPIDController.setSetpoint(state.angle.getRotations());

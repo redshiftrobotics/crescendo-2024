@@ -4,35 +4,38 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ArmConstants;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 /** This is the subsystem that represents the arm. */
 public class RealArm extends Arm {
 
-	private final CANSparkMax leftArmMotor;
-	private final CANSparkMax rightArmMotor;
+	private final SparkMax leftArmMotor;
+	private final SparkMax rightArmMotor;
 
 	private final CANcoder rightArmEncoder;
 
-	private final StatusSignal<Double> armPosition;
+	private final StatusSignal<Angle> armPosition;
 
 	private final PIDController armRaisePIDController;
 
 	/** Constructor. Creates a new Arm Subsystem. */
 	public RealArm(int leftMotorId, int rightMotorId, int rightEncoderId, boolean areMotorsReversed) {
 
-		leftArmMotor = new CANSparkMax(leftMotorId, MotorType.kBrushless);
-		rightArmMotor = new CANSparkMax(rightMotorId, MotorType.kBrushless);
+		leftArmMotor = new SparkMax(leftMotorId, MotorType.kBrushless);
+		rightArmMotor = new SparkMax(rightMotorId, MotorType.kBrushless);
 
 		rightArmEncoder = new CANcoder(rightEncoderId);
 
@@ -46,17 +49,20 @@ public class RealArm extends Arm {
 
 		MagnetSensorConfigs magnetSensorConfig = new MagnetSensorConfigs();
 		magnetSensorConfig.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-		magnetSensorConfig.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+		magnetSensorConfig.AbsoluteSensorDiscontinuityPoint = 1;
 		magnetSensorConfig.MagnetOffset = 0;
 		rightArmEncoder.getConfigurator().apply(magnetSensorConfig);
 
-		// leftArmMotor.setIdleMode(IdleMode.kCoast);
-		// rightArmMotor.setIdleMode(IdleMode.kCoast);
-		leftArmMotor.setIdleMode(IdleMode.kBrake);
-		rightArmMotor.setIdleMode(IdleMode.kBrake);
+		SparkMaxConfig leftArmConfig = new SparkMaxConfig();
+		leftArmConfig.idleMode(IdleMode.kBrake);
+		leftArmConfig.inverted(areMotorsReversed);
 
-		leftArmMotor.setInverted(areMotorsReversed);
-		rightArmMotor.setInverted(!areMotorsReversed);
+		SparkMaxConfig rightArmConfig = new SparkMaxConfig();
+		rightArmConfig.idleMode(IdleMode.kBrake);
+		rightArmConfig.inverted(!areMotorsReversed);
+
+		leftArmMotor.configure(leftArmConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		rightArmMotor.configure(rightArmConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 	}
 
 	@Override
